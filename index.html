@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptOps — Stop Being the AI Bottleneck</title>
+<meta name="description" content="The platform where Dev, PM, and Marketing manage, test, and improve AI prompts together. Engineers set it up once. Everyone else improves it without touching code.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+/* ────────────────────────────────────────────────
+   TOKENS & RESET
+──────────────────────────────────────────────── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --g:  #00ff41;
+  --g2: #00cc33;
+  --g3: #008f11;
+  --g4: #004d06;
+  --g5: #001402;
+  --cy: #00ffe0;
+  --pu: #a855f7;
+  --am: #f59e0b;
+  --rd: #ef4444;
+  --bl: #3b82f6;
+  --txt:  #c8ffc8;
+  --txt2: #72e872;
+  --txt3: #2d6b2d;
+  --b:  rgba(0,255,65,.07);
+  --b2: rgba(0,255,65,.14);
+  --b3: rgba(0,255,65,.26);
+  --mono:'JetBrains Mono',monospace;
+  --disp:'Bebas Neue',sans-serif;
+  --body:'Space Grotesk',sans-serif;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-behavior:smooth}
+body{background:#000;color:var(--txt);font-family:var(--body);overflow-x:hidden;cursor:none}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--g4)}
+
+/* ────────────────────────────────────────────────
+   CANVAS + SCANLINES
+──────────────────────────────────────────────── */
+#rain{position:fixed;inset:0;opacity:.033;pointer-events:none;z-index:0}
+.scan{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.022) 2px,rgba(0,0,0,.022) 4px)}
+
+/* ────────────────────────────────────────────────
+   CURSOR
+──────────────────────────────────────────────── */
+#cd,#cr{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+#cd{width:6px;height:6px;background:var(--g);border-radius:50%;box-shadow:0 0 10px var(--g);mix-blend-mode:screen}
+#cr{width:30px;height:30px;border:1px solid rgba(0,255,65,.45);border-radius:50%;mix-blend-mode:screen;transition:width .18s var(--ease),height .18s var(--ease),border-color .18s}
+
+/* ────────────────────────────────────────────────
+   ANIMATIONS
+──────────────────────────────────────────────── */
+@keyframes pip   {0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+@keyframes march {to{transform:translateX(-50%)}}
+@keyframes blink {0%,100%{opacity:1}50%{opacity:0}}
+@keyframes flick {0%,88%,90%,92%,100%{opacity:1}89%,91%{opacity:.55}}
+@keyframes fadeU {from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow  {0%,100%{box-shadow:0 0 18px rgba(0,255,65,.09)}50%{box-shadow:0 0 40px rgba(0,255,65,.22)}}
+@keyframes spin  {to{transform:rotate(360deg)}}
+
+.rv{opacity:0;transform:translateY(20px);transition:opacity .72s var(--ease),transform .72s var(--ease)}
+.rv.on{opacity:1;transform:none}
+
+/* ────────────────────────────────────────────────
+   NAV
+──────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;inset-inline:0;height:60px;z-index:800;
+  display:flex;align-items:center;padding:0 44px;gap:12px;
+  border-bottom:1px solid transparent;transition:background .4s,border-color .4s;
+}
+nav.ink{background:rgba(0,0,0,.94);border-color:var(--b2);backdrop-filter:blur(18px)}
+.nlogo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+.ngl{width:32px;height:32px;border:1px solid var(--b3);border-radius:5px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.ngl::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,255,65,.13),transparent)}
+.ngl span{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--g);text-shadow:0 0 10px var(--g);position:relative;z-index:1}
+.nlt{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--g);letter-spacing:.03em;text-shadow:0 0 18px rgba(0,255,65,.5)}
+.nbeta{font-family:var(--mono);font-size:8px;padding:2px 6px;border:1px solid var(--b2);color:var(--g3);border-radius:2px;letter-spacing:.12em}
+.ntick{
+  margin:0 auto;display:flex;align-items:center;gap:7px;
+  font-family:var(--mono);font-size:10px;color:var(--txt3);letter-spacing:.1em;
+  border:1px solid var(--b);padding:5px 14px;border-radius:20px;background:rgba(0,255,65,.02);
+}
+.npip{width:5px;height:5px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g);animation:pip 2s infinite}
+.nlinks{display:flex;gap:2px;margin-left:8px}
+.nl{font-family:var(--mono);font-size:10px;letter-spacing:.07em;color:var(--txt3);text-decoration:none;padding:5px 12px;border-radius:3px;border:1px solid transparent;transition:all .14s}
+.nl:hover{color:var(--txt2);background:rgba(0,255,65,.04);border-color:var(--b2)}
+.nact{display:flex;gap:8px}
+
+/* ────────────────────────────────────────────────
+   BUTTONS
+──────────────────────────────────────────────── */
+.btn{font-family:var(--mono);font-size:11px;font-weight:600;padding:8px 18px;border-radius:4px;border:1px solid;cursor:pointer;text-decoration:none;letter-spacing:.06em;transition:all .18s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-g{background:transparent;color:var(--txt3);border-color:var(--b2)}
+.btn-g:hover{color:var(--txt2);border-color:var(--b3);background:rgba(0,255,65,.03)}
+.btn-p{background:rgba(0,255,65,.09);color:var(--g);border-color:rgba(0,255,65,.35);text-shadow:0 0 10px rgba(0,255,65,.5);box-shadow:0 0 22px rgba(0,255,65,.07)}
+.btn-p:hover{background:rgba(0,255,65,.18);box-shadow:0 0 42px rgba(0,255,65,.18);transform:translateY(-1px)}
+
+/* ────────────────────────────────────────────────
+   HERO
+──────────────────────────────────────────────── */
+.hero{position:relative;z-index:2;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:60px}
+.hero::after{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(to bottom,transparent,var(--b3) 18%,var(--b3) 82%,transparent)}
+
+.hl{padding:80px 52px 72px;display:flex;flex-direction:column;justify-content:center}
+.hkick{display:inline-flex;align-items:center;gap:9px;margin-bottom:26px;animation:fadeU .7s var(--ease) both}
+.hk-bar{height:1px;width:24px;background:linear-gradient(90deg,var(--g),transparent)}
+.hk-chip{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--g2);background:rgba(0,255,65,.06);border:1px solid var(--b2);padding:3px 10px;border-radius:2px;display:flex;align-items:center;gap:5px}
+.hk-dot{width:5px;height:5px;border-radius:50%;background:var(--g);box-shadow:0 0 6px var(--g);animation:pip 1.6s infinite}
+
+h1{font-family:var(--disp);font-size:clamp(60px,6.8vw,104px);line-height:.92;letter-spacing:.02em;color:#fff;margin-bottom:0;animation:fadeU .7s .07s var(--ease) both}
+h1 .em{display:block;color:var(--g);text-shadow:0 0 60px rgba(0,255,65,.45),0 0 110px rgba(0,255,65,.14);animation:flick 8s 2s infinite}
+
+.hsub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--txt3);margin:12px 0 20px;animation:fadeU .7s .13s var(--ease) both}
+.hdesc{font-size:16px;color:rgba(200,255,200,.44);line-height:1.8;max-width:450px;margin-bottom:32px;animation:fadeU .7s .19s var(--ease) both}
+.hdesc strong{color:rgba(200,255,200,.75);font-weight:600}
+
+.hform{display:flex;max-width:430px;margin-bottom:12px;border:1px solid var(--b2);border-radius:4px;overflow:hidden;background:rgba(0,6,0,.85);animation:fadeU .7s .25s var(--ease) both;animation:fadeU .7s .25s var(--ease) both,glow 3.5s 2s infinite}
+.hform:focus-within{border-color:var(--b3)}
+.hinput{flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);font-size:11px;color:var(--txt2);padding:12px 14px;letter-spacing:.04em}
+.hinput::placeholder{color:var(--txt3)}
+.hfbtn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.07em;background:rgba(0,255,65,.12);color:var(--g);border:none;border-left:1px solid var(--b2);padding:12px 18px;cursor:pointer;transition:background .18s;text-shadow:0 0 10px rgba(0,255,65,.5)}
+.hfbtn:hover{background:rgba(0,255,65,.24)}
+
+.hproof{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:36px;animation:fadeU .7s .29s var(--ease) both}
+.hpi{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.1em;display:flex;align-items:center;gap:5px}
+.hpi::before{content:'✓';color:var(--g3);font-size:10px}
+
+.hroles{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:40px;animation:fadeU .7s .33s var(--ease) both}
+.rc{font-family:var(--mono);font-size:9px;letter-spacing:.09em;padding:5px 12px;border-radius:2px;border:1px solid;display:flex;align-items:center;gap:5px}
+.rc-e{color:var(--cy);border-color:rgba(0,255,204,.2);background:rgba(0,255,204,.03)}
+.rc-p{color:var(--pu);border-color:rgba(168,85,247,.2);background:rgba(168,85,247,.03)}
+.rc-m{color:var(--am);border-color:rgba(245,158,11,.2);background:rgba(245,158,11,.03)}
+
+.hstats{display:flex;border:1px solid var(--b2);border-radius:6px;overflow:hidden;animation:fadeU .7s .37s var(--ease) both}
+.hs{flex:1;padding:14px;text-align:center;border-right:1px solid var(--b2);position:relative;overflow:hidden;cursor:default;transition:background .2s}
+.hs:last-child{border-right:none}
+.hs:hover{background:rgba(0,255,65,.03)}
+.hs-v{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--g);text-shadow:0 0 16px rgba(0,255,65,.4);display:block;line-height:1}
+.hs-k{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.14em;margin-top:4px;display:block}
+
+/* hero right */
+.hr{padding:80px 52px 72px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px}
+
+/* terminal */
+.term{width:100%;max-width:510px;border:1px solid var(--b3);border-radius:9px;overflow:hidden;background:rgba(0,5,0,.97);box-shadow:0 24px 80px rgba(0,0,0,.94),0 0 60px rgba(0,255,65,.025);animation:fadeU .8s .28s var(--ease) both}
+.tbar{background:rgba(0,6,0,1);border-bottom:1px solid var(--b2);padding:9px 13px;display:flex;align-items:center;gap:9px}
+.tdots{display:flex;gap:5px}
+.tdot{width:10px;height:10px;border-radius:50%}
+.tdot.r{background:#ff5f57}.tdot.y{background:#febc2e}.tdot.g{background:#2ac840}
+.ttitle{flex:1;text-align:center;font-family:var(--mono);font-size:10px;color:var(--txt3);letter-spacing:.07em}
+.tlive{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;color:var(--g2);letter-spacing:.1em}
+.tlivepip{width:5px;height:5px;border-radius:50%;background:var(--g);box-shadow:0 0 6px var(--g);animation:pip 1.4s infinite}
+.tbody{padding:16px 18px;font-family:var(--mono);font-size:11px;line-height:1.8}
+.tl{display:flex;gap:8px}
+.tp{color:var(--g3);flex-shrink:0;user-select:none}
+.tc{color:var(--txt2)}.td{color:rgba(200,255,200,.28)}
+.thi{color:var(--g)}.tcy{color:var(--cy)}.tpu{color:var(--pu)}.tam{color:var(--am)}.trd{color:var(--rd)}
+.cur{display:inline-block;width:7px;height:12px;background:var(--g);vertical-align:middle;animation:blink 1.1s step-end infinite}
+
+/* mini chart */
+.mchart{width:100%;max-width:510px;border:1px solid var(--b2);border-radius:7px;background:rgba(0,4,0,.92);padding:13px 16px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;animation:fadeU .8s .42s var(--ease) both}
+.mc-lbl{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.15em;margin-bottom:7px}
+.mc-bars{display:flex;align-items:flex-end;gap:3px;height:32px}
+.mc-b{flex:1;border-radius:2px 2px 0 0;background:rgba(0,255,65,.2);min-width:6px;transition:height .7s var(--ease),background .3s}
+.mc-b.top{background:var(--g);box-shadow:0 0 8px rgba(0,255,65,.4)}
+.mc-val{font-family:var(--mono);font-size:28px;font-weight:600;color:var(--g);text-shadow:0 0 22px rgba(0,255,65,.4);line-height:1;text-align:right}
+.mc-unit{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.12em;text-align:right;margin-top:2px}
+
+/* ────────────────────────────────────────────────
+   MARQUEE
+──────────────────────────────────────────────── */
+.mq{position:relative;z-index:2;border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:11px 0;overflow:hidden;background:rgba(0,3,0,.55)}
+.mq-t{display:flex;width:max-content;animation:march 30s linear infinite}
+.mq-t:hover{animation-play-state:paused}
+.mc{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--txt3);white-space:nowrap;padding:0 26px;display:flex;align-items:center;gap:8px;border-right:1px solid var(--b)}
+.mc .dot{color:var(--g3)}
+
+/* ────────────────────────────────────────────────
+   SHARED SECTION ELEMENTS
+──────────────────────────────────────────────── */
+.wrap{position:relative;z-index:2;max-width:1220px;margin:0 auto;padding:0 48px}
+.slabel{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--g3);margin-bottom:10px}
+.stitle{font-family:var(--disp);font-size:clamp(42px,5.2vw,66px);line-height:.97;letter-spacing:.02em;color:#fff}
+.stitle .em{color:var(--g);text-shadow:0 0 40px rgba(0,255,65,.3)}
+.sbody{font-size:15px;color:rgba(200,255,200,.38);line-height:1.82;max-width:520px}
+
+/* ────────────────────────────────────────────────
+   PROBLEM
+──────────────────────────────────────────────── */
+.prob{padding:110px 0}
+.prob-head{margin-bottom:52px}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.pc{background:rgba(0,5,0,.78);border:1px solid var(--b2);border-radius:8px;padding:26px;position:relative;overflow:hidden;transition:border-color .22s,transform .22s;cursor:default}
+.pc:hover{border-color:var(--b3);transform:translateY(-3px)}
+.pc::before{content:'';position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,50,50,.22),transparent)}
+.pc-num{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.18em;margin-bottom:12px}
+.pc-ico{font-size:22px;margin-bottom:10px;line-height:1}
+.pc-t{font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em}
+.pc-b{font-size:12.5px;color:rgba(200,255,200,.36);line-height:1.75}
+.pc-cost{display:inline-block;margin-top:13px;font-family:var(--mono);font-size:8px;color:var(--rd);border:1px solid rgba(239,68,68,.18);padding:3px 9px;border-radius:2px;letter-spacing:.07em;background:rgba(239,68,68,.03)}
+
+/* ────────────────────────────────────────────────
+   BEFORE / AFTER
+──────────────────────────────────────────────── */
+.cmp{padding:0 0 110px}
+.cmpg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:48px}
+.cc{border:1px solid;border-radius:8px;padding:30px}
+.cc-no{background:rgba(8,0,0,.65);border-color:rgba(239,68,68,.13)}
+.cc-yes{background:rgba(0,10,0,.65);border-color:rgba(0,255,65,.18);box-shadow:0 0 36px rgba(0,255,65,.04)}
+.cc-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.16em;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid;display:flex;align-items:center;gap:7px}
+.cc-no .cc-lbl{color:var(--rd);border-color:rgba(239,68,68,.1)}
+.cc-yes .cc-lbl{color:var(--g);border-color:var(--b2);text-shadow:0 0 8px rgba(0,255,65,.4)}
+.ci{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid;font-size:13px;line-height:1.65}
+.ci:last-child{border-bottom:none}
+.cc-no .ci{border-color:rgba(239,68,68,.06);color:rgba(200,255,200,.35)}
+.cc-yes .ci{border-color:var(--b);color:rgba(200,255,200,.52)}
+.ci-s{font-family:var(--mono);font-size:11px;flex-shrink:0;margin-top:2px}
+.ci-s.b{color:var(--rd)}.ci-s.g{color:var(--g);text-shadow:0 0 7px rgba(0,255,65,.5)}
+
+/* ────────────────────────────────────────────────
+   DEMO
+──────────────────────────────────────────────── */
+.demo{position:relative;z-index:2;padding:0 48px 110px}
+.dhead{max-width:1220px;margin:0 auto 38px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px}
+.dhint{font-family:var(--mono);font-size:10px;color:var(--txt3);letter-spacing:.08em;display:flex;align-items:center;gap:6px;padding-bottom:2px}
+
+/* browser */
+.browser{max-width:1220px;margin:0 auto;border:1px solid var(--b3);border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,255,65,.04),0 40px 100px rgba(0,0,0,.97),0 0 80px rgba(0,255,65,.025)}
+.bchrome{background:rgba(0,5,0,1);border-bottom:1px solid var(--b2);padding:9px 15px;display:flex;align-items:center;gap:11px}
+.bdots{display:flex;gap:6px}
+.bdot{width:11px;height:11px;border-radius:50%}
+.bdot.r{background:#ff5f57}.bdot.y{background:#febc2e}.bdot.g{background:#2ac840}
+.burl{flex:1;max-width:360px;margin:0 auto;background:rgba(0,255,65,.03);border:1px solid var(--b2);border-radius:3px;padding:5px 11px;font-family:var(--mono);font-size:10px;color:var(--txt3);display:flex;align-items:center;justify-content:center;gap:5px;letter-spacing:.04em}
+.btabs{display:flex;gap:4px;margin-left:auto}
+.btab{font-family:var(--mono);font-size:10px;color:var(--txt3);padding:4px 13px;border-radius:3px;border:1px solid transparent;cursor:pointer;transition:all .15s;letter-spacing:.04em}
+.btab:hover{color:var(--txt2);border-color:var(--b2)}
+.btab.on{color:var(--g);border-color:rgba(0,255,65,.3);background:rgba(0,255,65,.06)}
+.bbody{height:680px;position:relative;overflow:hidden}
+.bbody iframe{width:100%;height:100%;border:none;display:block}
+.blive{position:absolute;top:12px;right:12px;z-index:10;font-family:var(--mono);font-size:9px;letter-spacing:.12em;background:rgba(0,5,0,.93);border:1px solid rgba(0,255,65,.28);color:var(--g2);padding:4px 10px;border-radius:2px;display:flex;align-items:center;gap:5px;pointer-events:none}
+.blive-p{width:5px;height:5px;border-radius:50%;background:var(--g);box-shadow:0 0 6px var(--g);animation:pip 1.5s infinite}
+
+/* ────────────────────────────────────────────────
+   FEATURES
+──────────────────────────────────────────────── */
+.feats{padding:110px 0}
+.fhead{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:flex-end;margin-bottom:52px}
+.fgrid{display:grid;grid-template-columns:1.55fr 1fr 1fr;grid-template-rows:auto auto;gap:12px}
+.fc{background:rgba(0,5,0,.78);border:1px solid var(--b2);border-radius:8px;padding:26px;position:relative;overflow:hidden;transition:border-color .22s,transform .22s;cursor:default}
+.fc::before{content:'';position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,65,.18),transparent);opacity:0;transition:opacity .22s}
+.fc:hover{border-color:var(--b3);transform:translateY(-3px)}.fc:hover::before{opacity:1}
+.fc.big{grid-row:span 2}
+.fc-n{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.18em;margin-bottom:12px}
+.fc-i{font-size:22px;margin-bottom:10px;line-height:1}
+.fc.big .fc-i{font-size:30px;margin-bottom:14px}
+.fc-t{font-size:15px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em}
+.fc.big .fc-t{font-size:19px;margin-bottom:10px}
+.fc-d{font-size:12.5px;color:rgba(200,255,200,.37);line-height:1.75}
+.fc.big .fc-d{font-size:14px;max-width:310px;margin-bottom:18px}
+.fc-pre{border:1px solid var(--b2);border-radius:6px;padding:12px 14px;background:rgba(0,6,0,.94);font-family:var(--mono);font-size:10.5px;line-height:1.72;color:rgba(200,255,200,.4);margin-bottom:14px}
+.fc-pre .h{color:var(--g)}.fc-pre .c{color:var(--cy)}.fc-pre .a{color:var(--am)}.fc-pre .p{color:var(--pu)}
+.fctag{font-family:var(--mono);font-size:8px;color:var(--g3);border:1px solid var(--b);padding:3px 9px;border-radius:2px;display:inline-flex;margin-top:10px;letter-spacing:.1em}
+.fcroles{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.fcr{font-family:var(--mono);font-size:8px;letter-spacing:.09em;padding:2px 8px;border-radius:2px;border:1px solid}
+.fcr-e{color:var(--cy);border-color:rgba(0,255,204,.2)}
+.fcr-p{color:var(--pu);border-color:rgba(168,85,247,.2)}
+.fcr-m{color:var(--am);border-color:rgba(245,158,11,.2)}
+
+/* ────────────────────────────────────────────────
+   HOW IT WORKS
+──────────────────────────────────────────────── */
+.hiw{position:relative;z-index:2;border-top:1px solid var(--b);border-bottom:1px solid var(--b);background:linear-gradient(180deg,rgba(0,7,0,.6),rgba(0,3,0,.6));padding:110px 48px}
+.hiw-in{max-width:1000px;margin:0 auto}
+.hiw-h{text-align:center;margin-bottom:68px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);position:relative}
+.steps::before{content:'';position:absolute;top:21px;left:16.5%;right:16.5%;height:1px;background:linear-gradient(90deg,transparent,var(--b3) 15%,var(--b3) 85%,transparent)}
+.step{padding:0 24px;text-align:center}
+.snw{width:42px;height:42px;margin:0 auto 20px;position:relative;z-index:1}
+.snum{width:42px;height:42px;border-radius:50%;border:1px solid var(--b3);background:rgba(0,5,0,1);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--g);box-shadow:0 0 18px rgba(0,255,65,.06);transition:all .22s}
+.step:hover .snum{border-color:rgba(0,255,65,.5);box-shadow:0 0 28px rgba(0,255,65,.18);background:rgba(0,255,65,.06)}
+.st{font-size:15px;font-weight:700;color:var(--txt2);margin-bottom:10px;letter-spacing:-.01em}
+.sd{font-size:12px;color:rgba(200,255,200,.35);line-height:1.72}
+.scode{margin-top:12px;background:rgba(0,4,0,.94);border:1px solid var(--b2);border-radius:4px;padding:10px 12px;font-family:var(--mono);font-size:9.5px;line-height:1.65;text-align:left}
+.scode .rem{color:rgba(239,68,68,.55);text-decoration:line-through}
+.scode .add{color:var(--g2)}
+.scode .com{color:var(--txt3)}
+.schip{margin-top:10px;display:inline-block;font-family:var(--mono);font-size:8px;color:var(--g3);border:1px solid var(--b);padding:2px 9px;border-radius:20px;letter-spacing:.1em}
+.sroles{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.sr{font-family:var(--mono);font-size:8px;letter-spacing:.09em;padding:3px 9px;border-radius:20px;border:1px solid}
+
+/* ────────────────────────────────────────────────
+   DIFF VIEWER
+──────────────────────────────────────────────── */
+.diff{padding:110px 0}
+.diffg{display:grid;grid-template-columns:1fr 1.25fr;gap:56px;align-items:center}
+.dfile{background:rgba(0,5,0,.94);border:1px solid var(--b2);border-radius:8px;overflow:hidden;font-family:var(--mono);font-size:11px}
+.dfh{background:rgba(0,6,0,1);border-bottom:1px solid var(--b2);padding:9px 14px;display:flex;align-items:center;justify-content:space-between}
+.dfn{color:var(--txt3);font-size:10px}
+.dfbadges{display:flex;gap:5px}
+.dfba{font-size:9px;color:var(--g);background:rgba(0,255,65,.07);border:1px solid rgba(0,255,65,.2);padding:2px 7px;border-radius:2px}
+.dfbr{font-size:9px;color:var(--rd);background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);padding:2px 7px;border-radius:2px}
+.dfl{padding:3px 14px;line-height:1.72;display:flex;gap:9px}
+.dln{color:var(--txt3);min-width:18px;font-size:9px;text-align:right;user-select:none;flex-shrink:0}
+.dl-ctx{color:var(--txt3)}
+.dl-add{background:rgba(0,255,65,.06);color:var(--g2)}
+.dl-rem{background:rgba(239,68,68,.05);color:rgba(239,100,100,.75)}
+.dsym{min-width:11px;flex-shrink:0}
+.dnote{border:1px solid var(--b2);border-radius:8px;padding:18px;background:rgba(0,4,0,.82);margin-top:11px}
+.dnh{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.dnlbl{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.15em}
+.dnauth{font-family:var(--mono);font-size:9px;color:var(--g2)}
+.dnb{font-size:13px;color:rgba(200,255,200,.43);line-height:1.78;margin-bottom:13px}
+.dnscore{display:flex;align-items:center;gap:9px}
+.dnsl{font-family:var(--mono);font-size:9px;color:var(--txt3)}
+.dnsbb{flex:1;height:4px;background:rgba(0,255,65,.08);border-radius:2px}
+.dnsbf{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--g3),var(--g))}
+.dnsv{font-family:var(--mono);font-size:11px;color:var(--g);white-space:nowrap}
+.dvbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.dvbtn{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:5px 13px;border-radius:3px;border:1px solid var(--b2);color:var(--txt3);cursor:pointer;background:transparent;transition:all .15s}
+.dvbtn.on,.dvbtn:hover{color:var(--g);border-color:rgba(0,255,65,.3);background:rgba(0,255,65,.05)}
+
+/* ────────────────────────────────────────────────
+   TESTIMONIALS
+──────────────────────────────────────────────── */
+.testi{padding:110px 0;border-top:1px solid var(--b)}
+.testih{margin-bottom:52px}
+.testig{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tc2{background:rgba(0,5,0,.78);border:1px solid var(--b2);border-radius:8px;padding:26px;position:relative;overflow:hidden;transition:all .22s}
+.tc2:hover{border-color:var(--b3);transform:translateY(-3px)}
+.tc2::after{content:'"';position:absolute;bottom:-24px;right:8px;font-family:var(--disp);font-size:120px;color:rgba(0,255,65,.022);line-height:1;pointer-events:none}
+.tstars{display:flex;gap:2px;margin-bottom:13px}
+.star{color:var(--am);font-size:12px}
+.tq{font-size:13.5px;color:rgba(200,255,200,.48);line-height:1.82;margin-bottom:19px}
+.tq strong{color:rgba(200,255,200,.8);font-weight:600}
+.tau{display:flex;align-items:center;gap:9px}
+.tav{width:32px;height:32px;border-radius:50%;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;flex-shrink:0}
+.tn{font-size:12px;font-weight:700;color:var(--txt2)}
+.tr{font-family:var(--mono);font-size:9px;color:var(--txt3);margin-top:2px}
+.trb{font-family:var(--mono);font-size:8px;letter-spacing:.09em;padding:2px 7px;border-radius:2px;border:1px solid;margin-left:auto;align-self:center}
+
+/* ────────────────────────────────────────────────
+   PRICING
+──────────────────────────────────────────────── */
+.pricing{position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,4,0,.45);padding:110px 48px}
+.prinr{max-width:1100px;margin:0 auto}
+.prih{text-align:center;margin-bottom:52px}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.plan{background:rgba(0,5,0,.9);border:1px solid var(--b2);border-radius:8px;padding:30px 26px;position:relative;overflow:hidden;transition:all .22s}
+.plan:hover{transform:translateY(-4px)}
+.plan.hot{border-color:rgba(0,255,65,.32);background:rgba(0,9,0,.97);box-shadow:0 0 50px rgba(0,255,65,.06)}
+.plan.hot::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent)}
+.phot{font-family:var(--mono);font-size:8px;background:rgba(0,255,65,.09);border:1px solid rgba(0,255,65,.24);color:var(--g);padding:3px 9px;border-radius:2px;letter-spacing:.12em;display:inline-block;margin-bottom:14px}
+.pname{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.18em;margin-bottom:9px}
+.pprice{font-family:var(--mono);font-size:38px;font-weight:600;color:var(--g);text-shadow:0 0 22px rgba(0,255,65,.3);line-height:1;margin-bottom:3px}
+.pprice sup{font-size:17px;vertical-align:super}.pprice sub{font-size:13px;color:var(--txt3);font-weight:400}
+.pperiod{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.09em;margin-bottom:7px}
+.pdesc{font-size:12.5px;color:rgba(200,255,200,.33);line-height:1.7;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--b)}
+.pitems{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.pitems li{font-size:12.5px;color:rgba(200,255,200,.48);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.pitems li::before{content:'✓';color:var(--g2);font-family:var(--mono);font-size:10px;flex-shrink:0;margin-top:1px}
+.pitems li.off{color:rgba(200,255,200,.18)}.pitems li.off::before{content:'—';color:var(--txt3)}
+.pbtn{width:100%;padding:12px;border-radius:4px;font-family:var(--mono);font-size:12px;font-weight:700;cursor:pointer;border:1px solid;letter-spacing:.07em;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px}
+.pbtn.g{background:transparent;color:var(--txt3);border-color:var(--b2)}
+.pbtn.g:hover{color:var(--txt2);border-color:var(--b3);background:rgba(0,255,65,.03)}
+.pbtn.p{background:rgba(0,255,65,.1);color:var(--g);border-color:rgba(0,255,65,.36);text-shadow:0 0 10px rgba(0,255,65,.4);box-shadow:0 0 22px rgba(0,255,65,.07)}
+.pbtn.p:hover{background:rgba(0,255,65,.2);box-shadow:0 0 40px rgba(0,255,65,.18)}
+/* coming soon */
+.pcs-wrap{margin-top:12px;border:1px solid var(--b);border-radius:8px;padding:22px;background:rgba(0,3,0,.7)}
+.pcs-lbl{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.18em;margin-bottom:12px}
+.pcs-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.pcs{border:1px solid var(--b);border-radius:6px;padding:15px;background:rgba(0,4,0,.7)}
+.pcs-tier{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;margin-bottom:4px}
+.pcs-when{font-family:var(--mono);font-size:8px;letter-spacing:.1em;padding:2px 7px;border-radius:2px;border:1px solid;display:inline-block;margin-bottom:9px}
+.pcs-pr{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--txt2);line-height:1;margin-bottom:5px}
+.pcs-pr span{font-size:12px;color:var(--txt3)}
+.pcs-sub{font-size:11px;color:rgba(200,255,200,.3);line-height:1.65}
+.pri-note{text-align:center;margin-top:20px;font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.08em}
+.pri-note a{color:var(--g2);text-decoration:none}
+
+/* ────────────────────────────────────────────────
+   ROADMAP
+──────────────────────────────────────────────── */
+.rmap{padding:110px 0}
+.rmapg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:52px}
+.rcard{background:rgba(0,5,0,.78);border:1px solid var(--b2);border-radius:8px;padding:26px;position:relative;overflow:hidden;transition:border-color .22s}
+.rcard:hover{border-color:var(--b3)}
+.rcbar{position:absolute;top:0;inset-inline:0;height:2px}
+.rcst{font-family:var(--mono);font-size:9px;letter-spacing:.14em;margin-bottom:14px;display:flex;align-items:center;gap:5px}
+.rct{font-size:16px;font-weight:700;color:var(--txt2);margin-bottom:14px;letter-spacing:-.01em}
+.rcl{list-style:none;display:flex;flex-direction:column;gap:8px}
+.rcl li{font-size:12.5px;color:rgba(200,255,200,.38);display:flex;align-items:flex-start;gap:8px;line-height:1.6}
+
+/* ────────────────────────────────────────────────
+   FAQ
+──────────────────────────────────────────────── */
+.faq{position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,3,0,.45);padding:110px 48px}
+.faq-in{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1.6fr;gap:72px;align-items:flex-start}
+.faqh{position:sticky;top:80px}
+.faqlink{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--g2);text-decoration:none;letter-spacing:.08em;margin-top:14px;transition:color .15s}
+.faqlink:hover{color:var(--g)}
+.faqlist{display:flex;flex-direction:column}
+.faqitem{border-bottom:1px solid var(--b2)}
+.faqq{width:100%;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;font-family:var(--body);font-size:14px;font-weight:600;color:var(--txt2);text-align:left;transition:color .14s}
+.faqq:hover{color:var(--txt)}
+.faqico{font-family:var(--mono);font-size:18px;color:var(--g3);flex-shrink:0;transition:transform .22s,color .18s}
+.faqitem.open .faqico{transform:rotate(45deg);color:var(--g)}
+.faqa{max-height:0;overflow:hidden;transition:max-height .38s var(--ease),padding .3s}
+.faqitem.open .faqa{max-height:300px;padding-bottom:18px}
+.faqa p{font-size:13.5px;color:rgba(200,255,200,.4);line-height:1.82}
+
+/* ────────────────────────────────────────────────
+   CTA
+──────────────────────────────────────────────── */
+.cta{position:relative;z-index:2;padding:120px 48px;text-align:center;overflow:hidden}
+.cta::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:600px;background:radial-gradient(ellipse,rgba(0,255,65,.04),transparent 66%);pointer-events:none}
+.cta::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 64px,rgba(0,255,65,.013) 64px,rgba(0,255,65,.013) 65px),repeating-linear-gradient(90deg,transparent,transparent 64px,rgba(0,255,65,.013) 64px,rgba(0,255,65,.013) 65px);pointer-events:none;z-index:-1}
+.ctah{font-family:var(--disp);font-size:clamp(52px,6.8vw,94px);color:#fff;line-height:.93;letter-spacing:.02em;margin-bottom:16px}
+.ctah .em{color:var(--g);text-shadow:0 0 60px rgba(0,255,65,.4),0 0 110px rgba(0,255,65,.14)}
+.ctab{font-size:16px;color:rgba(200,255,200,.37);max-width:460px;margin:0 auto 38px;line-height:1.8}
+.ctaform{display:flex;max-width:450px;margin:0 auto 14px;border:1px solid var(--b2);border-radius:4px;overflow:hidden;background:rgba(0,7,0,.88);animation:glow 3.5s infinite}
+.ctaform:focus-within{border-color:var(--b3)}
+.ctainput{flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);font-size:11px;color:var(--txt2);padding:13px 14px;letter-spacing:.04em}
+.ctainput::placeholder{color:var(--txt3)}
+.ctabtn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.07em;background:rgba(0,255,65,.12);color:var(--g);border:none;border-left:1px solid var(--b2);padding:13px 20px;cursor:pointer;transition:background .18s;text-shadow:0 0 10px rgba(0,255,65,.5);white-space:nowrap}
+.ctabtn:hover{background:rgba(0,255,65,.24)}
+.ctafine{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.1em;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.ctafine span{display:flex;align-items:center;gap:4px}
+.ctafine span::before{content:'✓';color:var(--g3)}
+.ctabuilt{margin-top:18px;font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.05em}
+.ctabuilt a{color:var(--g2);text-decoration:none;border-bottom:1px solid var(--b2)}
+.ctabuilt a:hover{color:var(--g)}
+
+/* ────────────────────────────────────────────────
+   FOOTER
+──────────────────────────────────────────────── */
+footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgba(0,2,0,.65)}
+.fmain{max-width:1220px;margin:0 auto;padding:56px 48px 38px;display:grid;grid-template-columns:2.4fr 1fr 1fr 1fr;gap:36px}
+.fabout{font-size:13px;color:rgba(200,255,200,.27);line-height:1.78;margin-top:13px;max-width:270px}
+.fstatus{margin-top:13px;display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;color:var(--g3);letter-spacing:.1em}
+.fcolh{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.18em;margin-bottom:14px}
+.flinks{list-style:none;display:flex;flex-direction:column;gap:10px}
+.flinks a{font-size:13px;color:rgba(200,255,200,.28);text-decoration:none;transition:color .14s}
+.flinks a:hover{color:var(--txt2)}
+.fbot{border-top:1px solid var(--b);max-width:1220px;margin:0 auto;padding:16px 48px;display:flex;align-items:center;justify-content:space-between}
+.fbot p{font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.06em}
+
+/* ────────────────────────────────────────────────
+   TOAST
+──────────────────────────────────────────────── */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(16px);z-index:9000;font-family:var(--mono);font-size:11px;background:rgba(0,7,0,.97);border:1px solid var(--g3);color:var(--g2);padding:10px 20px;border-radius:4px;opacity:0;transition:all .32s var(--ease);pointer-events:none;display:flex;align-items:center;gap:8px;box-shadow:0 0 32px rgba(0,255,65,.14);letter-spacing:.06em}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ────────────────────────────────────────────────
+   RESPONSIVE
+──────────────────────────────────────────────── */
+@media(max-width:1060px){
+  .hero{grid-template-columns:1fr}.hero::after{display:none}
+  .hr{border-top:1px solid var(--b2)}
+  .fgrid{grid-template-columns:1fr 1fr}.fc.big{grid-row:span 1}
+  .cmpg{grid-template-columns:1fr}
+  .diffg{grid-template-columns:1fr}
+  .fmain{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  nav{padding:0 18px}.nlinks,.ntick{display:none}
+  .hl,.hr{padding:48px 22px}
+  .wrap{padding:0 22px}
+  .prob,.cmp,.feats,.diff,.testi,.rmap{padding-left:0;padding-right:0}
+  .pgrid,.testig,.rmapg,.plans{grid-template-columns:1fr}
+  .fhead,.steps{grid-template-columns:1fr}
+  .steps::before{display:none}
+  .hiw,.faq,.pricing,.demo,.cta{padding-left:20px;padding-right:20px}
+  .faq-in{grid-template-columns:1fr;gap:36px}.faqh{position:static}
+  .fmain{grid-template-columns:1fr;padding:36px 20px}
+  .fbot{flex-direction:column;gap:6px;padding:14px 20px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<canvas id="rain"></canvas>
+<div class="scan"></div>
+<div id="cd"></div>
+<div id="cr"></div>
+<div id="toast"></div>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <a class="nlogo" href="#">
+    <div class="ngl"><span>PO</span></div>
+    <span class="nlt">PromptOps</span>
+    <span class="nbeta">BETA</span>
+  </a>
+  <div class="ntick"><span class="npip"></span>247+ TEAMS ON WAITLIST · BETA NOW OPEN</div>
+  <div class="nlinks">
+    <a class="nl" href="#problem">PROBLEM</a>
+    <a class="nl" href="#demo">DEMO</a>
+    <a class="nl" href="#features">FEATURES</a>
+    <a class="nl" href="#pricing">PRICING</a>
+    <a class="nl" href="#roadmap">ROADMAP</a>
+    <a class="nl" href="#faq">FAQ</a>
+  </div>
+  <div class="nact">
+    <a class="btn btn-g" href="#">SIGN IN</a>
+    <a class="btn btn-p" href="#cta">▶ GET ACCESS</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="hero">
+  <!-- LEFT -->
+  <div class="hl">
+    <div class="hkick">
+      <span class="hk-bar"></span>
+      <span class="hk-chip"><span class="hk-dot"></span>BETA — WAITLIST OPEN</span>
+    </div>
+
+    <h1>STOP BEING<br>THE AI<br><span class="em">BOTTLENECK</span></h1>
+
+    <div class="hsub">// dev · pm · marketing — one platform</div>
+
+    <p class="hdesc">Engineers set it up once.<br>
+    <strong>Then your PM and marketing team improve the AI themselves</strong> — without code, without tickets, without waiting 4 days.</p>
+
+    <div class="hform">
+      <input class="hinput" type="email" id="hero-email" placeholder="Enter your work email..." autocomplete="email">
+      <button class="hfbtn" onclick="submitEmail('hero-email')">JOIN WAITLIST →</button>
+    </div>
+
+    <div class="hproof">
+      <div class="hpi">No credit card</div>
+      <div class="hpi">Free plan available</div>
+      <div class="hpi">30-min engineer setup</div>
+    </div>
+
+    <div class="hroles">
+      <div class="rc rc-e">◈ ENGINEER — sets up once, reviews approvals</div>
+      <div class="rc rc-p">◉ PM — tests ideas, ships same day</div>
+      <div class="rc rc-m">★ MARKETING — owns brand voice in AI</div>
+    </div>
+
+    <div class="hstats">
+      <div class="hs"><span class="hs-v">10s</span><span class="hs-k">TO PUSH LIVE</span></div>
+      <div class="hs"><span class="hs-v">80%</span><span class="hs-k">FEWER TICKETS</span></div>
+      <div class="hs"><span class="hs-v">247+</span><span class="hs-k">TEAMS WAITING</span></div>
+      <div class="hs"><span class="hs-v">4→0</span><span class="hs-k">DAYS TO FIX</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT — terminal + chart -->
+  <div class="hr">
+    <div class="term">
+      <div class="tbar">
+        <div class="tdots"><div class="tdot r"></div><div class="tdot y"></div><div class="tdot g"></div></div>
+        <div class="ttitle">promptops — live deployment log</div>
+        <div class="tlive"><span class="tlivepip"></span>LIVE</div>
+      </div>
+      <div class="tbody">
+        <div class="tl"><span class="tp">$</span><span class="tc">pm deploy <span class="thi">customer-support-v3.1</span></span></div>
+        <div class="tl"><span class="tp"> </span><span class="td">Submitted by: <span class="tam">maya@acme.com</span> (Marketing)</span></div>
+        <div class="tl"><span class="tp"> </span><span class="td">Change: softened tone per brand refresh</span></div>
+        <div class="tl"><span class="tp"> </span><span class="td">Quality: <span class="thi">8.4 → 9.2</span> ↑ <span class="thi">+0.8</span></span></div>
+        <div class="tl"><span class="tp"> </span><span class="td">Reviewer: <span class="tcy">john@acme.com</span> — <span class="thi">APPROVED ✓</span></span></div>
+        <div class="tl"><span class="tp"> </span><span class="td" style="color:rgba(200,255,200,.15)">─────────────────────────────</span></div>
+        <div class="tl"><span class="tp"> </span><span class="thi">✓</span><span class="tc"> Deployed to production in <span class="thi">8s</span></span></div>
+        <div class="tl"><span class="tp"> </span><span class="thi">✓</span><span class="tc"> Previous version saved for rollback</span></div>
+        <div class="tl"><span class="tp"> </span><span class="tpu">→ Marketing made this. No ticket. No engineer needed.</span></div>
+        <div class="tl" style="margin-top:4px"><span class="tp">$</span><span class="tc"><span class="cur"></span></span></div>
+      </div>
+    </div>
+
+    <div class="mchart">
+      <div>
+        <div class="mc-lbl">AI QUALITY SCORE — LAST 30 DAYS</div>
+        <div class="mc-bars" id="mc-bars">
+          <div class="mc-b" style="height:38%"></div>
+          <div class="mc-b" style="height:49%"></div>
+          <div class="mc-b" style="height:44%"></div>
+          <div class="mc-b" style="height:59%"></div>
+          <div class="mc-b" style="height:54%"></div>
+          <div class="mc-b" style="height:67%"></div>
+          <div class="mc-b" style="height:63%"></div>
+          <div class="mc-b" style="height:73%"></div>
+          <div class="mc-b" style="height:77%"></div>
+          <div class="mc-b" style="height:71%"></div>
+          <div class="mc-b" style="height:83%"></div>
+          <div class="mc-b" style="height:89%"></div>
+          <div class="mc-b top" style="height:100%"></div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="mc-val">9.2</div>
+        <div class="mc-unit">CURRENT SCORE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="mq">
+  <div class="mq-t">
+    <div class="mc"><span class="dot">◆</span>NO MORE TICKETS</div>
+    <div class="mc"><span class="dot">◆</span>NO-CODE EDITOR</div>
+    <div class="mc"><span class="dot">◆</span>APPROVAL WORKFLOWS</div>
+    <div class="mc"><span class="dot">◆</span>VERSION CONTROL</div>
+    <div class="mc"><span class="dot">◆</span>1-CLICK ROLLBACK</div>
+    <div class="mc"><span class="dot">◆</span>A/B TESTING</div>
+    <div class="mc"><span class="dot">◆</span>QUALITY SCORES</div>
+    <div class="mc"><span class="dot">◆</span>COST ANALYTICS</div>
+    <div class="mc"><span class="dot">◆</span>LIVE DEPLOYMENT</div>
+    <div class="mc"><span class="dot">◆</span>GPT-4o · CLAUDE · GEMINI</div>
+    <div class="mc"><span class="dot">◆</span>DEV + PM + MARKETING</div>
+    <!-- dupe -->
+    <div class="mc"><span class="dot">◆</span>NO MORE TICKETS</div>
+    <div class="mc"><span class="dot">◆</span>NO-CODE EDITOR</div>
+    <div class="mc"><span class="dot">◆</span>APPROVAL WORKFLOWS</div>
+    <div class="mc"><span class="dot">◆</span>VERSION CONTROL</div>
+    <div class="mc"><span class="dot">◆</span>1-CLICK ROLLBACK</div>
+    <div class="mc"><span class="dot">◆</span>A/B TESTING</div>
+    <div class="mc"><span class="dot">◆</span>QUALITY SCORES</div>
+    <div class="mc"><span class="dot">◆</span>COST ANALYTICS</div>
+    <div class="mc"><span class="dot">◆</span>LIVE DEPLOYMENT</div>
+    <div class="mc"><span class="dot">◆</span>GPT-4o · CLAUDE · GEMINI</div>
+    <div class="mc"><span class="dot">◆</span>DEV + PM + MARKETING</div>
+  </div>
+</div>
+
+<!-- ══ PROBLEM ══ -->
+<section id="problem">
+  <div class="wrap">
+    <div class="prob">
+      <div class="prob-head rv">
+        <div class="slabel">// THE_PROBLEM</div>
+        <h2 class="stitle">Your AI team is working<br><span class="em">against each other.</span></h2>
+        <p class="sbody" style="margin-top:12px">Engineers, PMs, and marketers all want better AI — but they're stuck in completely different worlds with no way to collaborate.</p>
+      </div>
+      <div class="pgrid">
+        <div class="pc rv"><div class="pc-num">// 01</div><div class="pc-ico">🔒</div><div class="pc-t">Marketers see bad AI copy. They can't fix it.</div><div class="pc-b">Brand voice sounds off, AI writes like a robot. Marketing spots it immediately but fixing it means filing a ticket and waiting days for an engineer.</div><span class="pc-cost">TIME TO FIX: 4–6 DAYS</span></div>
+        <div class="pc rv" style="transition-delay:.06s"><div class="pc-num">// 02</div><div class="pc-ico">⚠</div><div class="pc-t">Something changed. Nobody knows what.</div><div class="pc-b">Your AI feature suddenly gives wrong answers. No record, no history, no trail. Just panic and 4 hours of guesswork debugging something that should've been a 10-second rollback.</div><span class="pc-cost">AVG DEBUG TIME: 4+ HOURS</span></div>
+        <div class="pc rv" style="transition-delay:.12s"><div class="pc-num">// 03</div><div class="pc-ico">📋</div><div class="pc-t">5 versions. None are the real one.</div><div class="pc-b">The "official" version is in Notion. The real one is buried in code. There's a draft in Slack. And the AI is running something different from all of them.</div><span class="pc-cost">ONBOARDING: 2 FULL DAYS LOST</span></div>
+        <div class="pc rv" style="transition-delay:.04s"><div class="pc-num">// 04</div><div class="pc-ico">💸</div><div class="pc-t">Spending thousands on AI. Nobody knows what's working.</div><div class="pc-b">$3,000 in AI costs last month. Which prompt drove it? Which team? Which feature was wasteful? Leadership asks and no one has a clean answer.</div><span class="pc-cost">UNTRACKED SPEND: UP TO 35%</span></div>
+        <div class="pc rv" style="transition-delay:.1s"><div class="pc-num">// 05</div><div class="pc-ico">📉</div><div class="pc-t">AI quality slips quietly. You find out from angry users.</div><div class="pc-b">The model provider makes a silent update. Your AI starts giving worse answers. No alert fires. Nobody checks. You find out weeks later when users start cancelling.</div><span class="pc-cost">QUALITY DRIFT: SILENT 30–90 DAYS</span></div>
+        <div class="pc rv" style="transition-delay:.16s"><div class="pc-num">// 06</div><div class="pc-ico">⏳</div><div class="pc-t">Engineers are the bottleneck for every single change.</div><div class="pc-b">Every word change in your AI feature requires a developer, a deployment, a release cycle. Engineering spends 3–6 hours per week on prompt changes that literally anyone could make.</div><span class="pc-cost">ENG TIME WASTED: 3–6 HRS/WEEK</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BEFORE / AFTER ══ -->
+<section id="compare">
+  <div class="wrap">
+    <div class="cmp">
+      <div class="rv">
+        <div class="slabel">// BEFORE_VS_AFTER</div>
+        <h2 class="stitle">Same team. Completely<br><span class="em">different result.</span></h2>
+      </div>
+      <div class="cmpg">
+        <div class="cc cc-no rv">
+          <div class="cc-lbl"><span>✗</span> WITHOUT PROMPTOPS</div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Marketer spots bad AI copy → writes a ticket → engineer picks it up 4 days later</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>PM's user insight sits in backlog — AI stays out of sync with what customers actually want</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Engineer updates AI text → no record → next person has no idea what changed or why</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>5 versions scattered across Notion, Slack, and source code. Nobody knows which is live.</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Quality drops silently — team only finds out when a user complains or cancels</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Every change is "update and hope it works" — no way to test before going live</span></div>
+        </div>
+        <div class="cc cc-yes rv" style="transition-delay:.1s">
+          <div class="cc-lbl"><span>✓</span> WITH PROMPTOPS</div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Marketer opens the dashboard, edits the tone, sees the quality score, ships it in 90 seconds.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>PM tests their idea directly in the platform and promotes it live — no ticket, no wait.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Every change is recorded: who did it, when, what it said before, what it says now, and the score.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>One registry. Every AI instruction, every version, live status. Always accurate. Always up to date.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Automated checks catch quality drops within hours. Alert fires before any user sees it.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Every change gets quality-tested first. Bad versions are blocked from going live automatically.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DEMO — DASHBOARD EMBED ══ -->
+<div class="demo" id="demo">
+  <div class="dhead rv">
+    <div>
+      <div class="slabel">// LIVE_DEMO</div>
+      <div class="stitle" style="font-family:var(--disp);font-size:clamp(40px,5vw,58px)">This is what PromptOps<br><span class="em">actually looks like.</span></div>
+    </div>
+    <div class="dhint"><span style="color:var(--g3)">◎</span>INTERACTIVE — CLICK ANYTHING INSIDE</div>
+  </div>
+
+  <div class="browser rv" style="transition-delay:.1s">
+    <div class="bchrome">
+      <div class="bdots"><div class="bdot r"></div><div class="bdot y"></div><div class="bdot g"></div></div>
+      <div class="burl"><span style="color:var(--g3)">🔒</span><span id="addr-txt">app.promptops.dev/dashboard</span></div>
+      <div class="btabs">
+        <span class="btab on" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</span>
+        <span class="btab" id="tab-editor"    onclick="switchTab('editor')">Prompt Studio</span>
+        <span class="btab" id="tab-analytics" onclick="switchTab('analytics')">Analytics</span>
+        <span class="btab" id="tab-traces"    onclick="switchTab('traces')">Traces</span>
+      </div>
+    </div>
+    <div class="bbody">
+      <div class="blive"><span class="blive-p"></span>INTERACTIVE · CLICK TO EXPLORE</div>
+      <iframe id="dash" src="dashboard.html" title="PromptOps Live Demo" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FEATURES ══ -->
+<section id="features">
+  <div class="wrap">
+    <div class="feats">
+      <div class="fhead">
+        <div class="rv">
+          <div class="slabel">// CORE_FEATURES</div>
+          <h2 class="stitle">Built for every person<br>who <span class="em">shapes your AI.</span></h2>
+        </div>
+        <p class="sbody rv" style="transition-delay:.08s">Not just a tool for engineers. PromptOps gives every role the right power — with guardrails that keep things safe.</p>
+      </div>
+      <div class="fgrid">
+        <!-- big card -->
+        <div class="fc big rv">
+          <div class="fc-n">// 01</div>
+          <div class="fc-i">◧</div>
+          <div class="fc-t">No-Code Prompt Studio</div>
+          <p class="fc-d">A plain-text editor where anyone can write and test AI instructions. Type your change, get an instant quality score, and submit for engineer approval — all without touching a codebase.</p>
+          <div class="fc-pre">
+            <div><span class="h">SYSTEM</span> You are a support agent for <span class="c">{{company_name}}</span>.</div>
+            <div style="margin-top:4px">Be <span class="h">warm, human, and encouraging</span>. Escalate</div>
+            <div>when confidence &lt; <span class="c">{{threshold}}</span>%. Verify identity.</div>
+            <div style="margin-top:8px;color:rgba(200,255,200,.25)">quality: <span style="color:var(--g)">9.2/10</span> · tokens: 54 · model: gpt-4o</div>
+            <div style="margin-top:5px"><span class="a">REQUEST APPROVAL →</span> <span style="color:rgba(200,255,200,.2)">awaiting john@acme.com</span></div>
+          </div>
+          <div class="fcroles">
+            <span class="fcr fcr-m">★ MARKETING — edits tone</span>
+            <span class="fcr fcr-p">◉ PM — tests use cases</span>
+            <span class="fcr fcr-e">◈ ENG — approves &amp; deploys</span>
+          </div>
+          <span class="fctag">NO-CODE · LIVE PREVIEW · VARIABLES</span>
+        </div>
+        <div class="fc rv" style="transition-delay:.07s">
+          <div class="fc-n">// 02</div><div class="fc-i">✓</div>
+          <div class="fc-t">Approval Workflows</div>
+          <p class="fc-d">Non-engineers propose changes. Engineers review and approve. Nothing goes live without the right sign-off. Engineers stay in control. Everyone else moves fast.</p>
+          <div class="fcroles"><span class="fcr fcr-e">◈ ENG — gatekeeps production</span></div>
+          <span class="fctag">REVIEW · ROLE-BASED · SAFE</span>
+        </div>
+        <div class="fc rv" style="transition-delay:.14s">
+          <div class="fc-n">// 03</div><div class="fc-i">⑂</div>
+          <div class="fc-t">Version Control</div>
+          <p class="fc-d">Every change recorded: who, when, what it said before, what it says now, and the quality score. Full diff view. 1-click rollback. No deployment needed.</p>
+          <span class="fctag">HISTORY · DIFF · ROLLBACK</span>
+        </div>
+        <div class="fc rv" style="transition-delay:.08s">
+          <div class="fc-n">// 04</div><div class="fc-i">◉</div>
+          <div class="fc-t">Quality Scores &amp; Alerts</div>
+          <p class="fc-d">Every AI instruction gets an automated score 0–10. If it drops — bad edit or silent model update — you get an alert before any user is affected.</p>
+          <div class="fcroles"><span class="fcr fcr-p">◉ PM — monitors trends</span></div>
+          <span class="fctag">AUTO-EVAL · ALERTS · DRIFT</span>
+        </div>
+        <div class="fc rv" style="transition-delay:.15s">
+          <div class="fc-n">// 05</div><div class="fc-i">$</div>
+          <div class="fc-t">Cost Analytics</div>
+          <p class="fc-d">AI spend broken down by prompt, by feature, by team. Spot waste before your monthly bill arrives. The dashboard your CFO and PM both actually want to open.</p>
+          <span class="fctag">COST · BY TEAM · FORECAST</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<div class="hiw" id="how-it-works">
+  <div class="hiw-in">
+    <div class="hiw-h rv">
+      <div class="slabel" style="text-align:center">// HOW_IT_WORKS</div>
+      <h2 class="stitle" style="text-align:center">Up and running in<br><span class="em">three steps.</span></h2>
+      <p class="sbody" style="max-width:460px;margin:12px auto 0;text-align:center">Engineers do a one-time setup. After that, every role works independently — without blocking each other.</p>
+    </div>
+    <div class="steps rv" style="transition-delay:.1s">
+      <div class="step">
+        <div class="snw"><div class="snum">01</div></div>
+        <div class="st">Engineer connects in 30 min</div>
+        <p class="sd">Replace hardcoded AI instructions with a PromptOps reference. One-time change. Engineers never touch it again just to update tone or wording.</p>
+        <div class="scode">
+          <div class="com">// Before: buried in code</div>
+          <div class="rem">const p = "You are helpful..."</div>
+          <div class="com">// After: managed from dashboard</div>
+          <div class="add">const p = await po.get('cs-bot')</div>
+        </div>
+        <span class="schip">SDK · 30 MIN · ONE-TIME</span>
+      </div>
+      <div class="step">
+        <div class="snw"><div class="snum">02</div></div>
+        <div class="st">PM &amp; Marketing improve directly</div>
+        <p class="sd">PMs add context from user research. Marketers adjust tone from the brand guide. Both test changes and see a quality score — all without writing a line of code.</p>
+        <div class="sroles">
+          <span class="sr" style="color:var(--am);border-color:rgba(245,158,11,.2)">★ Marketing — tone</span>
+          <span class="sr" style="color:var(--pu);border-color:rgba(168,85,247,.2)">◉ PM — context</span>
+        </div>
+        <span class="schip">NO CODE · INSTANT SCORE · SAFE</span>
+      </div>
+      <div class="step">
+        <div class="snw"><div class="snum">03</div></div>
+        <div class="st">Approved changes go live in 10s</div>
+        <p class="sd">Engineer approves → live in 10 seconds. No deployment. No release cycle. Old version auto-saved. Roll back in one click if anything goes wrong.</p>
+        <div class="sroles">
+          <span class="sr" style="color:var(--cy);border-color:rgba(0,255,204,.2)">◈ Eng approves</span>
+          <span class="sr" style="color:var(--g);border-color:rgba(0,255,65,.2)">⚡ 10s deploy</span>
+          <span class="sr" style="color:var(--g2);border-color:rgba(0,255,65,.2)">↩ rollback</span>
+        </div>
+        <span class="schip">DEPLOY · TRACK · ROLLBACK</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DIFF VIEWER ══ -->
+<section>
+  <div class="wrap">
+    <div class="diff">
+      <div class="diffg">
+        <div class="rv">
+          <div class="slabel">// VERSION_HISTORY</div>
+          <h2 class="stitle">Every change has a<br><span class="em">face and a reason.</span></h2>
+          <p class="sbody" style="margin-top:14px">Whether it was an engineer, PM, or marketer — every edit is recorded. You can see exactly what changed, why, and whether quality went up or down.</p>
+          <div class="dvbtns">
+            <button class="dvbtn on">Maya (Marketing) → v3.1</button>
+            <button class="dvbtn">Rohan (PM) → v3.0</button>
+            <button class="dvbtn">Priya (Eng) → v2.8</button>
+          </div>
+        </div>
+        <div class="rv" style="transition-delay:.1s">
+          <div class="dfile">
+            <div class="dfh">
+              <span class="dfn">prompts / onboarding-welcome.txt</span>
+              <div class="dfbadges"><span class="dfba">+2 lines</span><span class="dfbr">−1 line</span></div>
+            </div>
+            <div class="dfl dl-ctx"><span class="dln">1</span><span class="dsym"></span><span>You are {{brand_name}}'s onboarding guide.</span></div>
+            <div class="dfl dl-rem"><span class="dln">2</span><span class="dsym" style="color:var(--rd)">−</span><span>Be professional and informative. Explain the features.</span></div>
+            <div class="dfl dl-add"><span class="dln">2</span><span class="dsym" style="color:var(--g)">+</span><span>Be warm, human, and encouraging.</span></div>
+            <div class="dfl dl-add"><span class="dln">3</span><span class="dsym" style="color:var(--g)">+</span><span>Avoid jargon. Sound like a helpful colleague, not a manual.</span></div>
+            <div class="dfl dl-ctx"><span class="dln">4</span><span class="dsym"></span><span style="color:var(--txt3)">Highlight the top 3 features for their plan.</span></div>
+          </div>
+          <div class="dnote">
+            <div class="dnh">
+              <span class="dnlbl">CHANGE NOTES</span>
+              <span class="dnauth">@maya (Marketing) · 2h ago · v3.1</span>
+            </div>
+            <p class="dnb">Brand refresh says we sound too corporate. Softened tone per updated copy guidelines — didn't need engineering, tested it myself. Score went from 8.4 to 9.2. Approved by Priya before going live.</p>
+            <div class="dnscore">
+              <span class="dnsl">QUALITY</span>
+              <div class="dnsbb"><div class="dnsbf" style="width:92%"></div></div>
+              <span class="dnsv">9.2 / 10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ INTEGRATIONS STRIP ══ -->
+<div style="position:relative;z-index:2;border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:32px 48px;background:rgba(0,4,0,.5)">
+  <div style="max-width:1100px;margin:0 auto">
+    <p style="text-align:center;font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.18em;margin-bottom:18px">WORKS WITH EVERY AI MODEL AND TOOL YOUR TEAM ALREADY USES</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">GPT-4o</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">Claude 3.5</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">Gemini 1.5</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">Mistral</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">Llama 3</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">LangChain</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">Python SDK</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">Node.js</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">REST API</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">GitHub Actions</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--txt2);border:1px solid var(--b2);padding:5px 13px;border-radius:3px;letter-spacing:.06em">Slack Alerts</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section>
+  <div class="wrap">
+    <div class="testi">
+      <div class="testih rv">
+        <div class="slabel">// WHAT_TEAMS_SAY</div>
+        <h2 class="stitle">Every role has<br><span class="em">something to say.</span></h2>
+      </div>
+      <div class="testig">
+        <div class="tc2 rv">
+          <div class="tstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+          <p class="tq">"Our PM and marketer both had ideas to improve our AI feature — but neither could act on them without me. Now they <strong>make changes and I just review before it goes live</strong>. Saved 5+ hours a week from fewer tickets."</p>
+          <div class="tau">
+            <div class="tav" style="background:rgba(0,255,204,.06);border-color:rgba(0,255,204,.2);color:var(--cy)">PR</div>
+            <div><div class="tn">Priya R.</div><div class="tr">Lead Engineer, AI SaaS · Series A</div></div>
+            <span class="trb" style="color:var(--cy);border-color:rgba(0,255,204,.2)">ENG</span>
+          </div>
+        </div>
+        <div class="tc2 rv" style="transition-delay:.09s">
+          <div class="tstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+          <p class="tq">"I used to write improvement ideas in a Google Doc and wait days for an engineer. Now I <strong>test my own changes and ship them the same day</strong>. That's never happened before and it's changed how fast we move."</p>
+          <div class="tau">
+            <div class="tav" style="background:rgba(168,85,247,.06);border-color:rgba(168,85,247,.2);color:var(--pu)">SK</div>
+            <div><div class="tn">Sarah K.</div><div class="tr">Head of Product, B2B SaaS</div></div>
+            <span class="trb" style="color:var(--pu);border-color:rgba(168,85,247,.2)">PM</span>
+          </div>
+        </div>
+        <div class="tc2 rv" style="transition-delay:.18s">
+          <div class="tstars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+          <p class="tq">"I'm in marketing. I don't code. I never thought I'd have real control over how our AI sounds. Now I <strong>own the brand voice in the AI</strong>, test changes instantly, and need sign-off before anything goes live. It's the right balance."</p>
+          <div class="tau">
+            <div class="tav" style="background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.2);color:var(--am)">MJ</div>
+            <div><div class="tn">Maya J.</div><div class="tr">Brand &amp; Content Lead, Growth startup</div></div>
+            <span class="trb" style="color:var(--am);border-color:rgba(245,158,11,.2)">MARKETING</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PRICING ══ -->
+<section class="pricing" id="pricing">
+  <div class="prinr">
+    <div class="prih rv">
+      <div class="slabel" style="text-align:center">// PRICING</div>
+      <h2 class="stitle" style="text-align:center">Start free.<br><span class="em">Bring your whole team.</span></h2>
+      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:380px">No surprises. No sales calls. Cancel anytime.</p>
+    </div>
+    <div class="plans">
+      <div class="plan rv">
+        <div class="pname">// FREE</div>
+        <div class="pprice"><sup>$</sup>0</div>
+        <div class="pperiod">FOREVER · NO CARD REQUIRED</div>
+        <p class="pdesc">For solo engineers evaluating PromptOps on a real project before committing.</p>
+        <ul class="pitems">
+          <li>3 AI prompts</li>
+          <li>500 test runs / month</li>
+          <li>1 seat (engineer)</li>
+          <li>7-day change history</li>
+          <li>Basic quality scoring</li>
+          <li class="off">Approval workflows</li>
+          <li class="off">Cost analytics</li>
+        </ul>
+        <button class="pbtn g" onclick="submitEmail(null,'free')">GET STARTED FREE →</button>
+      </div>
+      <div class="plan hot rv" style="transition-delay:.09s">
+        <div class="phot">★ MOST POPULAR</div>
+        <div class="pname">// TEAM</div>
+        <div class="pprice"><sup>$</sup>79<sub>/mo</sub></div>
+        <div class="pperiod">3 SEATS · ANY ROLES</div>
+        <p class="pdesc">For the team with a Dev, PM, and Marketer all working on the same AI product. This is where PromptOps shines.</p>
+        <ul class="pitems">
+          <li>Unlimited AI prompts</li>
+          <li>50,000 test runs / month</li>
+          <li>3 seats with role-based access</li>
+          <li>Full change history + diff view</li>
+          <li>Approval workflows</li>
+          <li>Full quality scoring suite</li>
+          <li>Cost analytics dashboard</li>
+        </ul>
+        <button class="pbtn p" onclick="submitEmail(null,'team')">START TEAM — $79/MO →</button>
+      </div>
+      <div class="plan rv" style="transition-delay:.18s">
+        <div class="pname">// STUDIO</div>
+        <div class="pprice"><sup>$</sup>299<sub>/mo</sub></div>
+        <div class="pperiod">10 SEATS · ALL FEATURES</div>
+        <p class="pdesc">For growing teams that need more seats, A/B testing, Slack alerts, and per-team cost breakdowns.</p>
+        <ul class="pitems">
+          <li>Unlimited AI prompts</li>
+          <li>500,000 test runs / month</li>
+          <li>10 seats with custom roles</li>
+          <li>A/B testing <span style="font-family:var(--mono);font-size:9px;color:var(--am)">Q2 2026</span></li>
+          <li>Slack + webhook alerts</li>
+          <li>Cost breakdown by team</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="pbtn g" onclick="submitEmail(null,'studio')">START STUDIO PLAN →</button>
+      </div>
+    </div>
+    <div class="pcs-wrap rv" style="max-width:700px;margin:12px auto 0;transition-delay:.24s">
+      <div class="pcs-lbl">// COMING SOON</div>
+      <div class="pcs-grid">
+        <div class="pcs">
+          <div class="pcs-tier" style="color:var(--am)">GROWTH</div>
+          <span class="pcs-when" style="color:var(--am);border-color:rgba(245,158,11,.2);background:rgba(245,158,11,.05)">Q3 2026</span>
+          <div class="pcs-pr">$599<span>/mo</span></div>
+          <p class="pcs-sub">Up to 20 seats · Advanced cost forecasting · Multiple workspaces · Custom eval templates</p>
+        </div>
+        <div class="pcs">
+          <div class="pcs-tier" style="color:var(--cy)">ENTERPRISE</div>
+          <span class="pcs-when" style="color:var(--cy);border-color:rgba(0,255,204,.2);background:rgba(0,255,204,.04)">Q4 2026</span>
+          <div class="pcs-pr">$2,000<span>+/mo</span></div>
+          <p class="pcs-sub">Unlimited seats · SSO · Private hosting · Audit logs · Dedicated success manager</p>
+        </div>
+      </div>
+    </div>
+    <p class="pri-note rv" style="transition-delay:.28s">Interested in Growth or Enterprise early access? <a href="mailto:hello@promptops.dev">Email us directly →</a></p>
+  </div>
+</section>
+
+<!-- ══ ROADMAP ══ -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="rmap">
+      <div class="rv">
+        <div class="slabel">// ROADMAP</div>
+        <h2 class="stitle">What we're<br><span class="em">building next.</span></h2>
+        <p class="sbody" style="margin-top:10px">Public roadmap. No vaporware — only things actively in progress or planned from beta feedback.</p>
+      </div>
+      <div class="rmapg">
+        <div class="rcard rv">
+          <div class="rcbar" style="background:linear-gradient(90deg,#059669,#34d399)"></div>
+          <div class="rcst" style="color:var(--g)"><span>✓</span> SHIPPED · BETA</div>
+          <h3 class="rct">Core Collaboration Platform</h3>
+          <ul class="rcl">
+            <li><span style="color:var(--g)">✓</span> Version history + full change log</li>
+            <li><span style="color:var(--g)">✓</span> No-code Prompt Studio</li>
+            <li><span style="color:var(--g)">✓</span> Role-based access (Dev / PM / Marketing)</li>
+            <li><span style="color:var(--g)">✓</span> Approval workflow</li>
+            <li><span style="color:var(--g)">✓</span> Automated quality scoring</li>
+            <li><span style="color:var(--g)">✓</span> 1-click rollback</li>
+            <li><span style="color:var(--g)">✓</span> Cost analytics dashboard</li>
+          </ul>
+        </div>
+        <div class="rcard rv" style="transition-delay:.09s">
+          <div class="rcbar" style="background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div>
+          <div class="rcst" style="color:var(--bl)"><span>⚡</span> IN PROGRESS · Q2 2026</div>
+          <h3 class="rct">Team Power Features</h3>
+          <ul class="rcl">
+            <li><span style="color:var(--bl)">→</span> A/B testing — test 2 versions, see which performs better</li>
+            <li><span style="color:var(--bl)">→</span> JavaScript / Node.js SDK</li>
+            <li><span style="color:var(--bl)">→</span> GitHub Actions integration</li>
+            <li><span style="color:var(--bl)">→</span> Slack + webhook alerts</li>
+            <li><span style="color:var(--bl)">→</span> Marketing brand voice eval templates</li>
+            <li><span style="color:var(--bl)">→</span> Quality score trend reports</li>
+          </ul>
+        </div>
+        <div class="rcard rv" style="transition-delay:.18s">
+          <div class="rcbar" style="background:linear-gradient(90deg,#475569,#94a3b8)"></div>
+          <div class="rcst" style="color:var(--txt3)"><span>◦</span> PLANNED · Q3–Q4 2026</div>
+          <h3 class="rct">Enterprise &amp; Compliance</h3>
+          <ul class="rcl">
+            <li><span style="color:var(--txt3)">◦</span> Single sign-on (SSO / SAML)</li>
+            <li><span style="color:var(--txt3)">◦</span> Private server hosting</li>
+            <li><span style="color:var(--txt3)">◦</span> Custom team roles &amp; permissions</li>
+            <li><span style="color:var(--txt3)">◦</span> Compliance audit log export</li>
+            <li><span style="color:var(--txt3)">◦</span> Multi-region data storage</li>
+            <li><span style="color:var(--txt3)">◦</span> SOC 2 Type II certification</li>
+          </ul>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:20px;font-family:var(--mono);font-size:9px;color:var(--txt3);letter-spacing:.1em">Feature request? <a href="mailto:hello@promptops.dev" style="color:var(--g2);text-decoration:none">Tell us what your team needs →</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="faq" id="faq">
+  <div class="faq-in">
+    <div class="faqh rv">
+      <div class="slabel">// FAQ</div>
+      <h2 class="stitle">Questions we<br>get every day.</h2>
+      <p class="sbody" style="margin-top:10px">Can't find your answer? Reach out.</p>
+      <a class="faqlink" href="mailto:hello@promptops.dev">hello@promptops.dev →</a>
+    </div>
+    <div class="faqlist rv" style="transition-delay:.1s">
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">Can non-technical people use this without engineering help? <span class="faqico">+</span></button>
+        <div class="faqa"><p>Yes — that's the entire point. After an engineer does the one-time setup (~30 minutes), PMs and marketers log into a plain dashboard where they can read, edit, and test AI instructions in plain language. No code, no terminal required. Engineers approve before anything goes live, so there's no risk of accidental breakage.</p></div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">What exactly are "AI instructions" or "prompts"? <span class="faqico">+</span></button>
+        <div class="faqa"><p>An AI prompt is the text that tells an AI model how to behave. For example: "You are a helpful customer support agent. Be warm and professional." That text determines everything about how your AI responds. Right now, most teams have this buried in their code — which means only engineers can change it. PromptOps moves it to a shared dashboard.</p></div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">What does the approval workflow look like in practice? <span class="faqico">+</span></button>
+        <div class="faqa"><p>A PM or marketer edits the AI instructions, runs a quality test (score 0–10), and clicks "Request Approval." The engineer gets a notification, reviews what changed and the score, and either approves or leaves feedback. If approved, the change goes live in ~10 seconds — no deployment needed.</p></div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">Which AI models does PromptOps work with? <span class="faqico">+</span></button>
+        <div class="faqa"><p>All of them. PromptOps works with GPT-4o, Claude, Gemini, Mistral, Llama, and more. It also works with LangChain, LlamaIndex, and raw API calls. If your team is using any AI model, PromptOps can manage its instructions.</p></div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">How is this different from just keeping prompts in a Google Doc? <span class="faqico">+</span></button>
+        <div class="faqa"><p>A Google Doc is just storage — it can't push a change live in 10 seconds, run quality tests, track which version is actually running in your product, alert you when something breaks, or roll back in one click. PromptOps is operational infrastructure. Think of it like the difference between a Google Doc and a proper deployment pipeline.</p></div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">Does PromptOps see my users' conversations or data? <span class="faqico">+</span></button>
+        <div class="faqa"><p>No. PromptOps only manages the AI instructions. Your app still connects to OpenAI, Anthropic, or Google directly. We never see your users' messages or responses unless you explicitly choose to turn on logging for quality testing.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FINAL CTA ══ -->
+<section class="cta rv" id="cta">
+  <div class="slabel" style="text-align:center;margin-bottom:12px">// JOIN_THE_WAITLIST</div>
+  <h2 class="ctah">Your team already<br>wants the <span class="em">same thing.</span></h2>
+  <p class="ctab">Engineers, PMs, and marketers all want your AI to work well and represent your brand. PromptOps is where they finally meet. Join 247+ teams who've already said yes.</p>
+  <div class="ctaform">
+    <input class="ctainput" type="email" id="cta-email" placeholder="Your work email..." autocomplete="email">
+    <button class="ctabtn" onclick="submitEmail('cta-email')">GET EARLY ACCESS — FREE →</button>
+  </div>
+  <div class="ctafine">
+    <span>Free plan available</span>
+    <span>No credit card required</span>
+    <span>30-min engineer setup</span>
+    <span>Cancel anytime</span>
+  </div>
+  <div class="ctabuilt">
+    Built by <a href="https://linkedin.com/in/jachinsonowal" target="_blank" rel="noopener">Jachin Saikia Sonowal</a>
+    — Growth Marketer &amp; AI Automation Founder · Guwahati, India
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="fmain">
+    <div>
+      <a class="nlogo" href="#">
+        <div class="ngl"><span>PO</span></div>
+        <span class="nlt">PromptOps</span>
+      </a>
+      <p class="fabout">The collaboration platform where Dev, PM, and Marketing manage, test, and improve AI prompts together. Engineers set it up once. Everyone else improves it without touching code.</p>
+      <div class="fstatus"><span class="npip"></span>ALL SYSTEMS OPERATIONAL</div>
+    </div>
+    <div>
+      <div class="fcolh">PRODUCT</div>
+      <ul class="flinks">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a href="#">Docs</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="fcolh">FOR YOUR TEAM</div>
+      <ul class="flinks">
+        <li><a href="#features">For Engineers</a></li>
+        <li><a href="#features">For Product Managers</a></li>
+        <li><a href="#features">For Marketing</a></li>
+        <li><a href="#pricing">Team Plan</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="fcolh">COMPANY</div>
+      <ul class="flinks">
+        <li><a href="https://linkedin.com/in/jachinsonowal" target="_blank" rel="noopener">About Jachin</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="mailto:hello@promptops.dev">Contact</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="fbot">
+    <p>© 2026 PromptOps. Built by Jachin Saikia Sonowal · Guwahati, India</p>
+    <p>v0.1.0 BETA · <a href="mailto:hello@promptops.dev" style="color:var(--txt3);text-decoration:none">hello@promptops.dev</a></p>
+  </div>
+</footer>
+
+<!-- ══ SCRIPTS ══ -->
+<script>
+/* ── MATRIX RAIN ── */
+(()=>{
+  const c=document.getElementById('rain'),x=c.getContext('2d');
+  const chars='アイウエオカキクケコサシスセソ01◈◧◉⑂◎✦';
+  let W,H,cols,drops;
+  function size(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;cols=Math.floor(W/22);if(!drops)drops=Array(cols).fill(0);while(drops.length<cols)drops.push(0)}
+  function draw(){x.fillStyle='rgba(0,0,0,.048)';x.fillRect(0,0,W,H);x.font='12px JetBrains Mono,monospace';
+    for(let i=0;i<cols;i++){x.fillStyle=Math.random()>.975?'#fff':'#00ff41';x.fillText(chars[Math.floor(Math.random()*chars.length)],i*22,drops[i]*22);if(drops[i]*22>H&&Math.random()>.97)drops[i]=0;drops[i]++}}
+  size();window.addEventListener('resize',size);setInterval(draw,70);
+})();
+
+/* ── CURSOR ── */
+const cd=document.getElementById('cd'),cr=document.getElementById('cr');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+(function loop(){cd.style.left=mx+'px';cd.style.top=my+'px';rx+=(mx-rx)*.13;ry+=(my-ry)*.13;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(loop)})();
+document.querySelectorAll('a,button,.btab,.fc,.plan,.tc2,.rcard,.faqq,.dvbtn,.pc,.hs').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cr.style.width='44px';cr.style.height='44px';cr.style.borderColor='rgba(0,255,65,.72)'});
+  el.addEventListener('mouseleave',()=>{cr.style.width='30px';cr.style.height='30px';cr.style.borderColor='rgba(0,255,65,.45)'});
+});
+
+/* ── NAV INK ── */
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('ink',scrollY>30));
+
+/* ── SCROLL REVEAL ── */
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');observer.unobserve(e.target)}}),{threshold:.07});
+document.querySelectorAll('.rv').forEach(el=>observer.observe(el));
+
+/* ── BROWSER TABS ── */
+const tabUrls={dashboard:'app.promptops.dev/dashboard',editor:'app.promptops.dev/studio',analytics:'app.promptops.dev/analytics',traces:'app.promptops.dev/traces'};
+function switchTab(k){
+  document.querySelectorAll('.btab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-'+k).classList.add('on');
+  document.getElementById('addr-txt').textContent=tabUrls[k];
+  try{const f=document.getElementById('dash');if(f.contentWindow&&f.contentWindow.showPage)f.contentWindow.showPage(k,null)}catch(e){}
+}
+
+/* ── TOAST ── */
+function showToast(msg){const t=document.getElementById('toast');t.innerHTML='<span style="color:var(--g)">✓</span> '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3400)}
+
+/* ── EMAIL ── */
+function submitEmail(id,plan){
+  const input=id?document.getElementById(id):null;
+  const email=input?input.value.trim():'';
+  const names={free:'Free plan',team:'Team ($79/mo)',studio:'Studio ($299/mo)',growth:'Growth waitlist',enterprise:'Enterprise waitlist'};
+  if(id&&(!email||!email.includes('@'))){if(input){input.style.outline='1px solid rgba(239,68,68,.6)';setTimeout(()=>input.style.outline='',2200)}return}
+  showToast(plan?`Joined ${names[plan]||'waitlist'} — we'll be in touch!`:"You're on the waitlist — we'll be in touch soon!");
+  if(input)input.value='';
+}
+
+/* ── FAQ ── */
+function toggleFaq(btn){
+  const item=btn.closest('.faqitem');
+  const open=item.classList.contains('open');
+  document.querySelectorAll('.faqitem.open').forEach(i=>i.classList.remove('open'));
+  if(!open)item.classList.add('open');
+}
+
+/* ── DIFF BUTTONS ── */
+document.querySelectorAll('.dvbtn').forEach(b=>{
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.dvbtn').forEach(x=>x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+
+/* ── CHART ANIMATION ── */
+(()=>{
+  const bars=[...document.querySelectorAll('.mc-b:not(.top)')];
+  setInterval(()=>bars.forEach(b=>{const h=parseFloat(b.style.height)||50;b.style.height=Math.max(14,Math.min(94,h+(Math.random()*10-5)))+'%'}),1800);
+})();
+</script>
+</body>
+</html>
