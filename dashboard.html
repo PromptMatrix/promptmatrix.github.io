@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap');
+:root{--bg:#000000;--bg2:#030a03;--bg3:#061006;--border:#0a2a0a;--border2:#123512;--border3:#1a4a1a;--accent:#00ff41;--accent2:#00cc33;--accent3:#008f11;--accent4:#004d00;--dim:rgba(0,255,65,0.06);--glow:rgba(0,255,65,0.18);--cyan:#00ffcc;--purple:#9d6fff;--yellow:#ffe600;--red:#ff3333;--orange:#ff8800;--text:#b8ffb8;--text2:#52e852;--text3:#2a6a2a;--text4:#163016;--card:rgba(0,10,0,0.85);--font-mono:'JetBrains Mono','Courier New',monospace;--font-ui:'Syne',sans-serif;--sidebar-w:200px;--topbar-h:50px;--radius:5px;--transition:0.18s ease}
+*{margin:0;padding:0;box-sizing:border-box}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.025) 3px,rgba(0,0,0,0.025) 6px);pointer-events:none;z-index:9999}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(0,0,0,0.65) 100%);pointer-events:none;z-index:9998}
+#matrix-rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.05}
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);display:flex;height:100vh;overflow:hidden;font-size:12px;position:relative;z-index:1}
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:rgba(0,6,0,0.97);border-right:1px solid var(--border2);display:flex;flex-direction:column;position:relative;z-index:20;transition:width var(--transition),min-width var(--transition);overflow:hidden}
+.sidebar.collapsed{width:46px;min-width:46px}
+.sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:linear-gradient(180deg,transparent,var(--accent3) 25%,var(--accent3) 75%,transparent);opacity:0.35}
+.logo{padding:14px 12px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border2);min-height:54px;position:relative;overflow:hidden}
+.logo-icon{width:26px;height:26px;min-width:26px;border-radius:4px;background:linear-gradient(135deg,rgba(0,255,65,0.15),rgba(0,204,51,0.05));border:1px solid rgba(0,255,65,0.35);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--accent);text-shadow:0 0 10px var(--accent);flex-shrink:0}
+.logo-name{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--accent);text-shadow:0 0 12px rgba(0,255,65,0.7),0 0 24px rgba(0,255,65,0.3);letter-spacing:0.04em}
+.logo-badge{font-family:var(--font-mono);font-size:7px;border:1px solid var(--accent4);color:var(--accent3);padding:1px 4px;border-radius:2px;letter-spacing:0.12em;display:inline-block;margin-top:1px}
+.sidebar-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:12px;transition:color var(--transition);padding:3px}
+.sidebar-toggle:hover{color:var(--accent2)}
+.nav{flex:1;padding:8px 5px;overflow-y:auto;overflow-x:hidden}
+.nav::-webkit-scrollbar{width:2px}
+.nav::-webkit-scrollbar-thumb{background:var(--accent4)}
+.nav-section{font-family:var(--font-mono);font-size:8px;text-transform:uppercase;letter-spacing:.18em;color:var(--text4);padding:8px 7px 3px;white-space:nowrap;overflow:hidden;transition:opacity var(--transition)}
+.sidebar.collapsed .nav-section{opacity:0}
+.nav-item{display:flex;align-items:center;gap:8px;padding:6px 7px;border-radius:var(--radius);cursor:pointer;color:var(--text3);transition:all var(--transition);margin-bottom:1px;font-family:var(--font-ui);font-weight:500;font-size:11.5px;letter-spacing:0.02em;border:1px solid transparent;position:relative;white-space:nowrap}
+.nav-item .icon{font-size:13px;width:16px;text-align:center;flex-shrink:0;opacity:0.75}
+.nav-item .label{overflow:hidden;transition:max-width var(--transition),opacity var(--transition)}
+.sidebar.collapsed .nav-item .label{max-width:0;opacity:0}
+.nav-item .badge{margin-left:auto;background:rgba(0,255,65,0.08);color:var(--accent3);border:1px solid rgba(0,255,65,0.15);font-family:var(--font-mono);font-size:8px;padding:0 4px;border-radius:2px;flex-shrink:0;transition:opacity var(--transition)}
+.sidebar.collapsed .badge{opacity:0}
+.nav-item:hover{background:rgba(0,255,65,0.06);color:var(--accent);border-color:var(--border3);text-shadow:0 0 8px rgba(0,255,65,0.35)}
+.nav-item.active{background:rgba(0,255,65,0.09);color:var(--accent);border-color:rgba(0,255,65,0.22);text-shadow:0 0 8px rgba(0,255,65,0.5)}
+.nav-item.active::before{content:'';position:absolute;left:-6px;top:50%;transform:translateY(-50%);width:3px;height:14px;background:var(--accent);border-radius:0 2px 2px 0;box-shadow:0 0 8px var(--accent)}
+.sidebar-footer{padding:8px;border-top:1px solid var(--border2)}
+.user-card{display:flex;align-items:center;gap:7px;padding:7px;border-radius:var(--radius);background:rgba(0,255,65,0.03);cursor:pointer;border:1px solid var(--border2);transition:all var(--transition);overflow:hidden}
+.user-card:hover{border-color:rgba(0,255,65,0.3);background:rgba(0,255,65,0.06)}
+.avatar{width:26px;height:26px;min-width:26px;border-radius:50%;background:var(--bg3);border:1px solid var(--accent3);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:8px;color:var(--accent);text-shadow:0 0 6px var(--accent)}
+.user-name{font-size:11px;font-weight:600;color:var(--text2);white-space:nowrap}
+.user-plan{font-family:var(--font-mono);font-size:8px;color:var(--accent3)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:10}
+.topbar{background:rgba(0,4,0,0.97);border-bottom:1px solid var(--border2);padding:0 14px;height:var(--topbar-h);display:flex;align-items:center;gap:8px;box-shadow:0 2px 24px rgba(0,255,65,0.04);position:relative}
+.topbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 0%,var(--accent3) 30%,var(--accent3) 70%,transparent 100%);opacity:0.4}
+.topbar-breadcrumb{font-family:var(--font-mono);color:var(--text3);font-size:10px;letter-spacing:0.08em}
+.topbar-breadcrumb span{color:var(--accent2)}
+.search-bar{margin-left:auto;background:rgba(0,255,65,0.03);border:1px solid var(--border2);border-radius:var(--radius);padding:5px 10px;display:flex;align-items:center;gap:7px;width:180px;transition:all .2s}
+.search-bar:focus-within{border-color:rgba(0,255,65,0.4);box-shadow:0 0 16px rgba(0,255,65,0.08);width:210px}
+.search-bar input{background:none;border:none;outline:none;color:var(--text);font-family:var(--font-mono);font-size:10px;width:100%}
+.search-bar input::placeholder{color:var(--text3)}
+.btn{padding:5px 12px;border-radius:var(--radius);border:1px solid;cursor:pointer;font-family:var(--font-ui);font-size:11px;font-weight:600;transition:all var(--transition);display:inline-flex;align-items:center;gap:5px;letter-spacing:0.04em;white-space:nowrap}
+.btn-primary{background:rgba(0,255,65,0.1);color:var(--accent);border-color:rgba(0,255,65,0.4);text-shadow:0 0 8px rgba(0,255,65,0.5);box-shadow:0 0 16px rgba(0,255,65,0.08),inset 0 0 12px rgba(0,255,65,0.04)}
+.btn-primary:hover{background:rgba(0,255,65,0.18);box-shadow:0 0 28px rgba(0,255,65,0.18),inset 0 0 20px rgba(0,255,65,0.07);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text3);border-color:var(--border2)}
+.btn-ghost:hover{color:var(--text2);border-color:rgba(0,255,65,0.28);background:rgba(0,255,65,0.03)}
+.btn-cyan{background:rgba(0,255,204,0.07);color:var(--cyan);border-color:rgba(0,255,204,0.25)}
+.btn-sm{padding:3px 9px;font-size:10px}
+.btn-xs{padding:2px 7px;font-size:9px}
+.btn-red{background:rgba(255,51,51,0.07);color:var(--red);border-color:rgba(255,51,51,0.2)}
+.btn-ai{background:linear-gradient(135deg,rgba(157,111,255,0.12),rgba(0,255,65,0.08));color:#c4a0ff;border-color:rgba(157,111,255,0.3);text-shadow:0 0 8px rgba(157,111,255,0.5);position:relative;overflow:hidden}
+.btn-ai:hover{box-shadow:0 0 20px rgba(157,111,255,0.2)}
+.content{flex:1;overflow-y:auto;padding:16px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-track{background:transparent}
+.content::-webkit-scrollbar-thumb{background:var(--accent4);border-radius:2px}
+.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-family:var(--font-mono);font-size:9px;font-weight:400;letter-spacing:0.05em;border:1px solid}
+.tag-green{background:rgba(0,255,65,0.07);color:var(--accent);border-color:rgba(0,255,65,0.22)}
+.tag-yellow{background:rgba(255,230,0,0.07);color:var(--yellow);border-color:rgba(255,230,0,0.22)}
+.tag-red{background:rgba(255,51,51,0.07);color:var(--red);border-color:rgba(255,51,51,0.22)}
+.tag-cyan{background:rgba(0,255,204,0.07);color:var(--cyan);border-color:rgba(0,255,204,0.22)}
+.tag-purple{background:rgba(157,111,255,0.07);color:var(--purple);border-color:rgba(157,111,255,0.22)}
+.tag-orange{background:rgba(255,136,0,0.07);color:var(--orange);border-color:rgba(255,136,0,0.22)}
+.card{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:14px;position:relative;backdrop-filter:blur(8px);transition:border-color var(--transition)}
+.card:hover{border-color:var(--border3)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,65,0.25),transparent);border-radius:var(--radius) var(--radius) 0 0}
+.cc{position:absolute;width:7px;height:7px;border-color:var(--accent3);border-style:solid;opacity:0.5}
+.cc-tl{top:4px;left:4px;border-width:1px 0 0 1px}.cc-tr{top:4px;right:4px;border-width:1px 1px 0 0}.cc-bl{bottom:4px;left:4px;border-width:0 0 1px 1px}.cc-br{bottom:4px;right:4px;border-width:0 1px 1px 0}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
+.card-title{font-family:var(--font-mono);font-size:10px;font-weight:500;color:var(--text2);letter-spacing:0.06em}
+.card-sub{font-family:var(--font-mono);font-size:8.5px;color:var(--text3);margin-top:2px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.metric-card{background:rgba(0,8,0,0.7);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;position:relative;overflow:hidden;transition:all var(--transition)}
+.metric-card:hover{border-color:var(--border3);transform:translateY(-2px)}
+.metric-card::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(0,255,65,0.04),transparent 70%);pointer-events:none}
+.metric-label{font-family:var(--font-mono);font-size:8px;color:var(--text3);letter-spacing:0.1em;margin-bottom:6px}
+.metric-val{font-family:var(--font-mono);font-size:20px;font-weight:600;color:var(--accent);text-shadow:0 0 20px rgba(0,255,65,0.4),0 0 40px rgba(0,255,65,0.15);line-height:1}
+.metric-change{font-family:var(--font-mono);font-size:8px;margin-top:6px}
+.metric-change.up{color:var(--accent2)}.metric-change.down{color:var(--red)}.metric-change.neutral{color:var(--text3)}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border2);margin-bottom:14px}
+.tab{padding:7px 14px;font-family:var(--font-mono);font-size:10px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all var(--transition);letter-spacing:0.05em}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);text-shadow:0 0 8px rgba(0,255,65,0.5)}
+.tab:hover:not(.active){color:var(--text2)}
+.section-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:10px}
+.section-title{font-size:13px;font-weight:700;color:var(--text2);letter-spacing:0.05em;font-family:var(--font-ui)}
+.section-sub{font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:2px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.chart-area{height:90px;display:flex;align-items:flex-end;gap:3px;padding:0 2px}
+.bar{flex:1;border-radius:2px 2px 0 0;background:linear-gradient(0deg,var(--accent4),var(--accent2));opacity:.65;transition:opacity .3s,box-shadow .3s;cursor:pointer;position:relative}
+.bar:hover{opacity:1;box-shadow:0 0 12px rgba(0,255,65,0.3)}
+.chart-labels{display:flex;gap:3px;margin-top:3px}
+.chart-label{flex:1;text-align:center;font-family:var(--font-mono);font-size:8px;color:var(--text3)}
+.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.heat-cell{height:12px;border-radius:2px;transition:.3s;cursor:pointer}
+.heat-cell:hover{transform:scale(1.2)}
+.score-bar{display:flex;align-items:center;gap:7px}
+.bar-bg{flex:1;height:3px;background:rgba(0,255,65,0.08);border-radius:2px}
+.bar-fill{height:100%;border-radius:2px;transition:width .5s ease}
+.status-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
+.dot-green{background:var(--accent);box-shadow:0 0 8px var(--accent)}.dot-yellow{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}.dot-red{background:var(--red);box-shadow:0 0 6px var(--red)}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.3}}
+.dot-pulse{animation:pulse-dot 1.5s infinite}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid var(--border2)}
+th{font-family:var(--font-mono);font-size:8.5px;color:var(--text3);padding:0 7px 8px;text-align:left;letter-spacing:0.12em;font-weight:400;white-space:nowrap}
+td{padding:8px 7px;font-size:11px;border-bottom:1px solid rgba(0,255,65,0.04);vertical-align:middle}
+tr:hover td{background:rgba(0,255,65,0.02)}
+.version-list{display:flex;flex-direction:column;gap:5px}
+.version-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:3px;border:1px solid var(--border2);cursor:pointer;transition:all var(--transition)}
+.version-item:hover{border-color:rgba(0,255,65,0.28);background:rgba(0,255,65,0.03)}
+.version-item.current{border-color:rgba(0,255,65,0.32);background:rgba(0,255,65,0.055)}
+.v-hash{font-family:var(--font-mono);font-size:10px;color:var(--accent2)}.v-msg{font-size:11px;flex:1;color:var(--text2)}.v-date{font-family:var(--font-mono);font-size:9px;color:var(--text3)}
+.diff-viewer{font-family:var(--font-mono);font-size:10px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border2)}
+.diff-line{padding:2px 12px;line-height:1.7;display:flex;gap:9px}
+.diff-line-num{color:var(--text4);min-width:22px;text-align:right;user-select:none;font-size:9px}
+.diff-add{background:rgba(0,255,65,0.07);color:var(--accent2)}.diff-rem{background:rgba(255,51,51,0.05);color:rgba(255,80,80,0.8)}.diff-ctx{color:var(--text3)}
+.diff-add .diff-line-num{color:var(--accent4)}.diff-rem .diff-line-num{color:rgba(255,51,51,0.3)}
+.editor-layout{display:grid;grid-template-columns:1fr 300px;gap:12px}
+.prompt-editor{background:rgba(0,4,0,0.9);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden}
+.editor-toolbar{display:flex;align-items:center;gap:7px;padding:8px 12px;border-bottom:1px solid var(--border2);background:rgba(0,8,0,0.95);flex-wrap:wrap}
+.model-select{display:flex;align-items:center;gap:5px;background:rgba(0,255,65,0.05);border:1px solid var(--border2);border-radius:3px;padding:3px 9px;font-family:var(--font-mono);font-size:10px;cursor:pointer;color:var(--text2);transition:all var(--transition)}
+.model-select:hover{border-color:rgba(0,255,65,0.3)}
+.model-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent)}
+textarea.code-input{width:100%;background:transparent;border:none;outline:none;color:var(--text2);font-family:var(--font-mono);font-size:11px;line-height:1.85;padding:14px;min-height:160px;resize:vertical}
+.output-panel{background:rgba(0,4,0,0.8);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;font-family:var(--font-mono);font-size:10.5px;line-height:1.85;color:var(--text3);min-height:110px;white-space:pre-wrap;word-break:break-word}
+.side-panel{display:flex;flex-direction:column;gap:10px}
+.param-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.param-label{font-size:10.5px;color:var(--text3);font-family:var(--font-mono)}.param-val{font-family:var(--font-mono);font-size:10px;color:var(--accent2)}
+input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}
+.pipeline{display:flex;align-items:center;padding-bottom:4px}
+.pipe-step{display:flex;align-items:center;flex-direction:column;gap:4px;min-width:66px}
+.pipe-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px}
+.pipe-icon.done{background:rgba(0,255,65,0.1);border:1px solid var(--accent3)}.pipe-icon.active{background:rgba(0,255,65,0.14);border:1px solid var(--accent);animation:pulseBorder 1.5s infinite}.pipe-icon.pending{background:var(--bg3);border:1px solid var(--border2)}
+.pipe-label{font-family:var(--font-mono);font-size:8px;color:var(--text3);text-align:center}
+.pipe-arrow{color:var(--text4);font-size:14px;padding:0 2px;margin-bottom:18px;flex-shrink:0}
+@keyframes pulseBorder{0%,100%{box-shadow:0 0 0 0 rgba(0,255,65,0.4)}50%{box-shadow:0 0 0 6px rgba(0,255,65,0)}}
+.alert-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:3px;border:1px solid;margin-bottom:6px;font-size:11px}
+.alert-err{background:rgba(255,51,51,0.04);border-color:rgba(255,51,51,0.18)}.alert-warn{background:rgba(255,230,0,0.04);border-color:rgba(255,230,0,0.15)}.alert-info{background:rgba(0,255,65,0.03);border-color:rgba(0,255,65,0.15)}
+.spinner{width:12px;height:12px;border:1.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.notif{position:fixed;top:14px;right:14px;background:rgba(0,8,0,0.97);border:1px solid var(--accent3);box-shadow:0 0 40px rgba(0,255,65,0.18);border-radius:var(--radius);padding:10px 14px;font-family:var(--font-mono);font-size:10px;display:flex;align-items:center;gap:7px;animation:slideIn .3s ease;z-index:10000;color:var(--text2);max-width:300px}
+@keyframes slideIn{from{transform:translateX(110px);opacity:0}to{transform:translateX(0);opacity:1}}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9990;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:rgba(0,8,0,0.97);border:1px solid var(--border3);border-radius:var(--radius);padding:20px;width:480px;max-width:95vw;box-shadow:0 0 60px rgba(0,255,65,0.12);position:relative}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent2),transparent)}
+.modal-title{font-family:var(--font-mono);font-size:12px;color:var(--accent);text-shadow:0 0 12px rgba(0,255,65,0.5);margin-bottom:14px;letter-spacing:0.06em}
+.ai-panel{background:linear-gradient(135deg,rgba(157,111,255,0.06),rgba(0,255,65,0.04));border:1px solid rgba(157,111,255,0.2);border-radius:var(--radius);padding:12px;margin-bottom:10px}
+.ai-panel-title{font-family:var(--font-mono);font-size:9px;color:#b090ff;letter-spacing:0.1em;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+@keyframes sparkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.85)}}
+.ai-sparkle{animation:sparkle 2s infinite}
+textarea.ai-input{width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(157,111,255,0.15);border-radius:3px;padding:9px;color:var(--text);font-family:var(--font-mono);font-size:10px;line-height:1.7;resize:none;outline:none;min-height:54px}
+textarea.ai-input:focus{border-color:rgba(157,111,255,0.35)}
+.styled-input{width:100%;background:rgba(0,255,65,0.03);border:1px solid var(--border2);border-radius:3px;padding:6px 9px;color:var(--text2);font-family:var(--font-mono);font-size:10px;outline:none;transition:border-color var(--transition)}
+.styled-input:focus{border-color:rgba(0,255,65,0.35);box-shadow:0 0 10px rgba(0,255,65,0.06)}
+.styled-select{background:rgba(0,4,0,0.9);border:1px solid var(--border2);border-radius:3px;padding:4px 7px;color:var(--text2);font-family:var(--font-mono);font-size:10px;outline:none;cursor:pointer}
+.styled-select:focus{border-color:rgba(0,255,65,0.35)}
+.live-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-mono);font-size:9px;color:var(--accent);padding:2px 7px;border:1px solid rgba(0,255,65,0.3);border-radius:2px;background:rgba(0,255,65,0.06)}
+.analytics-grid{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px}
+.model-breakdown{display:flex;flex-direction:column;gap:7px}
+.model-row{display:flex;align-items:center;gap:9px}
+.model-name{font-family:var(--font-mono);font-size:10px;color:var(--text2);min-width:90px}
+.model-bar-wrap{flex:1;height:7px;background:rgba(0,255,65,0.06);border-radius:4px;overflow:hidden}
+.model-bar{height:100%;border-radius:4px}
+.model-pct{font-family:var(--font-mono);font-size:9px;color:var(--text3);min-width:28px;text-align:right}
+.trace-timeline{display:flex;flex-direction:column;gap:0}
+.trace-row{display:flex;align-items:stretch;gap:0;border-bottom:1px solid rgba(0,255,65,0.04);padding:7px 0;cursor:pointer;transition:.15s}
+.trace-row:hover{background:rgba(0,255,65,0.02)}
+.trace-time{font-family:var(--font-mono);font-size:9px;color:var(--text3);min-width:62px;padding:0 10px 0 0;text-align:right;display:flex;align-items:flex-start;padding-top:1px}
+.trace-line{display:flex;flex-direction:column;padding:0 10px;border-left:1px solid var(--border2);flex:1}
+.trace-bar-wrap{height:5px;background:rgba(0,255,65,0.06);border-radius:2px;overflow:hidden;margin-top:4px}
+.trace-bar{height:100%;border-radius:2px;transition:width .3s}
+.trace-name{font-size:11px;font-weight:500;color:var(--text2)}.trace-meta{font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:1px}
+.deploy-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius);margin-bottom:7px;background:rgba(0,6,0,0.6);transition:all var(--transition);cursor:pointer}
+.deploy-card:hover{border-color:var(--border3);background:rgba(0,255,65,0.02)}
+.deploy-icon{width:34px;height:34px;border-radius:var(--radius);background:rgba(0,255,65,0.07);border:1px solid var(--border3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.deploy-info{flex:1}.deploy-name{font-size:12px;font-weight:600;color:var(--text2)}.deploy-meta{font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-top:2px}
+.deploy-stats{display:flex;gap:14px}.deploy-stat{text-align:center}
+.deploy-stat-val{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--accent)}.deploy-stat-label{font-family:var(--font-mono);font-size:8px;color:var(--text3)}
+.apikey-row{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius);margin-bottom:7px;background:rgba(0,6,0,0.5);transition:.15s}
+.apikey-row:hover{border-color:var(--border3)}
+.apikey-name{font-size:11px;font-weight:600;color:var(--text2);min-width:120px}
+.apikey-val{font-family:var(--font-mono);font-size:10px;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,255,65,0.03);padding:3px 7px;border-radius:3px;border:1px solid var(--border);cursor:pointer}
+.apikey-val:hover{color:var(--text2)}.apikey-meta{font-family:var(--font-mono);font-size:8.5px;color:var(--text3);min-width:72px;text-align:right}
+.team-member{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:3px;border:1px solid var(--border2);margin-bottom:7px;transition:.15s}
+.team-member:hover{border-color:rgba(0,255,65,0.22)}
+.member-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px}
+.member-name{font-size:11.5px;font-weight:600;color:var(--text2)}.member-role{font-family:var(--font-mono);font-size:9px;color:var(--text3)}
+.glow-text{color:var(--accent);text-shadow:0 0 10px rgba(0,255,65,0.7),0 0 22px rgba(0,255,65,0.3)}
+.page{display:none;animation:fadeIn .25s ease}.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--accent4);border-radius:2px}::-webkit-scrollbar-thumb:hover{background:var(--accent3)}
+</style>
+</head>
+<body>
+<canvas id="matrix-rain"></canvas>
+<!-- AI MODAL -->
+<div class="modal-overlay" id="ai-modal">
+  <div class="modal">
+    <div class="modal-title">⬡ AI_PROMPT_GENERATOR</div>
+    <div style="margin-bottom:10px"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:5px">DESCRIBE_TASK</div><textarea class="ai-input" id="ai-task-input" rows="3" placeholder="e.g. customer support agent for SaaS, handles billing..."></textarea></div>
+    <div class="grid-2" style="margin-bottom:12px;gap:9px">
+      <div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">MODEL</div><select class="styled-select" id="ai-model-select" style="width:100%"><option value="claude-sonnet-4-20250514">Claude Sonnet 4</option><option value="claude-opus-4-20250514">Claude Opus 4</option><option value="claude-haiku-4-5-20251001">Claude Haiku 4.5</option></select></div>
+      <div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">TONE</div><select class="styled-select" id="ai-tone-select" style="width:100%"><option>Professional</option><option>Friendly</option><option>Technical</option><option>Creative</option></select></div>
+    </div>
+    <div style="display:flex;gap:7px;margin-bottom:12px"><button class="btn btn-ai" id="ai-gen-btn" onclick="generatePromptAI()" style="flex:1"><span class="ai-sparkle">✦</span> GENERATE</button><button class="btn btn-ghost" onclick="closeModal('ai-modal')">CANCEL</button></div>
+    <div id="ai-result" style="display:none"><div style="font-family:var(--font-mono);font-size:9px;color:var(--accent2);margin-bottom:5px;display:flex;align-items:center;gap:5px"><span class="status-dot dot-green dot-pulse"></span> GENERATED</div><div class="output-panel" id="ai-result-text" style="max-height:160px;overflow-y:auto;"></div><div style="display:flex;gap:7px;margin-top:9px"><button class="btn btn-primary btn-sm" style="flex:1" onclick="useGeneratedPrompt()">→ LOAD_TO_EDITOR</button><button class="btn btn-ghost btn-sm" onclick="generatePromptAI()">↻ REGEN</button></div></div>
+  </div>
+</div>
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-icon">PM</div>
+    <div><div class="logo-name">PromptMatrix</div><div class="logo-badge">v1.5</div></div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">◁</button>
+  </div>
+  <div class="nav">
+    <div class="nav-section">// workspace</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="icon">◈</span><span class="label">Dashboard</span></div>
+    <div class="nav-item" onclick="showPage('editor',this)"><span class="icon">◧</span><span class="label">Prompt Studio</span></div>
+    <div class="nav-item" onclick="showPage('registry',this)"><span class="icon">◫</span><span class="label">Registry</span><span class="badge">24</span></div>
+    <div class="nav-item" onclick="showPage('evals',this)"><span class="icon">◉</span><span class="label">Evaluations</span></div>
+    <div class="nav-item" onclick="showPage('versions',this)"><span class="icon">⑂</span><span class="label">Version Control</span></div>
+    <div class="nav-section">// observe</div>
+    <div class="nav-item" onclick="showPage('analytics',this)"><span class="icon">◎</span><span class="label">Analytics</span></div>
+    <div class="nav-item" onclick="showPage('traces',this)"><span class="icon">◑</span><span class="label">Trace Viewer</span><span class="badge" style="color:var(--yellow)">3</span></div>
+    <div class="nav-item" onclick="showPage('alerts',this)"><span class="icon">⚠</span><span class="label">Alerts</span><span class="badge" style="color:var(--red)">2</span></div>
+    <div class="nav-section">// deploy</div>
+    <div class="nav-item" onclick="showPage('deployments',this)"><span class="icon">▷</span><span class="label">Deployments</span></div>
+    <div class="nav-item" onclick="showPage('integrations',this)"><span class="icon">⊗</span><span class="label">Integrations</span></div>
+    <div class="nav-item" onclick="showPage('team',this)"><span class="icon">◻</span><span class="label">Team</span></div>
+    <div class="nav-section">// config</div>
+    <div class="nav-item" onclick="showPage('apikeys',this)"><span class="icon">⊞</span><span class="label">API Keys</span></div>
+    <div class="nav-item" onclick="showPage('settings',this)"><span class="icon">⊙</span><span class="label">Settings</span></div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-card"><div class="avatar">JD</div><span><div class="user-name">John Doe</div><div class="user-plan">[PRO_MATRIX]</div></span></div>
+  </div>
+</div>
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-breadcrumb" id="breadcrumb">SYS:<span>DASHBOARD</span></span>
+    <div class="live-badge"><span class="status-dot dot-green dot-pulse"></span> LIVE</div>
+    <div class="search-bar" style="margin-left:auto"><span style="color:var(--text3);font-family:var(--font-mono);font-size:12px">⌕</span><input placeholder="search prompts, evals, traces..."></div>
+    <button class="btn btn-ghost btn-sm" onclick="showPage('alerts',null)" style="color:var(--red);border-color:rgba(255,51,51,0.2)">⚠ 2</button>
+    <button class="btn btn-ai btn-sm" onclick="openModal('ai-modal')">✦ AI_GEN</button>
+    <button class="btn btn-primary btn-sm" onclick="showPage('editor',null)">+ NEW</button>
+  </div>
+  <div class="content">
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-row"><div><div class="section-title">// SYSTEM_STATUS — <span class="glow-text">ONLINE</span></div><div class="section-sub">matrix.instance · prompt_intelligence · uptime: 14d 6h 22m</div></div><div style="display:flex;gap:7px"><button class="btn btn-ghost btn-sm">◷ 7D</button><button class="btn btn-ghost btn-sm">↗ EXPORT</button></div></div>
+      <div class="metrics">
+        <div class="metric-card"><div class="metric-label">TOTAL_PROMPTS</div><div class="metric-val">247</div><div class="metric-change up">↑ 12 this cycle</div></div>
+        <div class="metric-card"><div class="metric-label">AVG_QUALITY</div><div class="metric-val">8.4<span style="font-size:12px;color:var(--text3)">/10</span></div><div class="metric-change up">↑ 0.3 delta</div></div>
+        <div class="metric-card"><div class="metric-label">API_CALLS_TODAY</div><div class="metric-val">18.2k</div><div class="metric-change up">↑ 4.1% vs T-1</div></div>
+        <div class="metric-card"><div class="metric-label">MONTHLY_COST</div><div class="metric-val" style="color:var(--yellow);text-shadow:0 0 18px rgba(255,230,0,0.4)">$284</div><div class="metric-change down">↑ $12 variance</div></div>
+      </div>
+      <div class="card" style="margin-bottom:10px;position:relative">
+        <div class="cc cc-tl"></div><div class="cc cc-tr"></div><div class="cc cc-bl"></div><div class="cc cc-br"></div>
+        <div class="card-header"><div><div class="card-title">ACTIVE_PIPELINE — customer_support_bot</div><div class="card-sub">last_run: 4min ago · stages_passing: 3/4</div></div><span class="tag tag-green">● LIVE</span></div>
+        <div class="pipeline">
+          <div class="pipe-step"><div class="pipe-icon done">✓</div><div class="pipe-label">INPUT<br>VALID</div></div><div class="pipe-arrow">──▶</div>
+          <div class="pipe-step"><div class="pipe-icon done">✓</div><div class="pipe-label">PROMPT<br>BUILD</div></div><div class="pipe-arrow">──▶</div>
+          <div class="pipe-step"><div class="pipe-icon active">◉</div><div class="pipe-label">MODEL<br>EXEC</div></div><div class="pipe-arrow">──▶</div>
+          <div class="pipe-step"><div class="pipe-icon pending">○</div><div class="pipe-label">EVAL<br>SCORE</div></div><div class="pipe-arrow">──▶</div>
+          <div class="pipe-step"><div class="pipe-icon pending">○</div><div class="pipe-label">OUTPUT<br>ROUTE</div></div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div>
+          <div class="card-header"><div class="card-title">RECENT_PROMPTS</div><button class="btn btn-ghost btn-xs" onclick="showPage('registry',null)">ALL →</button></div>
+          <div class="version-list">
+            <div class="version-item current"><div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--text2)">customer-support-v3</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">GPT-4o · 2h ago</div></div><span class="tag tag-green">9.1</span></div>
+            <div class="version-item"><div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--text2)">content-summarizer</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Claude 4 · 5h ago</div></div><span class="tag tag-yellow">7.8</span></div>
+            <div class="version-item"><div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--text2)">lead-qualifier</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">GPT-4o-mini · 1d ago</div></div><span class="tag tag-cyan">8.6</span></div>
+            <div class="version-item"><div style="flex:1"><div style="font-size:11px;font-weight:600;color:var(--text2)">email-composer</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Claude Haiku · 2d ago</div></div><span class="tag tag-purple">8.2</span></div>
+          </div>
+        </div>
+        <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div>
+          <div class="card-header"><div class="card-title">CALL_VOLUME [7d]</div><span style="font-family:var(--font-mono);font-size:9px;color:var(--accent2)">↑ 14% avg</span></div>
+          <div class="chart-area" id="chart1"></div>
+          <div class="chart-labels" id="chart1-labels"></div>
+          <div style="display:flex;gap:10px;margin-top:9px">
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)"><span style="color:var(--accent)">▪</span> GPT-4o</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)"><span style="color:var(--cyan)">▪</span> Claude</div>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)"><span style="color:var(--purple)">▪</span> Gemini</div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:10px;position:relative"><div class="cc cc-tl"></div><div class="cc cc-tr"></div><div class="cc cc-bl"></div><div class="cc cc-br"></div>
+        <div class="card-header"><div class="card-title">⚠ ACTIVE_ALERTS</div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">3 unresolved</span></div>
+        <div class="alert-item alert-err"><span style="color:var(--red);font-family:var(--font-mono);font-size:9px;font-weight:600">ERR</span><div style="flex:1;font-size:11px;color:var(--text2)"><strong>lead-qualifier</strong> — score below 7.0 threshold</div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">12m</span><button class="btn btn-ghost btn-xs">DISMISS</button></div>
+        <div class="alert-item alert-warn"><span style="color:var(--yellow);font-family:var(--font-mono);font-size:9px;font-weight:600">WARN</span><div style="flex:1;font-size:11px;color:var(--text2)"><strong>data-extractor</strong> — token usage 94% of limit</div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">1h</span><button class="btn btn-ghost btn-xs">DISMISS</button></div>
+        <div class="alert-item alert-info"><span style="color:var(--cyan);font-family:var(--font-mono);font-size:9px;font-weight:600">INFO</span><div style="flex:1;font-size:11px;color:var(--text2)"><strong>content-summarizer</strong> promoted to production</div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">3h</span><button class="btn btn-ghost btn-xs">DISMISS</button></div>
+      </div>
+    </div>
+    <!-- EDITOR -->
+    <div class="page" id="page-editor">
+      <div class="section-row"><div><div class="section-title">// PROMPT_STUDIO</div><div class="section-sub">customer-support-v3 · GPT-4o · v3.2</div></div><div style="display:flex;gap:7px"><button class="btn btn-ai btn-sm" onclick="openModal('ai-modal')">✦ AI_GEN</button><button class="btn btn-primary btn-sm" onclick="runPrompt()">▶ RUN</button></div></div>
+      <div class="tabs"><div class="tab active" onclick="switchEditorTab('prompt',this)">PROMPT</div><div class="tab" onclick="switchEditorTab('system',this)">SYSTEM</div><div class="tab" onclick="switchEditorTab('diff',this)">DIFF</div></div>
+      <div id="editor-tab-prompt">
+        <div class="editor-layout">
+          <div class="prompt-editor">
+            <div class="editor-toolbar"><div class="model-select"><div class="model-dot"></div>GPT-4o</div><select class="styled-select"><option>v3.2</option><option>v3.1</option></select><div style="margin-left:auto;display:flex;gap:5px"><button class="btn btn-ghost btn-xs">FORMAT</button><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);padding:0 3px" id="char-count">0 chars</span></div></div>
+            <div style="border-bottom:1px solid var(--border2);padding:5px 12px;background:rgba(0,6,0,0.5)"><span style="font-family:var(--font-mono);font-size:8.5px;color:var(--text3)">SYSTEM_PROMPT</span></div>
+            <textarea class="code-input" id="system-prompt" rows="2" oninput="updateCharCount()" style="border-bottom:1px solid var(--border2);min-height:54px">You are a professional customer support agent for {{company_name}}. Confidence threshold: {{confidence_threshold}}%. Tone: {{tone}}.</textarea>
+            <div style="border-bottom:1px solid var(--border2);padding:5px 12px;background:rgba(0,6,0,0.5)"><span style="font-family:var(--font-mono);font-size:8.5px;color:var(--text3)">USER_TEMPLATE</span></div>
+            <textarea class="code-input" id="prompt-input" rows="7" oninput="updateCharCount()">Customer inquiry: {{customer_message}}
+
+Please analyze and provide a structured response that:
+1. Acknowledges the customer's concern with empathy
+2. Provides a clear, actionable solution
+3. Sets appropriate expectations for timeline
+4. Offers follow-up support
+
+Maintain {{tone}} tone throughout.</textarea>
+            <div style="padding:8px 12px;border-top:1px solid var(--border2);display:flex;align-items:center;gap:7px"><span id="run-status" style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">READY</span><div style="margin-left:auto;display:flex;gap:12px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">lat: <span id="latency">—</span></span><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">tok: <span id="tokens">—</span></span><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">score: <span id="score">—</span></span></div></div>
+          </div>
+          <div class="side-panel">
+            <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div>
+              <div class="card-title" style="margin-bottom:10px">⚙ PARAMETERS</div>
+              <div class="param-row"><span class="param-label">Temperature</span><span class="param-val" id="temp-val">0.7</span></div>
+              <input type="range" min="0" max="2" step="0.1" value="0.7" oninput="document.getElementById('temp-val').textContent=this.value" style="margin-bottom:9px">
+              <div class="param-row"><span class="param-label">Max Tokens</span><span class="param-val" id="maxtok-val">512</span></div>
+              <input type="range" min="64" max="4096" step="64" value="512" oninput="document.getElementById('maxtok-val').textContent=this.value">
+            </div>
+            <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div>
+              <div class="card-title" style="margin-bottom:9px">◫ VARIABLES</div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px">{{company_name}}</div><input class="styled-input" type="text" value="Acme Corp"></div>
+                <div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px">{{tone}}</div><input class="styled-input" type="text" value="professional"></div>
+                <div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:3px">{{customer_message}}</div><textarea class="styled-input" rows="2" style="resize:none">I was charged twice for my subscription</textarea></div>
+              </div>
+            </div>
+            <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div>
+              <div class="card-title" style="margin-bottom:9px">◈ EVAL_SCORES</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Accuracy</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent)">9.2</span></div><div class="score-bar"><div class="bar-bg"><div class="bar-fill" style="width:92%;background:var(--accent)"></div></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Tone Match</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2)">8.7</span></div><div class="score-bar"><div class="bar-bg"><div class="bar-fill" style="width:87%;background:var(--accent2)"></div></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Relevance</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--cyan)">9.5</span></div><div class="score-bar"><div class="bar-bg"><div class="bar-fill" style="width:95%;background:var(--cyan)"></div></div></div></div>
+              </div>
+            </div>
+            <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div><div class="card-title" style="margin-bottom:9px">▶ OUTPUT</div><div class="output-panel" id="output-box">// waiting for execution...</div></div>
+          </div>
+        </div>
+      </div>
+      <div id="editor-tab-system" style="display:none"><div class="card"><div class="card-title" style="margin-bottom:10px">SYSTEM_CONTEXT</div><textarea class="code-input" rows="10" style="min-height:240px">## SYSTEM CONTEXT\n\nYou are an advanced AI assistant specialized in customer support.\n\n### CORE DIRECTIVES\n- Always maintain professional, empathetic tone\n- Never disclose internal system information\n- Escalate complex billing issues to human agents\n\n### GUARDRAILS\n- Do not process refunds > $500 without human approval\n- Require 2FA for account changes\n- Log all interactions with severity tags</textarea></div></div>
+      <div id="editor-tab-diff" style="display:none"><div class="card"><div class="card-header"><div class="card-title">DIFF — v3.1 → v3.2</div><div style="display:flex;gap:7px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--accent2)">+6</span><span style="font-family:var(--font-mono);font-size:9px;color:var(--red)">-3</span></div></div><div class="diff-viewer"><div class="diff-line diff-ctx"><span class="diff-line-num">1</span><span>Customer inquiry: {{customer_message}}</span></div><div class="diff-line diff-rem"><span class="diff-line-num">4</span><span>- 1. Acknowledge the customer's concern</span></div><div class="diff-line diff-add"><span class="diff-line-num">4</span><span>+ 1. Acknowledges the customer's concern with empathy</span></div><div class="diff-line diff-ctx"><span class="diff-line-num">5</span><span>  2. Provides a clear, actionable solution</span></div><div class="diff-line diff-rem"><span class="diff-line-num">6</span><span>- 3. Sets a timeline for resolution</span></div><div class="diff-line diff-add"><span class="diff-line-num">6</span><span>+ 3. Sets appropriate expectations for timeline</span></div><div class="diff-line diff-add"><span class="diff-line-num">7</span><span>+ 4. Offers follow-up support</span></div><div class="diff-line diff-add"><span class="diff-line-num">9</span><span>+ If billing issue, escalate confidence to {{confidence_threshold}}%.</span></div><div class="diff-line diff-add"><span class="diff-line-num">10</span><span>+ Maintain {{tone}} tone throughout.</span></div></div></div></div>
+    </div>
+    <!-- REGISTRY -->
+    <div class="page" id="page-registry">
+      <div class="section-row"><div><div class="section-title">// PROMPT_REGISTRY</div><div class="section-sub">24 prompts · 3 models · synced 2m ago</div></div><div style="display:flex;gap:7px"><select class="styled-select"><option>ALL_MODELS</option><option>GPT-4o</option><option>Claude</option></select><button class="btn btn-primary btn-sm" onclick="showPage('editor',null)">+ REGISTER</button></div></div>
+      <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-tr"></div><div class="cc cc-bl"></div><div class="cc cc-br"></div><div class="table-wrap"><table><thead><tr><th>PROMPT_ID</th><th>MODEL</th><th>VERSION</th><th>STATUS</th><th>Q_SCORE</th><th>API_CALLS</th><th>OWNER</th><th>UPDATED</th><th></th></tr></thead><tbody id="registry-table"></tbody></table></div></div>
+    </div>
+    <!-- EVALS -->
+    <div class="page" id="page-evals">
+      <div class="section-row"><div><div class="section-title">// EVALUATIONS</div><div class="section-sub">automated quality assessment</div></div><button class="btn btn-primary btn-sm">▶ RUN_EVAL</button></div>
+      <div class="grid-2" style="margin-bottom:10px">
+        <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div><div class="card-header"><div><div class="card-title">QUALITY_HEATMAP</div><div class="card-sub">7-day eval frequency</div></div></div><div class="heatmap" id="heatmap"></div><div style="display:flex;align-items:center;gap:6px;margin-top:9px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">LOW</span><div style="display:flex;gap:3px"><div style="width:12px;height:12px;border-radius:2px;background:rgba(0,255,65,0.1)"></div><div style="width:12px;height:12px;border-radius:2px;background:rgba(0,255,65,0.3)"></div><div style="width:12px;height:12px;border-radius:2px;background:rgba(0,255,65,0.6)"></div><div style="width:12px;height:12px;border-radius:2px;background:rgba(0,255,65,1)"></div></div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">HIGH</span></div></div>
+        <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div><div class="card-header"><div class="card-title">SCORE_DISTRIBUTION</div></div><div class="chart-area" style="height:80px" id="eval-chart"></div><div style="margin-top:9px;font-family:var(--font-mono);font-size:9px;color:var(--text3)">PASS: <span style="color:var(--accent)">87.3%</span> · FAIL: <span style="color:var(--red)">12.7%</span></div></div>
+      </div>
+      <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-tr"></div><div class="cc cc-bl"></div><div class="cc cc-br"></div><div class="card-header"><div class="card-title">EVAL_RUNS</div></div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div class="alert-item alert-info" style="gap:10px"><span class="tag tag-green">PASS</span><div style="flex:1"><div style="font-size:11px;color:var(--text2);font-weight:600">customer-support-v3</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">50 cases · 47 passed</div></div><span style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">9.1</span><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">2h</span></div>
+          <div class="alert-item alert-warn" style="gap:10px"><span class="tag tag-yellow">WARN</span><div style="flex:1"><div style="font-size:11px;color:var(--text2);font-weight:600">lead-qualifier</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">30 cases · 22 passed</div></div><span style="font-family:var(--font-mono);font-size:12px;color:var(--yellow)">6.8</span><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">5h</span></div>
+          <div class="alert-item alert-info" style="gap:10px"><span class="tag tag-green">PASS</span><div style="flex:1"><div style="font-size:11px;color:var(--text2);font-weight:600">email-composer</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">40 cases · 38 passed</div></div><span style="font-family:var(--font-mono);font-size:12px;color:var(--accent)">8.8</span><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">1d</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- ANALYTICS -->
+    <div class="page" id="page-analytics">
+      <div class="section-row"><div><div class="section-title">// ANALYTICS</div><div class="section-sub">30-day performance window</div></div><div style="display:flex;gap:7px"><button class="btn btn-ghost btn-sm">7D</button><button class="btn btn-ghost btn-sm">30D</button></div></div>
+      <div class="metrics" style="margin-bottom:12px">
+        <div class="metric-card"><div class="metric-label">CALLS_30D</div><div class="metric-val">412k</div><div class="metric-change up">↑ 18% MoM</div></div>
+        <div class="metric-card"><div class="metric-label">P50_LATENCY</div><div class="metric-val" style="font-size:17px">1.24s</div><div class="metric-change neutral">→ stable</div></div>
+        <div class="metric-card"><div class="metric-label">AVG_SCORE</div><div class="metric-val">8.4</div><div class="metric-change up">↑ 0.6</div></div>
+        <div class="metric-card"><div class="metric-label">COST_30D</div><div class="metric-val" style="color:var(--yellow);font-size:17px;text-shadow:0 0 18px rgba(255,230,0,0.4)">$840</div><div class="metric-change down">↑ $120</div></div>
+      </div>
+      <div class="analytics-grid">
+        <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-tr"></div><div class="card-header"><div class="card-title">CALL_VOLUME [30d]</div></div><div class="chart-area" style="height:110px" id="analytics-chart"></div><div class="chart-labels" id="analytics-labels"></div></div>
+        <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-br"></div><div class="card-header"><div class="card-title">MODEL_BREAKDOWN</div></div><div class="model-breakdown" id="model-breakdown"></div></div>
+      </div>
+    </div>
+    <!-- TRACES -->
+    <div class="page" id="page-traces">
+      <div class="section-row"><div><div class="section-title">// TRACE_VIEWER</div><div class="section-sub">end-to-end observability</div></div><div class="live-badge"><span class="status-dot dot-green dot-pulse"></span> STREAMING</div></div>
+      <div class="card" style="margin-bottom:10px;position:relative"><div class="cc cc-tl"></div><div class="cc cc-tr"></div>
+        <div class="card-header"><div class="card-title">req_4f8a2b1c · customer-support-v3</div><div style="display:flex;gap:7px"><span class="tag tag-green">PASS · 9.1</span><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);padding:2px 7px">1842ms total</span></div></div>
+        <div class="trace-timeline">
+          <div class="trace-row"><div class="trace-time">0ms</div><div class="trace-line"><div class="trace-name">Request Received</div><div class="trace-meta">POST /v1/execute · 1.2kb</div><div class="trace-bar-wrap"><div class="trace-bar" style="width:2%;background:var(--cyan)"></div></div></div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);padding:0 12px">18ms</span></div>
+          <div class="trace-row"><div class="trace-time">18ms</div><div class="trace-line"><div class="trace-name">Variable Injection</div><div class="trace-meta">3 vars resolved</div><div class="trace-bar-wrap"><div class="trace-bar" style="width:1%;background:var(--purple)"></div></div></div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);padding:0 12px">6ms</span></div>
+          <div class="trace-row"><div class="trace-time">24ms</div><div class="trace-line"><div class="trace-name">Model Execution — GPT-4o</div><div class="trace-meta">284 tokens · temp=0.7</div><div class="trace-bar-wrap"><div class="trace-bar" style="width:72%;background:var(--accent2)"></div></div></div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);padding:0 12px">1,320ms</span></div>
+          <div class="trace-row"><div class="trace-time">1,344ms</div><div class="trace-line"><div class="trace-name">Quality Evaluation</div><div class="trace-meta">accuracy=9.2 · tone=8.7 · composite=9.1</div><div class="trace-bar-wrap"><div class="trace-bar" style="width:24%;background:var(--yellow)"></div></div></div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);padding:0 12px">460ms</span></div>
+          <div class="trace-row"><div class="trace-time">1,804ms</div><div class="trace-line"><div class="trace-name">Response Routed</div><div class="trace-meta">webhook delivered</div><div class="trace-bar-wrap"><div class="trace-bar" style="width:2%;background:var(--cyan)"></div></div></div><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);padding:0 12px">38ms</span></div>
+        </div>
+      </div>
+      <div class="card" style="position:relative"><div class="cc cc-tl"></div><div class="cc cc-tr"></div><div class="cc cc-bl"></div><div class="cc cc-br"></div><div class="card-header"><div class="card-title">RECENT_TRACES</div></div><div class="table-wrap"><table><thead><tr><th>TRACE_ID</th><th>PROMPT</th><th>STATUS</th><th>SCORE</th><th>TOKENS</th><th>LATENCY</th><th>TIME</th></tr></thead><tbody><tr><td style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">req_4f8a2b1c</td><td style="color:var(--text2)">customer-support-v3</td><td><span class="tag tag-green">PASS</span></td><td style="font-family:var(--font-mono);color:var(--accent)">9.1</td><td style="font-family:var(--font-mono);color:var(--text3)">284</td><td style="font-family:var(--font-mono);color:var(--text3)">1.84s</td><td style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">just now</td></tr><tr><td style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">req_c22de411</td><td style="color:var(--text2)">content-summarizer</td><td><span class="tag tag-yellow">WARN</span></td><td style="font-family:var(--font-mono);color:var(--yellow)">7.2</td><td style="font-family:var(--font-mono);color:var(--text3)">512</td><td style="font-family:var(--font-mono);color:var(--text3)">0.92s</td><td style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">12s ago</td></tr><tr><td style="font-family:var(--font-mono);font-size:10px;color:var(--text3)">req_7b901f2a</td><td style="color:var(--text2)">lead-qualifier</td><td><span class="tag tag-red">FAIL</span></td><td style="font-family:var(--font-mono);color:var(--red)">4.8</td><td style="font-family:var(--font-mono);color:var(--text3)">198</td><td style="font-family:var(--font-mono);color:var(--text3)">0.74s</td><td style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">34s ago</td></tr></tbody></table></div></div>
+    </div>
+    <!-- DEPLOYMENTS -->
+    <div class="page" id="page-deployments">
+      <div class="section-row"><div><div class="section-title">// DEPLOYMENTS</div><div class="section-sub">4 active endpoints</div></div><button class="btn btn-primary btn-sm">+ DEPLOY</button></div>
+      <div class="grid-3" style="margin-bottom:12px">
+        <div class="metric-card"><div class="metric-label">ACTIVE_ENDPOINTS</div><div class="metric-val">4</div><div class="metric-change up">↑ 1 this week</div></div>
+        <div class="metric-card"><div class="metric-label">REQS_24H</div><div class="metric-val">18.2k</div><div class="metric-change up">↑ 4.1%</div></div>
+        <div class="metric-card"><div class="metric-label">UPTIME</div><div class="metric-val" style="font-size:17px">99.8%</div><div class="metric-change up">SLA met</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">ACTIVE_DEPLOYMENTS</div></div>
+        <div class="deploy-card"><div class="deploy-icon">🤖</div><div class="deploy-info"><div class="deploy-name">customer-support-v3</div><div class="deploy-meta">prod · gpt-4o · api.pm.io/cs-v3</div></div><div class="deploy-stats"><div class="deploy-stat"><div class="deploy-stat-val">142k</div><div class="deploy-stat-label">CALLS</div></div><div class="deploy-stat"><div class="deploy-stat-val" style="color:var(--accent)">9.1</div><div class="deploy-stat-label">SCORE</div></div></div><span class="tag tag-green">● LIVE</span></div>
+        <div class="deploy-card"><div class="deploy-icon">📝</div><div class="deploy-info"><div class="deploy-name">email-composer</div><div class="deploy-meta">prod · claude-haiku-4.5 · api.pm.io/email</div></div><div class="deploy-stats"><div class="deploy-stat"><div class="deploy-stat-val">44k</div><div class="deploy-stat-label">CALLS</div></div><div class="deploy-stat"><div class="deploy-stat-val" style="color:var(--accent)">8.2</div><div class="deploy-stat-label">SCORE</div></div></div><span class="tag tag-green">● LIVE</span></div>
+        <div class="deploy-card"><div class="deploy-icon">🔍</div><div class="deploy-info"><div class="deploy-name">content-summarizer</div><div class="deploy-meta">staging → prod · deploying now</div></div><div class="deploy-stats"><div class="deploy-stat"><div class="deploy-stat-val">89k</div><div class="deploy-stat-label">CALLS</div></div><div class="deploy-stat"><div class="deploy-stat-val" style="color:var(--yellow)">7.8</div><div class="deploy-stat-label">SCORE</div></div></div><span class="tag tag-yellow">⟳ DEPLOY</span></div>
+      </div>
+    </div>
+    <!-- ALERTS PAGE -->
+    <div class="page" id="page-alerts">
+      <div class="section-row"><div><div class="section-title">// ALERTS</div><div class="section-sub">3 unresolved · threshold monitoring</div></div><button class="btn btn-ghost btn-sm">+ RULE</button></div>
+      <div class="card">
+        <div class="alert-item alert-err" style="flex-direction:column;align-items:flex-start;gap:5px"><div style="display:flex;width:100%;gap:7px;align-items:center"><span style="color:var(--red);font-family:var(--font-mono);font-size:9px">CRITICAL</span><span style="font-size:11px;color:var(--text2);flex:1"><strong>lead-qualifier</strong> — score 6.4 below threshold 7.0</span><button class="btn btn-ghost btn-xs">RESOLVE</button></div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">rule: Q_SCORE_MIN · 12m ago · 8 occurrences</div></div>
+        <div class="alert-item alert-warn" style="flex-direction:column;align-items:flex-start;gap:5px"><div style="display:flex;width:100%;gap:7px;align-items:center"><span style="color:var(--yellow);font-family:var(--font-mono);font-size:9px">WARNING</span><span style="font-size:11px;color:var(--text2);flex:1"><strong>data-extractor</strong> — token usage 94%</span><button class="btn btn-ghost btn-xs">RESOLVE</button></div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">rule: TOKEN_BUDGET_PCT · 1h ago · 94,218/100,000</div></div>
+        <div class="alert-item alert-info" style="flex-direction:column;align-items:flex-start;gap:5px"><div style="display:flex;width:100%;gap:7px;align-items:center"><span style="color:var(--cyan);font-family:var(--font-mono);font-size:9px">INFO</span><span style="font-size:11px;color:var(--text2);flex:1"><strong>content-summarizer</strong> promoted to production</span><button class="btn btn-ghost btn-xs">DISMISS</button></div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">rule: AUTO_PROMOTE · 3h ago</div></div>
+      </div>
+    </div>
+    <!-- VERSION CONTROL -->
+    <div class="page" id="page-versions">
+      <div class="section-row"><div><div class="section-title">// VERSION_CONTROL</div><div class="section-sub">git-style prompt versioning</div></div><button class="btn btn-ghost btn-sm">⑂ COMPARE</button></div>
+      <div class="grid-2">
+        <div class="card"><div class="card-title" style="margin-bottom:10px">⑂ COMMIT_HISTORY</div>
+          <div class="version-list">
+            <div class="version-item current"><div style="width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);flex-shrink:0"></div><div class="v-hash">a3f91c</div><div class="v-msg">add confidence threshold for billing</div><div class="v-date">2h</div><span class="tag tag-green" style="font-size:8px">PROD</span></div>
+            <div class="version-item"><div style="width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0"></div><div class="v-hash">72be4d</div><div class="v-msg">improve tone for aggressive inquiries</div><div class="v-date">1d</div><span class="tag tag-cyan" style="font-size:8px">STAGE</span></div>
+            <div class="version-item"><div style="width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0"></div><div class="v-hash">1d8e22</div><div class="v-msg">refactor variable injection pattern</div><div class="v-date">3d</div></div>
+            <div class="version-item"><div style="width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0"></div><div class="v-hash">09ff12</div><div class="v-msg">bootstrap from AI generation</div><div class="v-date">8d</div><span class="tag tag-purple" style="font-size:8px">AI</span></div>
+          </div>
+        </div>
+        <div class="card"><div class="card-title" style="margin-bottom:10px">COMMIT — a3f91c</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;gap:7px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);min-width:55px">AUTHOR</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--text2)">john.doe@corp.io</span></div>
+            <div style="display:flex;gap:7px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);min-width:55px">BRANCH</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2)">main/production</span></div>
+            <div style="display:flex;gap:7px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);min-width:55px">EVAL</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent)">9.1 PASS</span></div>
+            <div style="display:flex;gap:7px"><span style="font-family:var(--font-mono);font-size:9px;color:var(--text3);min-width:55px">DELTA</span><span style="font-family:var(--font-mono);font-size:10px;color:var(--accent2)">+6 -3 lines</span></div>
+          </div>
+          <div style="display:flex;gap:7px;margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="switchEditorTab('diff',null);showPage('editor',null)">VIEW_DIFF →</button><button class="btn btn-ghost btn-sm">↩ ROLLBACK</button></div>
+        </div>
+      </div>
+    </div>
+    <!-- INTEGRATIONS -->
+    <div class="page" id="page-integrations">
+      <div class="section-row"><div><div class="section-title">// INTEGRATIONS</div></div><button class="btn btn-ghost btn-sm">+ CONNECT</button></div>
+      <div class="grid-3">
+        <div class="card" style="text-align:center;padding:18px 12px;cursor:pointer"><div style="font-size:24px;margin-bottom:8px">⚡</div><div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:3px">GitHub Actions</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:10px">CI/CD triggers</div><span class="tag tag-green">CONNECTED</span></div>
+        <div class="card" style="text-align:center;padding:18px 12px;cursor:pointer"><div style="font-size:24px;margin-bottom:8px">🔔</div><div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:3px">Slack</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:10px">Alert notifications</div><span class="tag tag-green">CONNECTED</span></div>
+        <div class="card" style="text-align:center;padding:18px 12px;cursor:pointer;opacity:0.6"><div style="font-size:24px;margin-bottom:8px">📊</div><div style="font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:3px">Datadog</div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:10px">Metrics export</div><span class="tag tag-yellow">CONFIGURE</span></div>
+      </div>
+    </div>
+    <!-- TEAM -->
+    <div class="page" id="page-team">
+      <div class="section-row"><div><div class="section-title">// TEAM</div></div><button class="btn btn-primary btn-sm">+ INVITE</button></div>
+      <div class="grid-2">
+        <div class="card"><div class="card-title" style="margin-bottom:10px">MEMBERS</div>
+          <div class="team-member"><div class="member-avatar" style="background:rgba(0,255,65,0.1);border:1px solid var(--accent3);color:var(--accent)">JD</div><div><div class="member-name">John Doe</div><div class="member-role">admin · john@corp.io</div></div><span class="tag tag-green" style="margin-left:auto">ADMIN</span></div>
+          <div class="team-member"><div class="member-avatar" style="background:rgba(0,255,204,0.1);border:1px solid rgba(0,255,204,0.25);color:var(--cyan)">SK</div><div><div class="member-name">Sarah Kim</div><div class="member-role">editor · sarah@corp.io</div></div><span class="tag tag-cyan" style="margin-left:auto">EDITOR</span></div>
+          <div class="team-member"><div class="member-avatar" style="background:rgba(157,111,255,0.1);border:1px solid rgba(157,111,255,0.25);color:var(--purple)">MR</div><div><div class="member-name">Mike Ross</div><div class="member-role">viewer · mike@corp.io</div></div><span class="tag tag-purple" style="margin-left:auto">VIEWER</span></div>
+        </div>
+        <div class="card"><div class="card-title" style="margin-bottom:10px">PERMISSIONS</div><div style="display:flex;flex-direction:column;gap:7px;font-family:var(--font-mono);font-size:10px"><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Create/Edit Prompts</span><span style="color:var(--text2)">Admin + Editor</span></div><div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text3)">Deploy to Production</span><span style="color:var(--text2)">Admin only</span></div><div style="display:flex;justify-content:space-between;padding:6px 0"><span style="color:var(--text3)">View Analytics</span><span style="color:var(--accent2)">All members</span></div></div></div>
+      </div>
+    </div>
+    <!-- API KEYS -->
+    <div class="page" id="page-apikeys">
+      <div class="section-row"><div><div class="section-title">// API_KEYS</div></div><button class="btn btn-primary btn-sm">+ CREATE</button></div>
+      <div class="card" style="margin-bottom:10px">
+        <div class="card-title" style="margin-bottom:12px">ACTIVE_KEYS</div>
+        <div class="apikey-row"><div class="apikey-name">production-main</div><div class="apikey-val" onclick="copyKey(this,'pm_live_4f8a2b1c9e3d7f2a')">pm_live_4f8a•••••••••7f2a</div><span class="tag tag-green">ACTIVE</span><div class="apikey-meta">2m ago</div><button class="btn btn-ghost btn-xs">ROTATE</button></div>
+        <div class="apikey-row"><div class="apikey-name">staging-ci</div><div class="apikey-val" onclick="copyKey(this,'pm_test_c22de411b7f9')">pm_test_c22d•••••••b7f9</div><span class="tag tag-yellow">TEST</span><div class="apikey-meta">1h ago</div><button class="btn btn-ghost btn-xs">ROTATE</button></div>
+      </div>
+      <div class="card"><div class="card-title" style="margin-bottom:10px">QUICK_SDK</div><div style="background:rgba(0,4,0,0.8);border:1px solid var(--border2);border-radius:3px;padding:12px;font-family:var(--font-mono);font-size:10px;color:var(--accent2);line-height:2"><span style="color:var(--purple)">const</span> <span style="color:var(--text2)">pm</span> = <span style="color:var(--cyan)">require</span>(<span style="color:var(--yellow)">'@promptmatrix/sdk'</span>);<br><span style="color:var(--purple)">const</span> <span style="color:var(--text2)">result</span> = <span style="color:var(--accent3)">await</span> pm.<span style="color:var(--text2)">execute</span>({<br>&nbsp;&nbsp;promptId: <span style="color:var(--yellow)">'customer-support-v3'</span>,<br>&nbsp;&nbsp;variables: { customer_message: <span style="color:var(--yellow)">'...'</span> }<br>});</div></div>
+    </div>
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="section-row"><div><div class="section-title">// SETTINGS</div></div></div>
+      <div class="grid-2">
+        <div class="card"><div class="card-title" style="margin-bottom:12px">WORKSPACE</div><div style="display:flex;flex-direction:column;gap:10px"><div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">WORKSPACE_NAME</div><input class="styled-input" value="Acme Corp — Production"></div><div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">DEFAULT_MODEL</div><select class="styled-select" style="width:100%"><option>claude-sonnet-4-20250514</option><option>gpt-4o</option></select></div><div><div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);margin-bottom:4px">QUALITY_THRESHOLD</div><input class="styled-input" value="7.0"></div></div><button class="btn btn-primary btn-sm" style="margin-top:12px">SAVE</button></div>
+        <div class="card"><div class="card-title" style="margin-bottom:12px">NOTIFICATIONS</div><div style="display:flex;flex-direction:column;gap:9px;font-family:var(--font-mono);font-size:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">Eval failures</span><span class="tag tag-green">ON</span></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">Score below threshold</span><span class="tag tag-green">ON</span></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">Production deploys</span><span class="tag tag-green">ON</span></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--text3)">Weekly digest</span><span class="tag tag-cyan">EMAIL</span></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){const canvas=document.getElementById('matrix-rain');const ctx=canvas.getContext('2d');let W,H,cols,drops;const chars='アイウエオカキクケコ01◈◧◉⑂';function init(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;cols=Math.floor(W/18);drops=Array(cols).fill(1)}function draw(){ctx.fillStyle='rgba(0,0,0,0.05)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#00ff41';ctx.font='13px JetBrains Mono';for(let i=0;i<drops.length;i++){ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*18,drops[i]*18);if(drops[i]*18>H&&Math.random()>0.975)drops[i]=0;drops[i]++}}init();window.addEventListener('resize',init);setInterval(draw,60)})();
+function showPage(id,navEl){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));if(navEl)navEl.classList.add('active');else{document.querySelectorAll('.nav-item').forEach(n=>{if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))n.classList.add('active')})}const labels={dashboard:'DASHBOARD',editor:'PROMPT_STUDIO',registry:'REGISTRY',evals:'EVALUATIONS',versions:'VERSION_CONTROL',analytics:'ANALYTICS',traces:'TRACE_VIEWER',alerts:'ALERTS',deployments:'DEPLOYMENTS',integrations:'INTEGRATIONS',team:'TEAM',apikeys:'API_KEYS',settings:'SETTINGS'};document.getElementById('breadcrumb').innerHTML='SYS:<span>'+(labels[id]||id.toUpperCase())+'</span>'}
+function toggleSidebar(){const sb=document.getElementById('sidebar');sb.classList.toggle('collapsed');document.querySelector('.sidebar-toggle').textContent=sb.classList.contains('collapsed')?'▷':'◁'}
+function switchEditorTab(tab,el){['prompt','system','diff'].forEach(t=>{const e=document.getElementById('editor-tab-'+t);if(e)e.style.display=t===tab?'':'none'});document.querySelectorAll('#page-editor .tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');else{document.querySelectorAll('#page-editor .tab').forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+tab+"'"))t.classList.add('active')})}}
+function updateCharCount(){const s=document.getElementById('system-prompt').value||'';const p=document.getElementById('prompt-input').value||'';document.getElementById('char-count').textContent=(s.length+p.length)+' chars'}updateCharCount();
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.getElementById('ai-modal').addEventListener('click',function(e){if(e.target===this)closeModal('ai-modal')});
+async function generatePromptAI(){const task=document.getElementById('ai-task-input').value.trim();if(!task){showNotif('⚠ Describe a task first');return}const model=document.getElementById('ai-model-select').value;const tone=document.getElementById('ai-tone-select').value;const btn=document.getElementById('ai-gen-btn');const resultEl=document.getElementById('ai-result');const resultText=document.getElementById('ai-result-text');btn.innerHTML='<span class="spinner"></span> GENERATING...';btn.disabled=true;resultEl.style.display='block';resultText.textContent='// connecting to Claude API...';try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:model,max_tokens:1000,system:'You are an expert prompt engineer. Generate production-ready prompts. Return ONLY the prompt text with {{variable}} syntax.',messages:[{role:'user',content:'Generate a high-quality prompt for: '+task+'\n\nTone: '+tone+'\n\nUse {{variables}} for dynamic content.'}]})});const data=await resp.json();const text=data.content?.map(c=>c.text||'').join('')||'Error';resultText.textContent=text;window._generatedPrompt=text;showNotif('✦ AI_GENERATE COMPLETE')}catch(err){resultText.textContent='// ERROR: '+err.message}btn.innerHTML='<span class="ai-sparkle">✦</span> GENERATE';btn.disabled=false}
+function useGeneratedPrompt(){if(window._generatedPrompt){document.getElementById('prompt-input').value=window._generatedPrompt;updateCharCount();closeModal('ai-modal');showPage('editor',null);showNotif('→ PROMPT_LOADED')}}
+function runPrompt(){const box=document.getElementById('output-box');const statusEl=document.getElementById('run-status');statusEl.innerHTML='<span class="spinner"></span>';box.textContent='// initializing...';['latency','tokens','score'].forEach(id=>document.getElementById(id).textContent='—');const start=Date.now();const response='IDENTITY_VERIFIED > Initiating refund protocol...\n\nI\'m sorry to hear about the duplicate charge — I\'ll resolve it immediately.\n\nTo proceed, please confirm:\n1. Email address on file\n2. Last 4 digits of payment method\n\nThe duplicate charge will be reversed within 3-5 business cycles.\n\nRef: INC-'+Math.floor(Math.random()*90000+10000);let i=0;box.textContent='';box.style.color='var(--accent2)';const iv=setInterval(()=>{if(i<response.length){box.textContent=response.substring(0,i+1);i+=5}else{clearInterval(iv);const el=((Date.now()-start)/1000).toFixed(2);statusEl.innerHTML='<span style="color:var(--accent)">✓ DONE</span>';document.getElementById('latency').textContent=el+'s';document.getElementById('tokens').textContent='284';document.getElementById('score').innerHTML='<span style="color:var(--accent)">9.1 ↑</span>';showNotif('✓ EXEC · SCORE: 9.1 · '+el+'s')}},14)}
+function showNotif(msg,dur=3000){const n=document.createElement('div');n.className='notif';n.innerHTML='<span style="color:var(--accent)">■</span> '+msg;document.body.appendChild(n);setTimeout(()=>{n.style.transition='opacity .3s,transform .3s';n.style.opacity='0';n.style.transform='translateX(20px)';setTimeout(()=>n.remove(),300)},dur)}
+function copyKey(el,key){navigator.clipboard.writeText(key).then(()=>{const orig=el.textContent;el.textContent='COPIED!';el.style.color='var(--accent)';setTimeout(()=>{el.textContent=orig;el.style.color=''},1500)})}
+(function(){const days=['MON','TUE','WED','THU','FRI','SAT','SUN'];const vals=[45,62,58,78,91,84,72];const c=document.getElementById('chart1');const cl=document.getElementById('chart1-labels');const mx=Math.max(...vals);days.forEach((d,i)=>{const b=document.createElement('div');b.className='bar';b.style.height=(vals[i]/mx*100)+'%';b.title=d+': '+vals[i]+'k';c.appendChild(b);const l=document.createElement('div');l.className='chart-label';l.textContent=d;cl.appendChild(l)})})();
+(function(){const v=[32,41,38,55,62,58,70,65,82,78,91,84,72,88,95,88,76,92,85,73,96,89,78,94,87,91,83,97,88,82];const ac=document.getElementById('analytics-chart');const al=document.getElementById('analytics-labels');if(ac){const mx=Math.max(...v);v.forEach(val=>{const b=document.createElement('div');b.className='bar';b.style.height=(val/mx*100)+'%';ac.appendChild(b)});[1,7,14,21,28].forEach(d=>{const l=document.createElement('div');l.className='chart-label';l.textContent='D'+d;l.style.flex='1';al.appendChild(l)})}})();
+(function(){const ec=document.getElementById('eval-chart');if(ec){const ev=[5,8,12,18,24,31,27,19,14,9,6,4,3];const mx=Math.max(...ev);ev.forEach(v=>{const b=document.createElement('div');b.className='bar';b.style.height=(v/mx*100)+'%';ec.appendChild(b)})}})();
+(function(){const mb=document.getElementById('model-breakdown');if(!mb)return;const models=[{name:'GPT-4o',pct:58,color:'var(--accent)'},{name:'Claude Sonnet 4',pct:27,color:'var(--cyan)'},{name:'GPT-4o-mini',pct:10,color:'var(--purple)'},{name:'Claude Haiku',pct:5,color:'var(--yellow)'}];models.forEach(m=>{mb.innerHTML+='<div class="model-row"><span class="model-name">'+m.name+'</span><div class="model-bar-wrap"><div class="model-bar" style="width:'+m.pct+'%;background:'+m.color+'"></div></div><span class="model-pct" style="color:'+m.color+'">'+m.pct+'%</span></div>'})})();
+(function(){const hm=document.getElementById('heatmap');if(!hm)return;for(let i=0;i<35;i++){const v=Math.random();const cell=document.createElement('div');cell.className='heat-cell';const op=v<0.2?0.08:v<0.5?0.3:v<0.8?0.6:1;cell.style.background='rgba(0,255,65,'+op+')';cell.title='Evals: '+Math.floor(v*50);hm.appendChild(cell)}})();
+(function(){const rows=[['customer-support-v3','GPT-4o','v3.2','production',9.1,'142k','John D.','2h'],['content-summarizer','Claude 4','v1.8','staging',7.8,'89k','Sarah K.','5h'],['lead-qualifier','GPT-4o-mini','v2.1','production',6.4,'67k','Mike R.','1d'],['email-composer','Claude Haiku','v4.0','production',8.2,'44k','John D.','2d'],['code-reviewer','GPT-4o','v1.3','draft',8.9,'12k','Sarah K.','3d'],['data-extractor','GPT-4o-mini','v2.7','staging',7.1,'38k','Mike R.','4d']];const tbody=document.getElementById('registry-table');if(!tbody)return;rows.forEach(([name,model,ver,status,score,calls,owner,updated])=>{const sc={production:'tag-green',staging:'tag-cyan',draft:'tag-yellow'}[status];const ss=score>=8.5?'tag-green':score>=7?'tag-yellow':'tag-red';tbody.innerHTML+='<tr><td style="font-weight:600;color:var(--text2);font-family:var(--font-mono)">'+name+'</td><td><span class="tag tag-purple">'+model+'</span></td><td style="font-family:var(--font-mono);color:var(--text3)">'+ver+'</td><td><span class="tag '+sc+'">'+status+'</span></td><td><span class="tag '+ss+'">'+score+'</span></td><td style="font-family:var(--font-mono);color:var(--accent2)">'+calls+'</td><td style="color:var(--text3)">'+owner+'</td><td style="font-family:var(--font-mono);color:var(--text3)">'+updated+'</td><td><div style="display:flex;gap:4px"><button class="btn btn-ghost btn-xs" onclick="showPage(\'editor\',null)">EDIT</button><button class="btn btn-ghost btn-xs" onclick="showPage(\'traces\',null)">TRACE</button></div></td></tr>'})})();
+setTimeout(()=>showNotif('■ SYSTEM_ONLINE · PromptMatrix v1.5'),500);
+</script>
+</body>
+</html>

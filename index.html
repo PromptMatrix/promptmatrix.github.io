@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptMatrix — AI Prompt Intelligence Platform</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Syne:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:      #000000;
+  --bg2:     #030a03;
+  --border:  #0a2a0a;
+  --border2: #123512;
+  --border3: #1a4a1a;
+  --accent:  #00ff41;
+  --accent2: #00cc33;
+  --accent3: #008f11;
+  --accent4: #004d00;
+  --cyan:    #00ffcc;
+  --purple:  #9d6fff;
+  --yellow:  #ffe600;
+  --red:     #ff3333;
+  --text:    #b8ffb8;
+  --text2:   #52e852;
+  --text3:   #2a6a2a;
+  --mono:    'JetBrains Mono', monospace;
+  --ui:      'Syne', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--ui);
+  overflow-x: hidden;
+}
+
+/* scanlines */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg,
+    transparent, transparent 3px,
+    rgba(0,0,0,0.02) 3px, rgba(0,0,0,0.02) 6px);
+  pointer-events: none; z-index: 9000;
+}
+
+/* matrix canvas — fixed, full screen, behind everything */
+#lp-matrix {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--accent4); border-radius: 2px; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 58px; z-index: 500;
+  display: flex; align-items: center;
+  padding: 0 48px;
+  background: rgba(0,0,0,0.88);
+  border-bottom: 1px solid transparent;
+  backdrop-filter: blur(14px);
+  transition: border-color .3s;
+}
+.nav.scrolled { border-color: var(--border2); }
+
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.nav-icon {
+  width: 30px; height: 30px; border-radius: 5px;
+  background: rgba(0,255,65,0.1);
+  border: 1px solid rgba(0,255,65,0.35);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  color: var(--accent); text-shadow: 0 0 10px var(--accent);
+}
+.nav-name {
+  font-family: var(--mono); font-size: 14px;
+  color: var(--accent);
+  text-shadow: 0 0 14px rgba(0,255,65,0.6);
+  letter-spacing: .04em;
+}
+.nav-ver {
+  font-family: var(--mono); font-size: 8px;
+  border: 1px solid var(--accent4); color: var(--accent3);
+  padding: 1px 5px; border-radius: 2px; letter-spacing: .12em;
+}
+.nav-links {
+  display: flex; gap: 4px; margin-left: 36px;
+}
+.nav-link {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--text3); text-decoration: none;
+  padding: 5px 12px; border-radius: 3px;
+  border: 1px solid transparent; transition: all .15s; letter-spacing: .05em;
+}
+.nav-link:hover {
+  color: var(--text2); border-color: var(--border2);
+  background: rgba(0,255,65,0.03);
+}
+.nav-right { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+
+.btn {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  padding: 7px 18px; border-radius: 4px;
+  cursor: pointer; border: 1px solid;
+  letter-spacing: .05em; transition: all .15s;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-ghost { background: transparent; color: var(--text3); border-color: var(--border2); }
+.btn-ghost:hover { color: var(--text2); border-color: var(--border3); background: rgba(0,255,65,0.03); }
+.btn-primary {
+  background: rgba(0,255,65,0.1); color: var(--accent);
+  border-color: rgba(0,255,65,0.4);
+  text-shadow: 0 0 8px rgba(0,255,65,0.5);
+  box-shadow: 0 0 20px rgba(0,255,65,0.08);
+}
+.btn-primary:hover {
+  background: rgba(0,255,65,0.18);
+  box-shadow: 0 0 36px rgba(0,255,65,0.18);
+  transform: translateY(-1px);
+}
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: 58px;
+}
+
+.hero-text {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 70px 24px 36px;
+  max-width: 860px;
+}
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .18em;
+  color: var(--accent2); border: 1px solid rgba(0,255,65,0.2);
+  background: rgba(0,255,65,0.05); padding: 5px 14px;
+  border-radius: 2px; margin-bottom: 26px;
+  animation: up .6s ease both;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 8px var(--accent);
+  animation: blink 1.5s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+h1 {
+  font-family: var(--ui); font-size: clamp(42px, 6vw, 76px);
+  font-weight: 800; line-height: 1.05;
+  letter-spacing: -.02em; color: var(--text);
+  margin-bottom: 6px; animation: up .6s .1s ease both;
+}
+h1 .green {
+  color: var(--accent);
+  text-shadow: 0 0 40px rgba(0,255,65,0.5), 0 0 80px rgba(0,255,65,0.2);
+}
+.sub-mono {
+  font-family: var(--mono); font-size: clamp(11px, 1.3vw, 15px);
+  color: var(--text3); letter-spacing: .08em;
+  margin-bottom: 22px; animation: up .6s .15s ease both;
+}
+.hero-desc {
+  font-size: clamp(15px, 1.6vw, 18px);
+  color: rgba(184,255,184,.5); line-height: 1.75;
+  max-width: 580px; margin: 0 auto 34px;
+  animation: up .6s .2s ease both;
+}
+.hero-cta {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; flex-wrap: wrap;
+  margin-bottom: 18px; animation: up .6s .26s ease both;
+}
+.cta-big {
+  font-family: var(--mono); font-size: 14px; font-weight: 500;
+  padding: 14px 30px; border-radius: 4px;
+  cursor: pointer; border: 1px solid; letter-spacing: .06em;
+  transition: all .18s; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.cta-big.primary {
+  background: rgba(0,255,65,0.12); color: var(--accent);
+  border-color: rgba(0,255,65,0.45);
+  text-shadow: 0 0 10px rgba(0,255,65,0.6);
+  box-shadow: 0 0 32px rgba(0,255,65,0.12), inset 0 0 20px rgba(0,255,65,0.04);
+}
+.cta-big.primary:hover {
+  background: rgba(0,255,65,0.2);
+  box-shadow: 0 0 55px rgba(0,255,65,0.22), inset 0 0 26px rgba(0,255,65,0.08);
+  transform: translateY(-2px);
+}
+.cta-big.ghost { background: transparent; color: var(--text3); border-color: var(--border2); }
+.cta-big.ghost:hover { color: var(--text2); border-color: var(--border3); background: rgba(0,255,65,0.03); }
+
+.hero-note {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text3); letter-spacing: .06em;
+  animation: up .6s .3s ease both;
+}
+
+/* hero stats */
+.hero-stats {
+  display: flex; align-items: center; justify-content: center;
+  gap: 40px; flex-wrap: wrap; padding: 16px 24px 0;
+  animation: up .6s .35s ease both; position: relative; z-index: 2;
+}
+.stat { text-align: center; }
+.stat-val {
+  font-family: var(--mono); font-size: 22px; font-weight: 600;
+  color: var(--accent); text-shadow: 0 0 22px rgba(0,255,65,0.4);
+}
+.stat-label { font-family: var(--mono); font-size: 9px; color: var(--text3); letter-spacing: .14em; margin-top: 3px; }
+.stat-div { width: 1px; height: 36px; background: linear-gradient(180deg,transparent,var(--border3),transparent); }
+
+@keyframes up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── DEMO SECTION ── */
+.demo-section {
+  position: relative; z-index: 2;
+  width: 100%; padding: 52px 32px 0;
+  animation: up .8s .4s ease both;
+}
+.demo-wrap { max-width: 1300px; margin: 0 auto; }
+
+/* ambient glow behind the browser window */
+.demo-glow {
+  position: absolute;
+  inset: -60px -80px;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(0,255,65,0.055) 0%, transparent 70%);
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+/* browser chrome bar */
+.browser-bar {
+  background: rgba(0,10,0,0.95);
+  border: 1px solid var(--border3);
+  border-bottom: 1px solid var(--border2);
+  border-radius: 10px 10px 0 0;
+  padding: 11px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.dots { display: flex; gap: 6px; }
+.dot {
+  width: 11px; height: 11px; border-radius: 50%; opacity: .75;
+  cursor: pointer; transition: opacity .15s;
+}
+.dot:hover { opacity: 1; }
+.dot-r { background: #ff5f57; }
+.dot-y { background: #febc2e; }
+.dot-g { background: #2ac840; }
+.addr-bar {
+  flex: 1; max-width: 360px; margin: 0 auto;
+  background: rgba(0,255,65,0.04);
+  border: 1px solid var(--border2);
+  border-radius: 4px; padding: 4px 12px;
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text3); text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.addr-https { color: var(--accent3); }
+.browser-tabs { margin-left: auto; display: flex; gap: 4px; }
+.b-tab {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text3); cursor: pointer;
+  padding: 3px 10px; border-radius: 3px;
+  border: 1px solid transparent; transition: all .15s;
+}
+.b-tab:hover { color: var(--text2); border-color: var(--border2); }
+.b-tab.on { color: var(--accent); border-color: rgba(0,255,65,0.25); background: rgba(0,255,65,0.06); }
+
+/* the iframe window */
+.iframe-wrap {
+  border: 1px solid var(--border3);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  height: 670px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.85), 0 0 0 1px rgba(0,255,65,0.07);
+  position: relative;
+}
+.iframe-wrap iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+.interactive-tag {
+  position: absolute; top: 12px; right: 12px; z-index: 10;
+  font-family: var(--mono); font-size: 9px;
+  background: rgba(0,8,0,0.9);
+  border: 1px solid rgba(0,255,65,0.3);
+  color: var(--accent2); padding: 4px 10px; border-radius: 2px;
+  letter-spacing: .1em; pointer-events: none;
+  display: flex; align-items: center; gap: 5px;
+}
+.live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 6px var(--accent);
+  animation: blink 1.5s infinite;
+}
+
+/* ── MARQUEE ── */
+.marquee-section {
+  padding: 64px 0 0;
+  overflow: hidden;
+  position: relative; z-index: 2;
+}
+.marquee-label {
+  text-align: center; font-family: var(--mono); font-size: 9px;
+  color: var(--text3); letter-spacing: .18em; margin-bottom: 22px;
+}
+.marquee-track {
+  display: flex; gap: 0;
+  animation: slide 30s linear infinite;
+  width: max-content;
+}
+.marquee-track:hover { animation-play-state: paused; }
+.m-item {
+  font-family: var(--mono); font-size: 12px; letter-spacing: .06em;
+  color: var(--text3); white-space: nowrap;
+  padding: 0 28px;
+  display: flex; align-items: center; gap: 8px;
+  border-right: 1px solid var(--border);
+}
+.m-item span { color: var(--accent3); }
+@keyframes slide { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ── SECTION SHARED ── */
+.section {
+  position: relative; z-index: 2;
+  padding: 96px 48px;
+  max-width: 1280px; margin: 0 auto;
+}
+.section-full {
+  position: relative; z-index: 2;
+  padding: 96px 48px;
+}
+.s-label {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--accent3); letter-spacing: .2em; margin-bottom: 14px;
+}
+.s-title {
+  font-family: var(--ui); font-size: clamp(28px,3.5vw,44px);
+  font-weight: 800; color: var(--text);
+  line-height: 1.1; letter-spacing: -.015em; margin-bottom: 14px;
+}
+.s-title .hl { color: var(--accent); text-shadow: 0 0 32px rgba(0,255,65,0.35); }
+.s-sub { font-size: 16px; color: rgba(184,255,184,.45); line-height: 1.75; max-width: 520px; }
+
+/* ── FEATURES ── */
+.features-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 14px; margin-top: 48px;
+}
+.feat {
+  background: rgba(0,8,0,0.7);
+  border: 1px solid var(--border2);
+  border-radius: 8px; padding: 26px 22px;
+  position: relative; overflow: hidden;
+  transition: all .2s; cursor: default;
+}
+.feat::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg,transparent,rgba(0,255,65,0.18),transparent);
+}
+.feat:hover { border-color: var(--border3); transform: translateY(-3px); box-shadow: 0 18px 36px rgba(0,0,0,0.5); }
+.feat-icon {
+  width: 40px; height: 40px; border-radius: 6px;
+  background: rgba(0,255,65,0.07); border: 1px solid var(--border3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; margin-bottom: 16px;
+}
+.feat-title { font-size: 15px; font-weight: 700; color: var(--text2); margin-bottom: 9px; }
+.feat-desc { font-size: 13px; color: rgba(184,255,184,.42); line-height: 1.7; }
+.feat-chip {
+  margin-top: 14px; font-family: var(--mono); font-size: 9px;
+  color: var(--accent3); letter-spacing: .1em;
+  border: 1px solid var(--border2); border-radius: 2px;
+  padding: 2px 8px; display: inline-block;
+}
+
+/* ── HOW IT WORKS ── */
+.hiw-bg {
+  background: linear-gradient(180deg,var(--bg),rgba(3,10,3,.6) 50%,var(--bg));
+  border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2);
+}
+.steps {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 0; max-width: 1100px; margin: 54px auto 0;
+  position: relative;
+}
+.steps::before {
+  content: '';
+  position: absolute; top: 23px; left: 12.5%; right: 12.5%; height: 1px;
+  background: linear-gradient(90deg,transparent,var(--border3) 20%,var(--border3) 80%,transparent);
+}
+.step { text-align: center; padding: 0 18px; }
+.step-num {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: rgba(0,8,0,.95); border: 1px solid var(--border3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 14px; font-weight: 600;
+  color: var(--accent); margin: 0 auto 18px;
+  position: relative; z-index: 1; box-shadow: 0 0 20px rgba(0,255,65,.1);
+}
+.step-num.lit {
+  background: rgba(0,255,65,.1); border-color: rgba(0,255,65,.4);
+  box-shadow: 0 0 30px rgba(0,255,65,.2);
+}
+.step-title { font-size: 15px; font-weight: 700; color: var(--text2); margin-bottom: 8px; }
+.step-desc { font-size: 12.5px; color: rgba(184,255,184,.38); line-height: 1.65; }
+
+/* ── TESTIMONIALS ── */
+.testi-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 14px; margin-top: 54px;
+}
+.testi {
+  background: rgba(0,6,0,.7); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 22px; transition: all .2s;
+}
+.testi:hover { border-color: var(--border3); transform: translateY(-2px); }
+.testi::before {
+  content: '"'; font-family: var(--ui); font-size: 58px;
+  font-weight: 800; color: rgba(0,255,65,.07);
+  line-height: 1; display: block; margin-bottom: 6px; margin-top: -8px;
+}
+.testi-text { font-size: 13.5px; color: rgba(184,255,184,.5); line-height: 1.75; margin-bottom: 18px; }
+.testi-author { display: flex; align-items: center; gap: 10px; }
+.t-av {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid var(--border3); display: flex;
+  align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10px; color: var(--accent);
+  background: rgba(0,255,65,.07);
+}
+.t-name { font-size: 12px; font-weight: 700; color: var(--text2); }
+.t-role { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 1px; }
+.t-stars { margin-left: auto; color: var(--yellow); font-size: 11px; letter-spacing: 2px; }
+
+/* ── PRICING ── */
+.pricing-bg {
+  background: rgba(2,6,2,.5);
+  border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2);
+}
+.pricing-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 14px; max-width: 1000px; margin: 54px auto 0;
+}
+.price-card {
+  background: rgba(0,6,0,.85); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 30px 26px;
+  position: relative; overflow: hidden; transition: all .2s;
+}
+.price-card.featured {
+  border-color: rgba(0,255,65,.35); background: rgba(0,12,0,.92);
+  box-shadow: 0 0 40px rgba(0,255,65,.07);
+}
+.price-card.featured::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.price-card:hover { transform: translateY(-4px); }
+.price-badge {
+  font-family: var(--mono); font-size: 9px; color: var(--accent);
+  background: rgba(0,255,65,.08); border: 1px solid rgba(0,255,65,.25);
+  padding: 2px 10px; border-radius: 2px; letter-spacing: .1em;
+  display: inline-block; margin-bottom: 14px;
+}
+.price-tier { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: .15em; margin-bottom: 10px; }
+.price-val {
+  font-family: var(--mono); font-size: 36px; font-weight: 600;
+  color: var(--accent); text-shadow: 0 0 24px rgba(0,255,65,.3);
+  margin-bottom: 3px; line-height: 1;
+}
+.price-val sup { font-size: 16px; vertical-align: super; }
+.price-val sub { font-size: 14px; color: var(--text3); }
+.price-period { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 22px; }
+.price-feats { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 24px; }
+.price-feats li { font-size: 13px; color: rgba(184,255,184,.5); display: flex; align-items: center; gap: 8px; }
+.price-feats li::before { content: '✓'; color: var(--accent2); font-family: var(--mono); font-size: 11px; flex-shrink: 0; }
+.price-feats li.dim { color: rgba(184,255,184,.22); }
+.price-feats li.dim::before { color: var(--text3); content: '—'; }
+.price-btn {
+  width: 100%; padding: 11px; border-radius: 4px;
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  cursor: pointer; border: 1px solid; letter-spacing: .06em; transition: all .15s;
+}
+.price-btn-ghost { background: transparent; color: var(--text3); border-color: var(--border2); }
+.price-btn-ghost:hover { color: var(--text2); border-color: var(--border3); background: rgba(0,255,65,.03); }
+.price-btn-main {
+  background: rgba(0,255,65,.1); color: var(--accent);
+  border-color: rgba(0,255,65,.4); text-shadow: 0 0 8px rgba(0,255,65,.4);
+  box-shadow: 0 0 20px rgba(0,255,65,.08);
+}
+.price-btn-main:hover { background: rgba(0,255,65,.18); box-shadow: 0 0 36px rgba(0,255,65,.16); }
+
+/* ── FINAL CTA ── */
+.cta-band {
+  padding: 100px 48px; text-align: center;
+  position: relative; z-index: 2;
+}
+.cta-band::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0,255,65,.045) 0%, transparent 68%);
+  pointer-events: none;
+}
+.cta-band h2 {
+  font-family: var(--ui); font-size: clamp(30px,4vw,52px);
+  font-weight: 800; color: var(--text); line-height: 1.1;
+  letter-spacing: -.02em; margin-bottom: 14px;
+}
+.cta-band h2 .hl { color: var(--accent); text-shadow: 0 0 40px rgba(0,255,65,.4); }
+.cta-band p { font-size: 16px; color: rgba(184,255,184,.42); margin-bottom: 38px; max-width: 460px; margin-left: auto; margin-right: auto; }
+.cta-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border2);
+  max-width: 1200px; margin: 0 auto;
+  padding: 48px; position: relative; z-index: 2;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+}
+.footer-brand p { font-size: 13px; color: rgba(184,255,184,.3); line-height: 1.75; margin-top: 12px; max-width: 270px; }
+.f-col-title { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: .15em; margin-bottom: 14px; }
+.f-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.f-links a { font-size: 13px; color: rgba(184,255,184,.3); text-decoration: none; transition: color .15s; }
+.f-links a:hover { color: var(--text2); }
+.footer-bottom {
+  border-top: 1px solid var(--border2);
+  padding: 22px 48px; position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-bottom p { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+/* ── SCROLL REVEAL ── */
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
+.reveal.on { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<canvas id="lp-matrix"></canvas>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-brand">
+    <div class="nav-icon">PM</div>
+    <span class="nav-name">PromptMatrix</span>
+    <span class="nav-ver">v1.5</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features"    class="nav-link">FEATURES</a>
+    <a href="#how-it-works" class="nav-link">HOW IT WORKS</a>
+    <a href="#pricing"     class="nav-link">PRICING</a>
+    <a href="#"            class="nav-link">DOCS</a>
+  </div>
+  <div class="nav-right">
+    <a href="#" class="btn btn-ghost">LOG_IN</a>
+    <a href="#" class="btn btn-primary">▶ START_FREE</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-text">
+    <div class="eyebrow">
+      <span class="eyebrow-dot"></span>
+      PROMPT INTELLIGENCE PLATFORM · v1.5 NOW LIVE
+    </div>
+
+    <h1>Manage, evaluate &<br>deploy <span class="green">AI prompts</span><br>at scale</h1>
+
+    <div class="sub-mono">// version_control · eval_pipelines · trace_observability · team_collab</div>
+
+    <p class="hero-desc">
+      The complete platform for engineering teams to build, test, version-control and
+      deploy production-grade AI prompts across any model — with real-time quality
+      scoring and full observability.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#" class="cta-big primary">▶ START_FREE — no card required</a>
+      <a href="#demo" class="cta-big ghost">◎ LIVE_DEMO ↓</a>
+    </div>
+    <div class="hero-note">Free 14-day trial · Full feature access · Cancel any time</div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-val">412k+</div><div class="stat-label">EXECUTIONS / DAY</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-val">99.8%</div><div class="stat-label">PLATFORM UPTIME</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-val">3 min</div><div class="stat-label">AVG SETUP TIME</div></div>
+    <div class="stat-div"></div>
+    <div class="stat"><div class="stat-val">8.4/10</div><div class="stat-label">AVG QUALITY SCORE</div></div>
+  </div>
+</section>
+
+<!-- LIVE DASHBOARD DEMO -->
+<div id="demo" class="demo-section">
+  <div class="demo-wrap" style="position:relative">
+    <div class="demo-glow"></div>
+
+    <!-- browser chrome -->
+    <div class="browser-bar">
+      <div class="dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="addr-bar" id="addr-bar">
+        <span class="addr-https">🔒</span>
+        <span id="addr-text">app.promptmatrix.io/dashboard</span>
+      </div>
+      <div class="browser-tabs">
+        <span class="b-tab on"  id="tab-dashboard"   onclick="switchTab('dashboard')">Dashboard</span>
+        <span class="b-tab"     id="tab-editor"      onclick="switchTab('editor')">Prompt Studio</span>
+        <span class="b-tab"     id="tab-analytics"   onclick="switchTab('analytics')">Analytics</span>
+        <span class="b-tab"     id="tab-traces"      onclick="switchTab('traces')">Traces</span>
+      </div>
+    </div>
+
+    <!-- the dashboard iframe -->
+    <div class="iframe-wrap">
+      <div class="interactive-tag">
+        <span class="live-dot"></span>
+        INTERACTIVE — click anything
+      </div>
+      <iframe
+        id="dash"
+        src="dashboard.html"
+        title="PromptMatrix Live Demo"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-label">TRUSTED BY ENGINEERING TEAMS AT</div>
+  <div style="overflow:hidden">
+    <div class="marquee-track">
+      <div class="m-item"><span>▪</span> ACME CORP</div>
+      <div class="m-item"><span>▪</span> NOVA AI LABS</div>
+      <div class="m-item"><span>▪</span> CIPHER SYSTEMS</div>
+      <div class="m-item"><span>▪</span> DELTA TECH</div>
+      <div class="m-item"><span>▪</span> VERTEX CO</div>
+      <div class="m-item"><span>▪</span> ECHO PLATFORM</div>
+      <div class="m-item"><span>▪</span> MATRIX OPS</div>
+      <div class="m-item"><span>▪</span> SIGNAL LABS</div>
+      <div class="m-item"><span>▪</span> PULSE AI</div>
+      <div class="m-item"><span>▪</span> ORBIT DATA</div>
+      <!-- duplicate for seamless loop -->
+      <div class="m-item"><span>▪</span> ACME CORP</div>
+      <div class="m-item"><span>▪</span> NOVA AI LABS</div>
+      <div class="m-item"><span>▪</span> CIPHER SYSTEMS</div>
+      <div class="m-item"><span>▪</span> DELTA TECH</div>
+      <div class="m-item"><span>▪</span> VERTEX CO</div>
+      <div class="m-item"><span>▪</span> ECHO PLATFORM</div>
+      <div class="m-item"><span>▪</span> MATRIX OPS</div>
+      <div class="m-item"><span>▪</span> SIGNAL LABS</div>
+      <div class="m-item"><span>▪</span> PULSE AI</div>
+      <div class="m-item"><span>▪</span> ORBIT DATA</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="reveal">
+    <div class="s-label">// CORE_FEATURES</div>
+    <h2 class="s-title">Everything your team needs<br>to <span class="hl">ship prompts confidently</span></h2>
+    <p class="s-sub">From first draft to production deployment — version-controlled, evaluated, and observed end-to-end.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat reveal">
+      <div class="feat-icon">◧</div>
+      <div class="feat-title">Prompt Studio</div>
+      <div class="feat-desc">A full-featured editor with variable injection, multi-tab prompts, real-time token counting, and model parameter controls.</div>
+      <div class="feat-chip">EDITOR · VARIABLES · PARAMS</div>
+    </div>
+    <div class="feat reveal" style="transition-delay:.07s">
+      <div class="feat-icon">◉</div>
+      <div class="feat-title">Eval Pipelines</div>
+      <div class="feat-desc">Automated quality scoring with test suites, score thresholds, heatmaps, and CI/CD integration. Auto-promote on pass.</div>
+      <div class="feat-chip">QUALITY · CI/CD · THRESHOLDS</div>
+    </div>
+    <div class="feat reveal" style="transition-delay:.14s">
+      <div class="feat-icon">⑂</div>
+      <div class="feat-title">Version Control</div>
+      <div class="feat-desc">Git-style branching, full diff viewer, rollback, branch management, and auto-snapshot on eval pass.</div>
+      <div class="feat-chip">GIT · DIFF · ROLLBACK</div>
+    </div>
+    <div class="feat reveal" style="transition-delay:.04s">
+      <div class="feat-icon">◑</div>
+      <div class="feat-title">Trace Viewer</div>
+      <div class="feat-desc">End-to-end observability with per-stage timing — input, build, model exec, eval scoring, and routing.</div>
+      <div class="feat-chip">OBSERVABILITY · LATENCY · DEBUG</div>
+    </div>
+    <div class="feat reveal" style="transition-delay:.11s">
+      <div class="feat-icon" style="color:var(--purple)">✦</div>
+      <div class="feat-title">AI Prompt Generator</div>
+      <div class="feat-desc">Describe your task in plain English — Claude generates a production-ready, structured prompt with variables.</div>
+      <div class="feat-chip">CLAUDE · AI-POWERED · GENERATE</div>
+    </div>
+    <div class="feat reveal" style="transition-delay:.18s">
+      <div class="feat-icon">◎</div>
+      <div class="feat-title">Analytics</div>
+      <div class="feat-desc">30-day call volume, model breakdown, per-prompt scores, cost tracking, and quality trends in real time.</div>
+      <div class="feat-chip">METRICS · COST · TRENDS</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<div class="hiw-bg section-full" id="how-it-works">
+  <div style="text-align:center;max-width:600px;margin:0 auto" class="reveal">
+    <div class="s-label" style="text-align:center">// HOW_IT_WORKS</div>
+    <h2 class="s-title" style="text-align:center">From draft to production<br>in <span class="hl">four steps</span></h2>
+  </div>
+  <div class="steps reveal">
+    <div class="step">
+      <div class="step-num lit">01</div>
+      <div class="step-title">Write or Generate</div>
+      <div class="step-desc">Use the Prompt Studio or let AI write your prompt from a plain-text description.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Evaluate & Score</div>
+      <div class="step-desc">Run automated evals across test cases. Scores across accuracy, tone, and relevance.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Version & Review</div>
+      <div class="step-desc">Commit to version history with diff view. Collaborate before promoting to staging or prod.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Deploy & Observe</div>
+      <div class="step-desc">Deploy to a live endpoint and monitor traces, quality alerts, and cost in the dashboard.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="max-width:1200px;margin:0 auto">
+  <div class="reveal" style="text-align:center;max-width:580px;margin:0 auto 0">
+    <div class="s-label" style="text-align:center">// WHAT_TEAMS_SAY</div>
+    <h2 class="s-title" style="text-align:center">Shipped by teams who take<br><span class="hl">prompt quality seriously</span></h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi reveal">
+      <div class="testi-text">PromptMatrix cut our prompt iteration time from days to hours. The version diff viewer alone is worth it — finally we review prompt changes like we review code.</div>
+      <div class="testi-author"><div class="t-av">AK</div><div><div class="t-name">Alex Kim</div><div class="t-role">HEAD OF AI · NOVA LABS</div></div><div class="t-stars">★★★★★</div></div>
+    </div>
+    <div class="testi reveal" style="transition-delay:.08s">
+      <div class="testi-text">Eval pipelines with CI/CD means we catch regressions before production. Our quality scores went from 6.8 to 9.1 average in 3 months.</div>
+      <div class="testi-author"><div class="t-av" style="background:rgba(0,255,204,.07);border-color:rgba(0,255,204,.25);color:var(--cyan)">SR</div><div><div class="t-name">Sofia Reyes</div><div class="t-role">LEAD ENG · CIPHER SYS</div></div><div class="t-stars">★★★★★</div></div>
+    </div>
+    <div class="testi reveal" style="transition-delay:.16s">
+      <div class="testi-text">The AI prompt generator is scary good. Describe what you need, hit generate, and Claude outputs a production-ready template. Ship day 1.</div>
+      <div class="testi-author"><div class="t-av" style="background:rgba(157,111,255,.08);border-color:rgba(157,111,255,.25);color:var(--purple)">MP</div><div><div class="t-name">Marcus Park</div><div class="t-role">FOUNDING ENG · DELTA TECH</div></div><div class="t-stars">★★★★★</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<div class="pricing-bg section-full" id="pricing">
+  <div style="text-align:center;max-width:580px;margin:0 auto" class="reveal">
+    <div class="s-label" style="text-align:center">// PRICING</div>
+    <h2 class="s-title" style="text-align:center">Simple, transparent<br><span class="hl">pricing for every team</span></h2>
+    <p class="s-sub" style="text-align:center;margin:0 auto">All plans include full platform access. No hidden fees.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="price-card reveal">
+      <div class="price-tier">// STARTER</div>
+      <div class="price-val"><sup>$</sup>0</div>
+      <div class="price-period">FREE FOREVER</div>
+      <ul class="price-feats">
+        <li>5 active prompts</li>
+        <li>100 eval runs/month</li>
+        <li>3 team members</li>
+        <li>7-day trace history</li>
+        <li class="dim">Version control</li>
+        <li class="dim">AI Prompt Generator</li>
+      </ul>
+      <button class="price-btn price-btn-ghost">START_FREE →</button>
+    </div>
+    <div class="price-card featured reveal" style="transition-delay:.08s">
+      <div class="price-badge">MOST POPULAR</div>
+      <div class="price-tier">// PRO_MATRIX</div>
+      <div class="price-val"><sup>$</sup>49<sub>/mo</sub></div>
+      <div class="price-period">PER WORKSPACE · MONTHLY</div>
+      <ul class="price-feats">
+        <li>Unlimited prompts</li>
+        <li>10,000 eval runs/month</li>
+        <li>15 team members</li>
+        <li>90-day trace history</li>
+        <li>Full version control</li>
+        <li>AI Prompt Generator</li>
+      </ul>
+      <button class="price-btn price-btn-main">START_TRIAL_FREE →</button>
+    </div>
+    <div class="price-card reveal" style="transition-delay:.16s">
+      <div class="price-tier">// ENTERPRISE</div>
+      <div class="price-val" style="font-size:28px;padding-top:5px">CUSTOM</div>
+      <div class="price-period">CONTACT SALES</div>
+      <ul class="price-feats">
+        <li>Unlimited everything</li>
+        <li>SSO + SAML</li>
+        <li>Unlimited seats</li>
+        <li>1-year trace history</li>
+        <li>Priority support + SLA</li>
+        <li>Private cloud / VPC</li>
+      </ul>
+      <button class="price-btn price-btn-ghost">CONTACT_SALES →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<div class="cta-band reveal">
+  <h2>Your prompts deserve<br><span class="hl">production-grade engineering</span></h2>
+  <p>Join 400+ teams shipping higher-quality AI features with PromptMatrix.</p>
+  <div class="cta-row">
+    <a href="#" class="cta-big primary" style="font-size:15px;padding:15px 34px">▶ START_FOR_FREE</a>
+    <a href="#" class="cta-big ghost">⊞ BOOK_A_DEMO</a>
+  </div>
+  <div style="margin-top:18px;font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.06em">
+    No card required · 14-day full access · Cancel any time
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer">
+    <div class="footer-brand">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:2px">
+        <div class="nav-icon" style="width:26px;height:26px;font-size:10px">PM</div>
+        <span class="nav-name" style="font-size:13px">PromptMatrix</span>
+      </div>
+      <p>The AI Prompt Intelligence Platform — version-control, evaluate, and deploy production prompts at scale.</p>
+    </div>
+    <div>
+      <div class="f-col-title">PRODUCT</div>
+      <ul class="f-links"><li><a href="#">Features</a></li><li><a href="#">Pricing</a></li><li><a href="#">Changelog</a></li><li><a href="#">Roadmap</a></li></ul>
+    </div>
+    <div>
+      <div class="f-col-title">DEVELOPERS</div>
+      <ul class="f-links"><li><a href="#">Documentation</a></li><li><a href="#">API Reference</a></li><li><a href="#">SDK</a></li><li><a href="#">Status</a></li></ul>
+    </div>
+    <div>
+      <div class="f-col-title">COMPANY</div>
+      <ul class="f-links"><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 PromptMatrix Inc. All rights reserved.</p>
+    <p>v1.5.0 · Built with ♥ for AI engineers</p>
+  </div>
+</footer>
+
+<script>
+/* ── MATRIX RAIN ── */
+(function(){
+  const c = document.getElementById('lp-matrix');
+  const ctx = c.getContext('2d');
+  const chars = 'アイウエオカキクケコ01◈◧◉⑂◎◑▷⊗⊙';
+  let W, H, cols, drops;
+  function resize(){
+    W = c.width  = window.innerWidth;
+    H = c.height = window.innerHeight;
+    cols  = Math.floor(W / 20);
+    drops = drops ? drops : Array(cols).fill(0);
+    // resize drops array if needed
+    while(drops.length < cols) drops.push(0);
+  }
+  function draw(){
+    ctx.fillStyle = 'rgba(0,0,0,0.045)';
+    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = '#00ff41';
+    ctx.font = '13px JetBrains Mono, monospace';
+    for(let i=0;i<cols;i++){
+      ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*20, drops[i]*20);
+      if(drops[i]*20 > H && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  setInterval(draw, 65);
+})();
+
+/* ── NAV SCROLL ── */
+window.addEventListener('scroll', ()=>{
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+/* ── SCROLL REVEAL ── */
+const ro = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('on'); ro.unobserve(e.target); } });
+}, {threshold: 0.1});
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+/* ── BROWSER TABS — control dashboard iframe ── */
+const tabPages = {
+  dashboard: { page: 'dashboard', addr: 'app.promptmatrix.io/dashboard' },
+  editor:    { page: 'editor',    addr: 'app.promptmatrix.io/studio'    },
+  analytics: { page: 'analytics', addr: 'app.promptmatrix.io/analytics' },
+  traces:    { page: 'traces',    addr: 'app.promptmatrix.io/traces'    },
+};
+
+function switchTab(key){
+  // update tab styles
+  document.querySelectorAll('.b-tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('tab-' + key).classList.add('on');
+
+  // update address bar
+  document.getElementById('addr-text').textContent = tabPages[key].addr;
+
+  // tell the iframe to navigate
+  const iframe = document.getElementById('dash');
+  try {
+    if(iframe.contentWindow && iframe.contentWindow.showPage){
+      iframe.contentWindow.showPage(tabPages[key].page, null);
+    }
+  } catch(e){
+    // cross-origin guard — fine for same-origin files
+  }
+}
+
+// Sync address bar when iframe navigates internally
+document.getElementById('dash').addEventListener('load', ()=>{
+  // iframe loaded — nothing needed, same-origin
+});
+</script>
+</body>
+</html>
