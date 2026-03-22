@@ -1,0 +1,174 @@
+"""
+Test fixtures
+=============
+All tests share a SQLite in-memory database that is created fresh per test.
+No mocking of business logic — tests run against real SQLAlchemy models.
+
+Email sending is patched at the httpx level so no real network calls happen.
+Upstash Redis is replaced with a _NoopCache so tests run without credentials.
+"""
+
+import os
+import pytest
+import pytest_asyncio
+
+# Set test env before any app imports
+os.environ.setdefault("DATABASE_URL", "sqlite:///./test_pm.db")
+os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret-key-not-for-prod")
+os.environ.setdefault("ENCRYPTION_KEY", "test-enc-key-not-for-prod-xxxxxx")
+os.environ.setdefault("APP_ENV", "development")
+
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app.database import Base, get_db
+from app.models import (
+    Organisation, User, OrgMember, Project, Environment,
+    Prompt, PromptVersion, ApiKey
+)
+from app.core.auth import hash_password, generate_api_key
+
+# ── Test database — fresh SQLite per session ──────────────────────
+
+TEST_DB_URL = "sqlite:///./test_pm.db"
+test_engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
+TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+
+
+def override_get_db():
+    db = TestSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _create_tables():
+    """Create all tables once for the test session."""
+    Base.metadata.create_all(bind=test_engine)
+    yield
+    Base.metadata.drop_all(bind=test_engine)
+    import os
+    if os.path.exists("test_pm.db"):
+        os.remove("test_pm.db")
+
+
+@pytest.fixture(autouse=True)
+def _clean_db():
+    """Wipe all rows between tests — keeps tests independent."""
+    yield
+    db = TestSessionLocal()
+    try:
+        # Delete in dependency order
+        for model in [
+            PromptVersion, Prompt, ApiKey,
+            Environment, Project, OrgMember, User, Organisation
+        ]:
+            db.query(model).delete()
+        db.commit()
+    finally:
+        db.close()
+
+
+@pytest.fixture
+def client():
+    """TestClient with DB dependency overridden to test database."""
+    # Import here so env vars are already set
+    import main
+    from app.serve import cache as cache_module
+
+    # Replace Upstash cache with no-op so tests don't need Redis credentials
+    original_cache = cache_module._cache
+    cache_module._cache = cache_module._NoopCache()
+
+    main.app.dependency_overrides[get_db] = override_get_db
+    with TestClient(main.app, raise_server_exceptions=True) as c:
+        yield c
+
+    main.app.dependency_overrides.clear()
+    cache_module._cache = original_cache
+
+
+@pytest.fixture
+def db():
+    """Raw DB session for fixtures and assertions."""
+    session = TestSessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+
+
+# ── Seed helpers ──────────────────────────────────────────────────
+
+def seed_org_user(db, email="owner@test.com", role="owner", plan="free"):
+    """Create org + user + membership. Returns (org, user, member)."""
+    import re, secrets
+    slug_base = re.sub(r"[^a-z0-9]", "-", email.split("@")[0])
+    slug = slug_base
+    i = 1
+    while db.query(Organisation).filter(Organisation.slug == slug).first():
+        slug = f"{slug_base}-{i}"; i += 1
+
+    org = Organisation(name=f"{email}'s Org", slug=slug, plan=plan)
+    db.add(org); db.flush()
+
+    user = User(email=email, hashed_pw=hash_password("password123"), full_name="Test User")
+    db.add(user); db.flush()
+
+    member = OrgMember(org_id=org.id, user_id=user.id, role=role)
+    db.add(member); db.flush()
+
+    project = Project(org_id=org.id, name="Default")
+    db.add(project); db.flush()
+
+    env = Environment(
+        project_id=project.id, name="production",
+        display_name="Production", color="#00e676",
+        is_protected=True, eval_pass_threshold=7.0
+    )
+    db.add(env); db.flush()
+    db.commit()
+
+    return org, user, member, project, env
+
+
+def seed_approved_prompt(db, env_id, user_id, key="assistant.system", content="You are a helpful assistant."):
+    """Create a prompt with one approved live version. Returns (prompt, version)."""
+    prompt = Prompt(environment_id=env_id, key=key, description="test")
+    db.add(prompt); db.flush()
+
+    v = PromptVersion(
+        prompt_id=prompt.id, version_num=1,
+        content=content, commit_message="init",
+        status="approved",
+        proposed_by_id=user_id, approved_by_id=user_id,
+    )
+    db.add(v); db.flush()
+    prompt.live_version_id = v.id
+    db.commit()
+    return prompt, v
+
+
+def seed_api_key(db, env_id, name="test-key"):
+    """Create and return (full_key_string, ApiKey row)."""
+    full_key, key_hash, key_prefix = generate_api_key("production")
+    row = ApiKey(
+        environment_id=env_id, name=name,
+        key_hash=key_hash, key_prefix=key_prefix
+    )
+    db.add(row); db.commit()
+    return full_key, row
+
+
+def auth_headers(client, email="owner@test.com", password="password123"):
+    """Login and return Authorization headers."""
+    r = client.post("/api/v1/auth/login", json={"email": email, "password": password})
+    assert r.status_code == 200, f"Login failed: {r.text}"
+    token = r.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}

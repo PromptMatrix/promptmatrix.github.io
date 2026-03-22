@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PromptMatrix — Prompt Governance</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --g:#00e676;--g2:#00c853;--g3:rgba(0,230,118,.07);--g4:rgba(0,230,118,.13);
+  --bg:#060806;--bg2:#0a0c0a;--bg3:#0e110e;--bg4:#131613;
+  --b:#161a16;--b2:#1e231e;--b3:#262b26;
+  --t:#c8d4c8;--t2:#6a7a6a;--t3:#2e3a2e;--t4:#3e4e3e;
+  --r:#ff4444;--r2:rgba(255,68,68,.12);
+  --y:#ffd700;--y2:rgba(255,215,0,.12);
+  --c:#00e5ff;--c2:rgba(0,229,255,.1);
+  --p:#b388ff;--p2:rgba(179,136,255,.1);
+  --f:'JetBrains Mono',monospace;
+  --rad:0px;
+}
+html,body{height:100%;background:var(--bg);color:var(--t);font-family:var(--f);font-size:12px;overflow:hidden}
+canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
+.scanlines{position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);opacity:.6}
+.shell{position:relative;z-index:1;display:flex;height:100vh;overflow:hidden}
+
+/* ══ AUTH OVERLAY ══ */
+#auth-overlay{
+  position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:0;
+}
+#auth-overlay.hidden{display:none}
+.auth-box{
+  width:100%;max-width:420px;background:var(--bg2);
+  border:1px solid var(--b2);padding:0;overflow:hidden;
+}
+.auth-header{
+  padding:24px 28px 20px;border-bottom:1px solid var(--b2);
+}
+.auth-logo{
+  font-size:16px;font-weight:600;letter-spacing:.08em;color:var(--g);
+  margin-bottom:4px;
+}
+.auth-logo em{color:var(--t3);font-style:normal;font-size:10px;margin-left:4px}
+.auth-tabs{
+  display:flex;gap:0;border-bottom:1px solid var(--b2);
+}
+.auth-tab{
+  flex:1;padding:10px;text-align:center;font-size:10px;letter-spacing:.08em;
+  cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;
+  transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;
+  font-family:var(--f);
+}
+.auth-tab.active{color:var(--g);border-bottom-color:var(--g)}
+.auth-body{padding:24px 28px}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:9px;color:var(--t3);letter-spacing:.1em;margin-bottom:5px}
+.auth-field input{
+  width:100%;background:var(--bg3);border:1px solid var(--b2);
+  color:var(--t);font-family:var(--f);font-size:11px;
+  padding:8px 10px;outline:none;transition:border-color .15s;
+}
+.auth-field input:focus{border-color:var(--g)}
+.auth-btn{
+  width:100%;background:var(--g);color:#000;font-family:var(--f);
+  font-size:10px;font-weight:600;letter-spacing:.1em;padding:10px;
+  border:none;cursor:pointer;transition:background .15s;
+}
+.auth-btn:hover{background:var(--g2)}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed}
+.auth-err{
+  font-size:9px;color:var(--r);margin-top:10px;
+  padding:6px 8px;background:var(--r2);border-left:2px solid var(--r);
+  display:none;
+}
+.auth-err.show{display:block}
+.auth-footer{
+  padding:14px 28px;border-top:1px solid var(--b2);
+  font-size:9px;color:var(--t3);text-align:center;
+}
+
+/* ══ SIDEBAR ══ */
+.sb{width:196px;min-width:196px;border-right:1px solid var(--b2);display:flex;flex-direction:column;background:var(--bg);transition:width .15s,min-width .15s}
+.sb.col{width:42px;min-width:42px}
+.logo{padding:12px 10px;border-bottom:1px solid var(--b2);display:flex;align-items:center;gap:8px;min-height:46px;overflow:hidden}
+.logo-mark{color:var(--g);font-size:12px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+.logo-mark em{color:var(--t3);font-style:normal;font-size:9px;margin-left:3px}
+.sb-tog{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-family:var(--f);font-size:14px;flex-shrink:0;line-height:1;padding:0 2px;transition:color .15s}
+.sb-tog:hover{color:var(--g)}
+.nav{flex:1;padding:6px 3px;overflow-y:auto;overflow-x:hidden}
+.nav::-webkit-scrollbar{width:2px}
+.nav::-webkit-scrollbar-thumb{background:var(--b2)}
+.ns{font-size:8px;color:var(--t3);letter-spacing:.18em;padding:8px 7px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col .ns{opacity:0;pointer-events:none}
+.ni{display:flex;align-items:center;gap:7px;padding:5px 7px;cursor:pointer;color:var(--t2);border-left:2px solid transparent;margin-bottom:1px;white-space:nowrap;overflow:hidden;transition:color .12s,background .12s,border-color .12s;user-select:none}
+.ni:hover{color:var(--t);background:rgba(255,255,255,.018)}
+.ni.on{color:var(--g);border-left-color:var(--g);background:var(--g3)}
+.ni .ic{font-size:11px;width:14px;text-align:center;flex-shrink:0}
+.ni .lb{overflow:hidden;transition:max-width .15s,opacity .15s;font-size:11px}
+.col .ni .lb{max-width:0;opacity:0}
+.ni .bx{margin-left:auto;font-size:8px;color:var(--t3);border:1px solid var(--b2);padding:0 3px;flex-shrink:0;line-height:14px}
+.col .bx{display:none}
+.sf{padding:6px;border-top:1px solid var(--b2)}
+.uc{display:flex;align-items:center;gap:6px;padding:6px 7px;border:1px solid var(--b2);cursor:pointer;background:var(--bg2);overflow:hidden;transition:background .12s}
+.uc:hover{background:var(--bg3)}
+.av{width:24px;height:24px;background:var(--g3);border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g);flex-shrink:0;font-weight:600}
+.ui{overflow:hidden;flex:1}
+.un{font-size:10px;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up{font-size:8px;color:var(--t3)}
+.col .ui{display:none}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:var(--r);flex-shrink:0}
+.sb-dot.ok{background:var(--g)}
+.sb-clock{font-size:8px;color:var(--t3);padding:4px 7px;letter-spacing:.04em}
+.col .sb-clock{display:none}
+.sb-info{font-size:8px;color:var(--t3);padding:2px 7px;letter-spacing:.04em;white-space:nowrap;overflow:hidden}
+.col .sb-info{display:none}
+.sb-mode{font-size:8px;color:var(--y);padding:0 7px 4px;letter-spacing:.04em}
+.col .sb-mode{display:none}
+
+/* ══ MAIN ══ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.top{height:38px;border-bottom:1px solid var(--b2);display:flex;align-items:center;padding:0 12px;gap:10px;flex-shrink:0;background:var(--bg)}
+.bc{font-size:9px;color:var(--t3);letter-spacing:.08em;flex:1}
+.bc span{color:var(--t2)}
+.lb-live{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--t3)}
+.lb-live .dot{width:5px;height:5px;border-radius:50%;background:var(--r)}
+.lb-live .dot.ok{background:var(--g)}
+.top-r{display:flex;gap:6px;align-items:center}
+.top-btn{padding:3px 8px;font-family:var(--f);font-size:9px;background:var(--bg3);border:1px solid var(--b2);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s}
+.top-btn:hover{border-color:var(--g);color:var(--g)}
+
+/* ENV SELECTOR */
+.env-sel{
+  display:flex;align-items:center;gap:6px;padding:3px 8px;
+  background:var(--bg3);border:1px solid var(--b2);cursor:pointer;
+  font-size:9px;color:var(--t2);letter-spacing:.06em;
+}
+.env-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.env-sel select{
+  background:none;border:none;color:var(--t2);font-family:var(--f);
+  font-size:9px;outline:none;cursor:pointer;padding:0;
+}
+
+/* ══ CONTENT PANES ══ */
+.cnt{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.cnt::-webkit-scrollbar{width:2px}
+.cnt::-webkit-scrollbar-thumb{background:var(--b2)}
+.pane{display:none;flex-direction:column;gap:10px}
+.pane.on{display:flex}
+
+/* ══ COMPONENTS ══ */
+.row{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.row-end{margin-left:auto;display:flex;gap:6px;align-items:center}
+.ph{font-size:10px;letter-spacing:.1em;color:var(--t2);font-weight:500}
+.ph span{color:var(--g)}
+.ps2{font-size:8px;color:var(--t3);margin-top:2px;letter-spacing:.04em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.card{background:var(--bg2);border:1px solid var(--b2);padding:10px 12px}
+.card-title{font-size:9px;letter-spacing:.12em;color:var(--t2);margin-bottom:8px;font-weight:500}
+.card-sub{font-size:9px;color:var(--t3);line-height:1.6;margin-top:4px}
+.mc{background:var(--bg2);border:1px solid var(--b2);padding:10px 12px}
+.ml{font-size:8px;color:var(--t3);letter-spacing:.1em;margin-bottom:4px}
+.mv{font-size:22px;font-weight:600;color:var(--t);letter-spacing:.02em;line-height:1}
+.mch{font-size:8px;margin-top:3px;letter-spacing:.05em}
+.mch.up{color:var(--g)}.mch.ne{color:var(--t3)}.mch.dn{color:var(--r)}
+.btn{padding:4px 10px;font-family:var(--f);font-size:9px;border:1px solid var(--b2);background:var(--bg3);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s;white-space:nowrap}
+.btn:hover{border-color:var(--g);color:var(--g)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.bp{background:var(--g3);border-color:var(--g);color:var(--g)}
+.btn.bp:hover{background:var(--g4)}
+.btn.br{border-color:rgba(255,68,68,.3);color:var(--r)}
+.btn.bg2b{border-color:var(--b3);color:var(--t3)}
+.bxs{font-size:8px;padding:3px 8px}
+.tag{font-size:8px;padding:1px 5px;border:1px solid var(--b2);color:var(--t3);letter-spacing:.05em}
+.tag.tg{border-color:rgba(0,230,118,.3);color:var(--g);background:var(--g3)}
+.tag.tc{border-color:rgba(0,229,255,.3);color:var(--c)}
+.tag.ty{border-color:rgba(255,215,0,.3);color:var(--y);background:var(--y2)}
+.tag.tp{border-color:rgba(179,136,255,.3);color:var(--p)}
+.tag.tr{border-color:rgba(255,68,68,.3);color:var(--r);background:var(--r2)}
+.tag.tn{color:var(--t3)}
+.empty{font-size:9px;color:var(--t3);letter-spacing:.06em;padding:20px 0;text-align:center;border:1px dashed var(--b2)}
+.vl{display:flex;flex-direction:column;gap:4px}
+.vi{padding:7px 10px;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;gap:8px;cursor:pointer;transition:border-color .12s}
+.vi:hover{border-color:var(--g)}
+.vi-key{font-size:10px;color:var(--t);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vi-meta{font-size:8px;color:var(--t3);letter-spacing:.04em;white-space:nowrap}
+.fg{margin-bottom:10px}
+.fg label{display:block;font-size:8px;color:var(--t3);letter-spacing:.1em;margin-bottom:4px}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:11px;padding:6px 8px;outline:none;resize:vertical;transition:border-color .15s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--g)}
+.fg textarea{min-height:120px;line-height:1.6}
+.fg select option{background:var(--bg3)}
+
+/* notif */
+#notif{position:fixed;bottom:16px;right:16px;z-index:9998;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.nt{padding:8px 12px;background:var(--bg2);border:1px solid var(--b2);font-size:10px;color:var(--t);letter-spacing:.04em;max-width:320px;opacity:0;transform:translateY(8px);transition:all .2s;border-left:3px solid var(--g)}
+.nt.show{opacity:1;transform:none}
+.nt.err{border-left-color:var(--r);color:var(--r)}
+.nt.warn{border-left-color:var(--y);color:var(--y)}
+
+/* version diff */
+.diff-old{background:rgba(255,68,68,.08);border-left:2px solid var(--r);padding:8px;font-size:10px;color:var(--t2);white-space:pre-wrap;word-break:break-all;line-height:1.7;margin-bottom:4px;max-height:200px;overflow-y:auto}
+.diff-new{background:var(--g3);border-left:2px solid var(--g);padding:8px;font-size:10px;color:var(--t);white-space:pre-wrap;word-break:break-all;line-height:1.7;max-height:200px;overflow-y:auto}
+
+/* score ring */
+.score-ring{position:relative;width:40px;height:40px;flex-shrink:0}
+.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.score-ring .sr-bg{fill:none;stroke:var(--b2);stroke-width:3}
+.score-ring .sr-fg{fill:none;stroke:var(--g);stroke-width:3;stroke-linecap:square;transition:stroke-dashoffset .6s ease}
+.score-ring .sr-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--t)}
+
+/* modal */
+#modal-overlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
+#modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--b2);width:90%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-hdr{padding:12px 16px;border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:10px;letter-spacing:.1em;color:var(--t);font-weight:500}
+.modal-close{background:none;border:none;color:var(--t3);font-size:14px;cursor:pointer;font-family:var(--f)}
+.modal-close:hover{color:var(--r)}
+.modal-body{padding:16px;overflow-y:auto;flex:1}
+.modal-foot{padding:10px 16px;border-top:1px solid var(--b2);display:flex;gap:8px;justify-content:flex-end}
+
+/* spinner */
+.spin{display:inline-block;width:10px;height:10px;border:1.5px solid var(--b3);border-top-color:var(--g);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* loading skeleton */
+.skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);background-size:200%;animation:skel 1.2s infinite;height:28px;margin-bottom:4px}
+@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* code block */
+.codeblk{background:var(--bg3);border:1px solid var(--b2);padding:10px 12px;font-size:10px;line-height:1.8;overflow-x:auto;white-space:pre}
+.codeblk .kw{color:var(--c)} .codeblk .st{color:var(--g)} .codeblk .cm{color:var(--t3)} .codeblk .va{color:var(--y)} .codeblk .fn{color:var(--p)}
+
+/* eval criteria bars */
+.crit-bar{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.crit-label{font-size:9px;color:var(--t3);width:110px;flex-shrink:0;letter-spacing:.04em}
+.crit-track{flex:1;height:3px;background:var(--b2);overflow:hidden}
+.crit-fill{height:100%;background:var(--g);transition:width .5s ease}
+.crit-val{font-size:9px;color:var(--t2);width:28px;text-align:right;flex-shrink:0}
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<div class="scanlines"></div>
+
+<!-- ══ AUTH OVERLAY ══ -->
+<div id="auth-overlay">
+  <div class="auth-box">
+    <div class="auth-header">
+      <div class="auth-logo">PROMPT<em>MATRIX</em> <span style="font-size:9px;color:var(--t3);margin-left:8px;letter-spacing:.04em">// PROMPT GOVERNANCE FOR AI TEAMS</span></div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="authTab('login')">SIGN_IN</button>
+      <button class="auth-tab" onclick="authTab('register')">CREATE_ACCOUNT</button>
+    </div>
+    <div class="auth-body">
+      <!-- LOGIN -->
+      <div id="auth-login">
+        <div class="auth-field"><label>EMAIL</label><input type="email" id="a-email" placeholder="you@company.com" autocomplete="email"></div>
+        <div class="auth-field"><label>PASSWORD</label><input type="password" id="a-pass" placeholder="••••••••" autocomplete="current-password"></div>
+        <div class="auth-err" id="auth-err-login"></div>
+        <button class="auth-btn" onclick="doLogin()" id="login-btn">SIGN_IN →</button>
+      </div>
+      <!-- REGISTER -->
+      <div id="auth-register" style="display:none">
+        <div class="auth-field"><label>FULL NAME</label><input type="text" id="r-name" placeholder="Alex Chen" autocomplete="name"></div>
+        <div class="auth-field"><label>EMAIL</label><input type="email" id="r-email" placeholder="you@company.com" autocomplete="email"></div>
+        <div class="auth-field"><label>PASSWORD</label><input type="password" id="r-pass" placeholder="Min 8 characters" autocomplete="new-password"></div>
+        <div class="auth-field"><label>WORKSPACE NAME</label><input type="text" id="r-org" placeholder="Acme AI Team"></div>
+        <div class="auth-err" id="auth-err-reg"></div>
+        <button class="auth-btn" onclick="doRegister()" id="reg-btn">CREATE_WORKSPACE →</button>
+      </div>
+    </div>
+    <div class="auth-footer">
+      Self-host free · Cloud plan $149 founding access ·
+      <a href="https://promptmatrix.io" style="color:var(--g);text-decoration:none">promptmatrix.io</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-title">MODAL</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<!-- ══ NOTIF ══ -->
+<div id="notif"></div>
+
+<!-- ══ SHELL ══ -->
+<div class="shell" id="shell" style="display:none">
+
+  <!-- SIDEBAR -->
+  <div class="sb" id="sb">
+    <div class="logo">
+      <div class="logo-mark" id="logo-text">PROMPT<em>MATRIX</em></div>
+      <button class="sb-tog" id="sb-tog" onclick="toggleSb()">‹</button>
+    </div>
+    <div class="nav">
+      <div class="ns">WORKSPACE</div>
+      <div class="ni on" onclick="pg('dash')" id="ni-dash"><span class="ic">◎</span><span class="lb">Dashboard</span><span class="bx" id="bx-alerts">0</span></div>
+      <div class="ni" onclick="pg('prompts')" id="ni-prompts"><span class="ic">▦</span><span class="lb">Prompts</span><span class="bx" id="bx-prompts">0</span></div>
+      <div class="ni" onclick="pg('editor')" id="ni-editor"><span class="ic">✦</span><span class="lb">Editor</span></div>
+      <div class="ni" onclick="pg('approvals')" id="ni-approvals"><span class="ic">◉</span><span class="lb">Approvals</span><span class="bx" id="bx-approvals">0</span></div>
+      <div class="ni" onclick="pg('evals')" id="ni-evals"><span class="ic">◈</span><span class="lb">Evaluations</span></div>
+      <div class="ni" onclick="pg('versions')" id="ni-versions"><span class="ic">⑂</span><span class="lb">History</span></div>
+      <div class="ns">INFRASTRUCTURE</div>
+      <div class="ni" onclick="pg('keys')" id="ni-keys"><span class="ic">⌘</span><span class="lb">API Keys</span></div>
+      <div class="ni" onclick="pg('environments')" id="ni-environments"><span class="ic">◌</span><span class="lb">Environments</span></div>
+      <div class="ni" onclick="pg('audit')" id="ni-audit"><span class="ic">≡</span><span class="lb">Audit Log</span></div>
+      <div class="ns">INTEGRATIONS</div>
+      <div class="ni" onclick="pg('integrate')" id="ni-integrate"><span class="ic">⊕</span><span class="lb">Connect</span></div>
+      <div class="ns">ACCOUNT</div>
+      <div class="ni" onclick="pg('team')" id="ni-team"><span class="ic">◫</span><span class="lb">Team</span></div>
+      <div class="ni" onclick="pg('settings')" id="ni-settings"><span class="ic">⚙</span><span class="lb">Settings</span></div>
+    </div>
+    <div class="sf">
+      <div class="uc" onclick="pg('settings')">
+        <div class="av" id="sb-av">?</div>
+        <div class="ui">
+          <div class="un" id="sb-name">loading...</div>
+          <div class="up" id="sb-plan">● FREE</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;padding:4px 7px;margin-top:4px">
+        <div class="sb-dot" id="sb-dot"></div>
+        <div class="sb-clock" id="sb-clock">--:--:--</div>
+        <div class="sb-mode" id="sb-mode">CLOUD</div>
+      </div>
+      <div class="sb-info" id="sb-org">loading workspace...</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="top">
+      <div class="bc">PM / <span id="top-bc">DASHBOARD</span></div>
+      <!-- Environment selector -->
+      <div class="env-sel" id="env-sel">
+        <div class="env-dot" id="env-dot" style="background:var(--r)"></div>
+        <select id="env-select" onchange="switchEnv(this.value)">
+          <option value="">loading...</option>
+        </select>
+      </div>
+      <div class="lb-live"><span class="dot" id="top-dot"></span><span id="server-status">CONNECTING</span></div>
+      <div class="top-r">
+        <button class="top-btn" onclick="openNewPromptModal()">+ NEW PROMPT</button>
+        <button class="top-btn" onclick="doLogout()" style="color:var(--t3)">LOGOUT</button>
+      </div>
+    </div>
+    <div class="cnt" id="cnt">
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="pane on" id="pane-dash">
+        <div class="row">
+          <div><div class="ph">SYS: <span>DASHBOARD</span></div><div class="ps2" id="dash-org-line">loading workspace...</div></div>
+          <div class="row-end">
+            <button class="btn bp bxs" onclick="loadDash()">↻ REFRESH</button>
+          </div>
+        </div>
+        <div class="g4">
+          <div class="mc"><div class="ml">TOTAL_PROMPTS</div><div class="mv" id="dm-total">—</div><div class="mch ne" id="dm-total-ch">this environment</div></div>
+          <div class="mc"><div class="ml">LIVE_IN_PROD</div><div class="mv" id="dm-prod">—</div><div class="mch up">approved versions</div></div>
+          <div class="mc"><div class="ml">PENDING_REVIEW</div><div class="mv" id="dm-pending">—</div><div class="mch ne" id="dm-pend-ch">awaiting engineer</div></div>
+          <div class="mc"><div class="ml">TEAM_MEMBERS</div><div class="mv" id="dm-members">—</div><div class="mch ne">active</div></div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">RECENT PROMPTS</div>
+            <div class="vl" id="dash-recent"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">PENDING APPROVALS</div>
+            <div class="vl" id="dash-approvals"><div class="skel"></div><div class="skel"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">QUICK_START</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="openNewPromptModal()">
+              <div style="font-size:16px;margin-bottom:6px">✦</div>
+              <div style="font-size:9px;color:var(--g);letter-spacing:.06em;margin-bottom:3px">CREATE PROMPT</div>
+              <div style="font-size:8px;color:var(--t3);line-height:1.5">Name your prompt, write the content, save as draft</div>
+            </div>
+            <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="pg('keys')">
+              <div style="font-size:16px;margin-bottom:6px">⌘</div>
+              <div style="font-size:9px;color:var(--c);letter-spacing:.06em;margin-bottom:3px">GET API KEY</div>
+              <div style="font-size:8px;color:var(--t3);line-height:1.5">Create a serve key for your agents and workflows</div>
+            </div>
+            <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="pg('integrate')">
+              <div style="font-size:16px;margin-bottom:6px">⊕</div>
+              <div style="font-size:9px;color:var(--p);letter-spacing:.06em;margin-bottom:3px">CONNECT AGENT</div>
+              <div style="font-size:8px;color:var(--t3);line-height:1.5">See integration code for n8n, Python, Node, curl</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PROMPTS REGISTRY ══ -->
+      <div class="pane" id="pane-prompts">
+        <div class="row">
+          <div><div class="ph">▦ <span>PROMPT_REGISTRY</span></div><div class="ps2">all prompts in this environment · click to open editor</div></div>
+          <div class="row-end">
+            <input id="preg-search" placeholder="search keys..." style="background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:10px;padding:4px 8px;outline:none;width:160px" oninput="filterRegistry(this.value)">
+            <button class="btn bp bxs" onclick="openNewPromptModal()">+ NEW</button>
+          </div>
+        </div>
+        <div class="vl" id="registry-list">
+          <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+        </div>
+        <div class="empty" id="registry-empty" style="display:none">// no prompts yet · create your first prompt with + NEW</div>
+      </div>
+
+      <!-- ══ EDITOR ══ -->
+      <div class="pane" id="pane-editor">
+        <div class="row">
+          <div><div class="ph">✦ <span>PROMPT_EDITOR</span></div><div class="ps2" id="editor-meta">select a prompt from Registry</div></div>
+          <div class="row-end">
+            <button class="btn bxs bg2b" onclick="pg('prompts')">← BACK</button>
+            <button class="btn bxs" onclick="saveAsDraft()" id="btn-draft">SAVE DRAFT</button>
+            <button class="btn bp bxs" onclick="submitForReview()" id="btn-submit">SUBMIT FOR REVIEW</button>
+          </div>
+        </div>
+        <div class="g2" style="align-items:start">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="card">
+              <div class="fg">
+                <label>PROMPT KEY</label>
+                <input type="text" id="e-key" placeholder="assistant.system · radar.briefing · chatbot.greeting">
+              </div>
+              <div class="fg">
+                <label>DESCRIPTION (optional)</label>
+                <input type="text" id="e-desc" placeholder="What this prompt does">
+              </div>
+              <div class="fg">
+                <label>CONTENT — the actual prompt text</label>
+                <textarea id="e-content" rows="12" placeholder="You are a helpful assistant...&#10;&#10;Use {{variable}} for dynamic values.&#10;Example: Your name is {{user_name}} and you work at {{company}}."></textarea>
+              </div>
+              <div class="fg">
+                <label>COMMIT MESSAGE</label>
+                <input type="text" id="e-commit" placeholder="What changed and why">
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="card">
+              <div class="card-title">DETECTED VARIABLES</div>
+              <div id="e-vars" style="font-size:9px;color:var(--t3);line-height:1.8">Write {{variable}} in your prompt to define dynamic values. They appear here automatically.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">VERSION HISTORY</div>
+              <div class="vl" id="e-versions"><div style="font-size:9px;color:var(--t3)">Select a prompt to see version history</div></div>
+            </div>
+            <div class="card" id="eval-result-card" style="display:none">
+              <div class="card-title">LATEST EVAL RESULT</div>
+              <div id="eval-result-body"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ APPROVALS ══ -->
+      <div class="pane" id="pane-approvals">
+        <div class="row">
+          <div><div class="ph">◉ <span>APPROVAL_QUEUE</span></div><div class="ps2">versions awaiting your review · engineer+ role required to approve</div></div>
+          <div class="row-end">
+            <button class="btn bxs bg2b" onclick="loadApprovals()">↻ REFRESH</button>
+          </div>
+        </div>
+        <div id="approval-list"><div class="skel"></div><div class="skel"></div></div>
+        <div class="empty" id="approvals-empty" style="display:none">// no pending proposals · all clear ✓</div>
+      </div>
+
+      <!-- ══ EVALUATIONS ══ -->
+      <div class="pane" id="pane-evals">
+        <div class="row">
+          <div><div class="ph">◈ <span>EVALUATIONS</span></div><div class="ps2">LLM-as-judge · test your prompts before approving</div></div>
+        </div>
+        <div class="g2" style="align-items:start">
+          <div class="card">
+            <div class="card-title">RUN EVAL</div>
+            <div class="fg">
+              <label>SELECT PROMPT VERSION</label>
+              <select id="ev-version"><option value="">— select version —</option></select>
+            </div>
+            <div class="fg">
+              <label>JUDGE MODEL PROVIDER</label>
+              <select id="ev-provider" onchange="updateModelList()">
+                <option value="anthropic">Anthropic (Claude)</option>
+                <option value="openai">OpenAI (GPT)</option>
+                <option value="google">Google (Gemini)</option>
+                <option value="groq">Groq (Llama — free tier)</option>
+                <option value="mistral">Mistral</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>MODEL</label>
+              <select id="ev-model">
+                <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
+                <option value="claude-haiku-4-5-20251001">claude-haiku-4-5-20251001 (fast)</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>YOUR API KEY — used once, never stored</label>
+              <input type="password" id="ev-key" placeholder="sk-... or use saved team key below">
+            </div>
+            <div class="fg">
+              <label>TEST INPUT (what a user would send)</label>
+              <textarea id="ev-input" rows="3" placeholder="What are your capabilities?"></textarea>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn bp" onclick="runEval()" id="eval-btn">◈ RUN EVAL</button>
+              <button class="btn" onclick="runRuleBasedEval()">⚡ QUICK CHECK (no key needed)</button>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">SAVED TEAM KEYS</div>
+              <div id="team-keys-list"><div style="font-size:9px;color:var(--t3)">No saved keys. Add one to run evals without pasting keys each time.</div></div>
+              <button class="btn bxs" style="margin-top:8px" onclick="openSaveKeyModal()">+ SAVE KEY</button>
+            </div>
+            <div class="card" id="eval-output" style="display:none">
+              <div class="card-title">EVAL RESULT</div>
+              <div id="eval-output-body"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ HISTORY ══ -->
+      <div class="pane" id="pane-versions">
+        <div class="row">
+          <div><div class="ph">⑂ <span>VERSION_HISTORY</span></div><div class="ps2">complete audit trail · every version ever proposed</div></div>
+        </div>
+        <div class="card">
+          <div class="fg">
+            <label>SELECT PROMPT TO VIEW HISTORY</label>
+            <select id="hist-select" onchange="loadVersionHistory(this.value)">
+              <option value="">— select prompt —</option>
+            </select>
+          </div>
+        </div>
+        <div id="hist-list"></div>
+      </div>
+
+      <!-- ══ API KEYS ══ -->
+      <div class="pane" id="pane-keys">
+        <div class="row">
+          <div><div class="ph">⌘ <span>API_KEYS</span></div><div class="ps2">serve keys for your agents · each key tied to one environment</div></div>
+          <div class="row-end">
+            <button class="btn bp bxs" onclick="openCreateKeyModal()">+ CREATE KEY</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">HOW AGENTS USE THESE KEYS</div>
+          <div class="codeblk"><span class="cm"># Python / any HTTP client</span>
+<span class="cm"># Replace pm_live_xxxx with your actual key</span>
+r = requests.get(
+    <span class="st">"https://api.promptmatrix.io/pm/serve/<span class="va">your.prompt.key</span>"</span>,
+    headers={<span class="st">"Authorization"</span>: <span class="st">"Bearer <span class="va">pm_live_xxxx</span>"</span>},
+    timeout=<span class="va">2</span>
+)
+system_prompt = r.text  <span class="cm"># returns the approved content</span></div>
+        </div>
+        <div class="vl" id="keys-list"><div class="skel"></div><div class="skel"></div></div>
+        <div class="empty" id="keys-empty" style="display:none">// no API keys yet · create one to connect your agents</div>
+      </div>
+
+      <!-- ══ ENVIRONMENTS ══ -->
+      <div class="pane" id="pane-environments">
+        <div class="row">
+          <div><div class="ph">◌ <span>ENVIRONMENTS</span></div><div class="ps2">dev → staging → production · each environment has its own prompts and keys</div></div>
+        </div>
+        <div class="vl" id="env-list"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+      </div>
+
+      <!-- ══ AUDIT LOG ══ -->
+      <div class="pane" id="pane-audit">
+        <div class="row">
+          <div><div class="ph">≡ <span>AUDIT_LOG</span></div><div class="ps2">every action · append-only · who did what and when</div></div>
+          <div class="row-end">
+            <select id="audit-filter" onchange="loadAudit()" style="background:var(--bg3);border:1px solid var(--b2);color:var(--t2);font-family:var(--f);font-size:9px;padding:3px 6px;outline:none">
+              <option value="">ALL ACTIONS</option>
+              <option value="version">versions</option>
+              <option value="prompt">prompts</option>
+              <option value="member">members</option>
+              <option value="key">api keys</option>
+            </select>
+          </div>
+        </div>
+        <div id="audit-list"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+      </div>
+
+      <!-- ══ INTEGRATIONS ══ -->
+      <div class="pane" id="pane-integrate">
+        <div class="row">
+          <div><div class="ph">⊕ <span>INTEGRATIONS</span></div><div class="ps2">connect your agents · copy integration code</div></div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">PYTHON</div>
+            <div class="codeblk"><span class="kw">import</span> requests
+
+<span class="fn">def</span> <span class="va">get_prompt</span>(key, vars={}):
+    url = <span class="st">f"https://api.promptmatrix.io/pm/serve/{key}"</span>
+    <span class="kw">if</span> vars:
+        url += <span class="st">"?vars="</span> + <span class="st">","</span>.join(
+            <span class="st">f"{k}={v}"</span> <span class="kw">for</span> k,v <span class="kw">in</span> vars.items()
+        )
+    r = requests.get(url, headers={
+        <span class="st">"Authorization"</span>: <span class="st">"Bearer YOUR_KEY"</span>
+    }, timeout=<span class="va">2</span>)
+    <span class="kw">return</span> r.text <span class="kw">if</span> r.ok <span class="kw">else</span> <span class="st">"[fallback prompt]"</span>
+
+<span class="cm"># Usage</span>
+system = get_prompt(<span class="st">"assistant.system"</span>)
+system = get_prompt(<span class="st">"email.writer"</span>, {<span class="st">"tone"</span>: <span class="st">"formal"</span>})</div>
+          </div>
+          <div class="card">
+            <div class="card-title">n8n / MAKE / ZAPIER</div>
+            <div style="font-size:10px;color:var(--t2);line-height:1.8;margin-bottom:10px">Add an HTTP Request node before your AI node:</div>
+            <div class="codeblk">Method:  GET
+URL:     https://api.promptmatrix.io
+         /pm/serve/{{$vars.promptKey}}
+Headers:
+  Authorization: Bearer YOUR_KEY
+
+<span class="cm"># Output maps to system prompt input</span>
+<span class="cm"># of your OpenAI / Claude / Gemini node</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">JAVASCRIPT / NODE</div>
+            <div class="codeblk"><span class="kw">const</span> <span class="va">getPrompt</span> = <span class="kw">async</span> (key, vars={}) => {
+  <span class="kw">const</span> q = <span class="va">Object</span>.entries(vars)
+    .map(([k,v]) => <span class="st">`${k}=${v}`</span>).join(<span class="st">","</span>)
+  <span class="kw">const</span> url = <span class="st">`https://api.promptmatrix.io</span>
+<span class="st">    /pm/serve/${key}${q ? "?vars="+q : ""}`</span>
+  <span class="kw">const</span> r = <span class="kw">await</span> fetch(url, {
+    headers: { Authorization: <span class="st">"Bearer YOUR_KEY"</span> }
+  })
+  <span class="kw">return</span> r.ok ? r.text() : <span class="st">"[fallback]"</span>
+}</div>
+          </div>
+          <div class="card">
+            <div class="card-title">CURL</div>
+            <div class="codeblk"><span class="cm"># Plain text response</span>
+curl https://api.promptmatrix.io \
+  /pm/serve/assistant.system \
+  -H <span class="st">"Authorization: Bearer YOUR_KEY"</span>
+
+<span class="cm"># JSON response (with metadata)</span>
+curl <span class="st">"...?format=json"</span> \
+  -H <span class="st">"Authorization: Bearer YOUR_KEY"</span>
+
+<span class="cm"># With variable substitution</span>
+curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
+  -H <span class="st">"Authorization: Bearer YOUR_KEY"</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TEAM ══ -->
+      <div class="pane" id="pane-team">
+        <div class="row">
+          <div><div class="ph">◫ <span>TEAM</span></div><div class="ps2">members · roles · invite</div></div>
+          <div class="row-end">
+            <button class="btn bp bxs" onclick="openInviteModal()">+ INVITE</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">ROLE PERMISSIONS</div>
+          <div style="font-size:9px;color:var(--t3);line-height:2">
+            <span style="color:var(--r)">owner</span> — full control, billing, delete org &nbsp;·&nbsp;
+            <span style="color:var(--y)">admin</span> — everything + invite members + promote to production &nbsp;·&nbsp;
+            <span style="color:var(--g)">engineer</span> — approve/reject versions, create API keys &nbsp;·&nbsp;
+            <span style="color:var(--c)">editor</span> — propose versions, cannot approve &nbsp;·&nbsp;
+            <span style="color:var(--t3)">viewer</span> — read-only
+          </div>
+        </div>
+        <div id="team-list"><div class="skel"></div><div class="skel"></div></div>
+      </div>
+
+      <!-- ══ SETTINGS ══ -->
+      <div class="pane" id="pane-settings">
+        <div class="row">
+          <div><div class="ph">⚙ <span>SETTINGS</span></div><div class="ps2">workspace · account · danger zone</div></div>
+        </div>
+        <div class="g2" style="align-items:start">
+          <div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">WORKSPACE</div>
+              <div style="font-size:9px;color:var(--t3);margin-bottom:10px;line-height:1.8">
+                <div>Org: <span style="color:var(--t)" id="set-org-name">—</span></div>
+                <div>Plan: <span style="color:var(--g)" id="set-plan">—</span></div>
+                <div>Slug: <span style="color:var(--t2)" id="set-slug">—</span></div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">SERVE ENDPOINT</div>
+              <div style="font-size:9px;color:var(--t3);margin-bottom:8px">Your agents call this endpoint. Replace <span style="color:var(--y)">{key}</span> with your prompt key.</div>
+              <div class="codeblk" style="font-size:9px" id="settings-serve-url">loading...</div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">ACCOUNT</div>
+              <div id="set-user-info" style="font-size:9px;color:var(--t3);line-height:2;margin-bottom:10px"></div>
+            </div>
+            <div class="card" style="border-color:rgba(255,68,68,.2)">
+              <div class="card-title" style="color:var(--r)">DANGER ZONE</div>
+              <button class="btn br bxs" onclick="doLogout()">SIGN OUT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end cnt -->
+  </div><!-- end main -->
+</div><!-- end shell -->
+
+<script>
+'use strict';
+// ══════════════════════════════════════════════════════════════════════
+// CONFIG — single source of truth
+// ══════════════════════════════════════════════════════════════════════
+const API = 'REPLACE_WITH_YOUR_VERCEL_BACKEND_URL'; // e.g. https://promptmatrix-backend-xxxx.vercel.app
+
+// ══════════════════════════════════════════════════════════════════════
+// APP STATE — everything lives here, never scattered
+// ══════════════════════════════════════════════════════════════════════
+const S = {
+  token:   null,   // JWT access token
+  user:    null,   // { id, email, full_name }
+  org:     null,   // { id, name, slug, plan, role }
+  project: null,   // first project
+  envs:    [],     // all environments
+  env:     null,   // currently selected environment { id, name, color }
+  prompts: [],     // prompts in current env
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// RAIN CANVAS
+// ══════════════════════════════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('rain');
+  const ctx=c.getContext('2d');
+  let cols;
+  function resize(){c.width=innerWidth;c.height=innerHeight;cols=Math.floor(c.width/14);}
+  resize();window.addEventListener('resize',resize);
+  const drops=Array(200).fill(0).map(()=>Math.random()*-50);
+  const chars='アイウエオ0123456789ABCDEF◎◉⑂▦✦→←↑↓';
+  setInterval(()=>{
+    ctx.fillStyle='rgba(6,8,6,.05)';ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle='#00e676';ctx.font='10px monospace';
+    const n=Math.min(drops.length,cols);
+    for(let i=0;i<n;i++){
+      const ch=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(ch,i*14,drops[i]*14);
+      if(drops[i]*14>c.height&&Math.random()>.975)drops[i]=0;
+      drops[i]+=0.5;
+    }
+  },80);
+})();
+
+// ══════════════════════════════════════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════════════════════════════════════
+setInterval(()=>{
+  const el=document.getElementById('sb-clock');
+  if(!el)return;
+  const n=new Date();
+  const ist=new Date(n.toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
+  const h=ist.getHours().toString().padStart(2,'0');
+  const m=ist.getMinutes().toString().padStart(2,'0');
+  const sec=ist.getSeconds().toString().padStart(2,'0');
+  el.textContent=h+':'+m+':'+sec+' IST';
+},1000);
+
+// ══════════════════════════════════════════════════════════════════════
+// API LAYER — defined after auth functions (requires __no_token__ support)
+// ══════════════════════════════════════════════════════════════════════
+
+// Serve endpoint just returns text
+async function apiServe(key){
+  const envApiKey = prompt(`Enter your API key for environment "${S.env?.name}" to test:\n(from API Keys page)`);
+  if(!envApiKey) return;
+  try {
+    const r = await fetch(`${API}/pm/serve/${key}`, {
+      headers: { 'Authorization': 'Bearer ' + envApiKey }
+    });
+    return r.ok ? await r.text() : null;
+  } catch(e){ return null; }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════════════════
+function authTab(t){
+  document.getElementById('auth-login').style.display   = t==='login'    ? '' : 'none';
+  document.getElementById('auth-register').style.display = t==='register' ? '' : 'none';
+  document.querySelectorAll('.auth-tab').forEach((el,i)=>{
+    el.classList.toggle('active', (i===0&&t==='login')||(i===1&&t==='register'));
+  });
+}
+
+async function doLogin(){
+  const email = document.getElementById('a-email').value.trim();
+  const pass  = document.getElementById('a-pass').value;
+  const errEl = document.getElementById('auth-err-login');
+  const btn   = document.getElementById('login-btn');
+  errEl.className = 'auth-err';
+  if(!email||!pass){ errEl.textContent='Email and password required'; errEl.className='auth-err show'; return; }
+  btn.disabled=true; btn.textContent='SIGNING IN...';
+  const data = await api('POST', '/api/v1/auth/login', { email, password: pass }, '__no_token__');
+  btn.disabled=false; btn.textContent='SIGN_IN →';
+  if(!data){ errEl.textContent='Invalid email or password'; errEl.className='auth-err show'; return; }
+  onAuthSuccess(data);
+}
+
+async function doRegister(){
+  const name  = document.getElementById('r-name').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const pass  = document.getElementById('r-pass').value;
+  const org   = document.getElementById('r-org').value.trim();
+  const errEl = document.getElementById('auth-err-reg');
+  const btn   = document.getElementById('reg-btn');
+  errEl.className='auth-err';
+  if(!name||!email||!pass||!org){ errEl.textContent='All fields required'; errEl.className='auth-err show'; return; }
+  if(pass.length<8){ errEl.textContent='Password must be at least 8 characters'; errEl.className='auth-err show'; return; }
+  btn.disabled=true; btn.textContent='CREATING...';
+  const data = await api('POST', '/api/v1/auth/register', {
+    email, password: pass, full_name: name, org_name: org
+  }, '__no_token__');
+  btn.disabled=false; btn.textContent='CREATE_WORKSPACE →';
+  if(!data){ return; } // error shown by api()
+  onAuthSuccess(data);
+}
+
+async function api(method, path, body=null, rawToken=null){
+  const token = rawToken === '__no_token__' ? null : (rawToken || S.token);
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if(token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if(body) opts.body = JSON.stringify(body);
+  try {
+    const r = await fetch(API + path, opts);
+    if(r.status === 401 && rawToken !== '__no_token__'){ doLogout(); return null; }
+    const data = await r.json().catch(()=>({}));
+    if(!r.ok) throw new Error(data.detail || 'API error ' + r.status);
+    return data;
+  } catch(e) {
+    if(e.name==='TypeError') notif('Cannot reach server — check API URL in config','err');
+    else notif(e.message,'err');
+    return null;
+  }
+}
+
+function onAuthSuccess(data){
+  S.token = data.access_token;
+  S.user  = data.user;
+  S.org   = data.active_org || data.org;
+  sessionStorage.setItem('pm_token', S.token);
+  sessionStorage.setItem('pm_user',  JSON.stringify(S.user));
+  sessionStorage.setItem('pm_org',   JSON.stringify(S.org));
+  document.getElementById('auth-overlay').classList.add('hidden');
+  document.getElementById('shell').style.display='flex';
+  initApp();
+}
+
+function doLogout(){
+  sessionStorage.clear();
+  S.token=null; S.user=null; S.org=null; S.env=null;
+  document.getElementById('auth-overlay').classList.remove('hidden');
+  document.getElementById('shell').style.display='none';
+}
+
+async function tryRestoreSession(){
+  const token = sessionStorage.getItem('pm_token');
+  const user  = JSON.parse(sessionStorage.getItem('pm_user')||'null');
+  const org   = JSON.parse(sessionStorage.getItem('pm_org')||'null');
+  if(token && user && org){
+    S.token=token; S.user=user; S.org=org;
+    // Validate token is still live — api() calls doLogout() on 401
+    const me = await api('GET', '/api/v1/auth/me');
+    if(!me) return false;  // expired — doLogout() already fired
+    document.getElementById('auth-overlay').classList.add('hidden');
+    document.getElementById('shell').style.display='flex';
+    initApp();
+    return true;
+  }
+  return false;
+}
+
+// Handle ?plan=founding in URL (from landing page)
+function checkPlanParam(){
+  const params = new URLSearchParams(location.search);
+  if(params.get('plan')==='founding'){
+    authTab('register');
+    document.getElementById('r-org').placeholder='Your team workspace name';
+    // Show founding context
+    const body = document.querySelector('.auth-body');
+    const banner = document.createElement('div');
+    banner.style.cssText='font-size:9px;color:var(--y);background:var(--y2);border:1px solid rgba(255,215,0,.3);padding:8px 10px;margin-bottom:14px;letter-spacing:.06em;line-height:1.6';
+    banner.textContent='⚡ FOUNDING ACCESS — $149 one-time. Rate-locked forever. After registering you\'ll be redirected to checkout.';
+    body.querySelector('#auth-register').prepend(banner);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// APP INIT — runs after successful auth
+// ══════════════════════════════════════════════════════════════════════
+async function initApp(){
+  updateSidebar();
+  await loadProjectsAndEnvs();
+  await loadDash();
+  checkServerHealth();
+  setInterval(checkServerHealth, 30000);
+}
+
+function updateSidebar(){
+  if(!S.user||!S.org) return;
+  const av = document.getElementById('sb-av');
+  const nm = document.getElementById('sb-name');
+  const pl = document.getElementById('sb-plan');
+  const oi = document.getElementById('sb-org');
+  if(av) av.textContent = (S.user.full_name||S.user.email||'?')[0].toUpperCase();
+  if(nm) nm.textContent = S.user.full_name || S.user.email;
+  if(pl) pl.textContent = '● ' + (S.org.plan||'free').toUpperCase();
+  if(oi) oi.textContent = S.org.name || 'workspace';
+  document.getElementById('set-org-name').textContent = S.org.name || '—';
+  document.getElementById('set-plan').textContent = (S.org.plan||'free').toUpperCase();
+  document.getElementById('set-slug').textContent = S.org.slug || '—';
+  document.getElementById('set-user-info').innerHTML = `
+    <div>Email: <span style="color:var(--t)">${S.user.email}</span></div>
+    <div>Name: <span style="color:var(--t)">${S.user.full_name||'—'}</span></div>
+    <div>Role: <span style="color:var(--g)">${S.org.role||'member'}</span></div>`;
+  document.getElementById('dash-org-line').textContent =
+    `${S.org.name} · ${(S.org.role||'member').toUpperCase()} · ${(S.org.plan||'free').toUpperCase()}`;
+  const serveEl = document.getElementById('settings-serve-url');
+  if(serveEl) serveEl.innerHTML = `${API}/pm/serve/<span style="color:var(--y)">{key}</span>`;
+}
+
+async function checkServerHealth(){
+  const dot  = document.getElementById('sb-dot');
+  const tdot = document.getElementById('top-dot');
+  const st   = document.getElementById('server-status');
+  try {
+    const r = await fetch(API+'/api/status', {signal:AbortSignal.timeout(3000)});
+    const ok = r.ok;
+    [dot,tdot].forEach(el=>{ if(el){ el.classList.toggle('ok',ok); el.style.background=ok?'var(--g)':'var(--r)'; }});
+    if(st) st.textContent = ok ? 'CONNECTED' : 'ERROR';
+  } catch(e) {
+    [dot,tdot].forEach(el=>{ if(el) el.style.background='var(--r)'; });
+    if(st) st.textContent = 'OFFLINE';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ENVIRONMENT MANAGEMENT
+// ══════════════════════════════════════════════════════════════════════
+async function loadProjectsAndEnvs(){
+  const data = await api('GET', '/api/v1/projects');
+  if(!data||!data.projects||!data.projects.length) return;
+  S.project = data.projects[0];
+  S.envs = S.project.environments || [];
+
+  const sel = document.getElementById('env-select');
+  sel.innerHTML = S.envs.map(e =>
+    `<option value="${e.id}">${e.display_name||e.name}</option>`
+  ).join('');
+
+  // Default to production if exists, else first
+  const prod = S.envs.find(e=>e.name==='production') || S.envs[0];
+  if(prod){ S.env=prod; sel.value=prod.id; updateEnvDot(); }
+
+  // Also populate history prompt selector
+  renderEnvList();
+}
+
+function switchEnv(envId){
+  const env = S.envs.find(e=>e.id===envId);
+  if(env){ S.env=env; updateEnvDot(); loadDash(); }
+}
+
+function updateEnvDot(){
+  const dot = document.getElementById('env-dot');
+  if(!dot||!S.env) return;
+  dot.style.background = S.env.color || '#888';
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════════════
+async function loadDash(){
+  if(!S.env) return;
+  // Load prompts for current env
+  const [promptsData, approvalsData, teamData] = await Promise.all([
+    api('GET', `/api/v1/prompts?environment_id=${S.env.id}`),
+    api('GET', '/api/v1/approvals'),
+    api('GET', `/api/v1/orgs/${S.org.id}/members`),
+  ]);
+
+  if(promptsData){
+    S.prompts = promptsData.prompts || [];
+    setText('dm-total', S.prompts.length);
+    const live = S.prompts.filter(p=>p.live_version).length;
+    setText('dm-prod', live);
+    renderRecentPrompts(S.prompts.slice(-5).reverse());
+    updateBadge('bx-prompts', S.prompts.length);
+    // Populate version selectors
+    populatePromptSelectors();
+  }
+
+  if(approvalsData){
+    const pending = approvalsData.pending || [];
+    setText('dm-pending', pending.length);
+    updateBadge('bx-approvals', pending.length);
+    renderDashApprovals(pending.slice(0,3));
+  }
+
+  if(teamData){
+    setText('dm-members', (teamData.members||[]).length);
+  }
+}
+
+function renderRecentPrompts(prompts){
+  const el = document.getElementById('dash-recent');
+  if(!el) return;
+  if(!prompts.length){ el.innerHTML='<div style="font-size:9px;color:var(--t3)">No prompts yet. Create your first prompt.</div>'; return; }
+  el.innerHTML = prompts.map(p => `
+    <div class="vi" onclick="openPromptEditor('${p.id}')">
+      <div class="vi-key">${p.key}</div>
+      ${p.live_version ? `<span class="tag tg">v${p.live_version.version_num} LIVE</span>` : `<span class="tag tn">DRAFT</span>`}
+      <div class="vi-meta">${p.version_count||0} version${(p.version_count||0)!==1?'s':''}</div>
+    </div>`).join('');
+}
+
+function renderDashApprovals(pending){
+  const el = document.getElementById('dash-approvals');
+  if(!el) return;
+  if(!pending.length){ el.innerHTML='<div style="font-size:9px;color:var(--t3)">No pending approvals ✓</div>'; return; }
+  el.innerHTML = pending.map(a => `
+    <div class="vi" onclick="pg('approvals')">
+      <div class="vi-key">${a.prompt?.key||'unknown'}</div>
+      <span class="tag ty">v${a.version?.version_num} PENDING</span>
+      <div class="vi-meta">${a.requested_by?.email?.split('@')[0]||'?'}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// PROMPTS REGISTRY
+// ══════════════════════════════════════════════════════════════════════
+async function loadRegistry(){
+  if(!S.env) return;
+  const data = await api('GET', `/api/v1/prompts?environment_id=${S.env.id}`);
+  if(!data) return;
+  S.prompts = data.prompts || [];
+  renderRegistry(S.prompts);
+  populatePromptSelectors();
+}
+
+function renderRegistry(prompts){
+  const list  = document.getElementById('registry-list');
+  const empty = document.getElementById('registry-empty');
+  if(!list) return;
+  if(!prompts.length){ list.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  list.innerHTML = prompts.map(p => `
+    <div class="vi" onclick="openPromptEditor('${p.id}')">
+      <div style="font-size:9px;color:var(--t3);width:16px;flex-shrink:0">✦</div>
+      <div class="vi-key">${p.key}</div>
+      ${p.live_version
+        ? `<span class="tag tg">v${p.live_version.version_num} LIVE · ${(p.live_version.last_eval_score||'').toString()?'score '+p.live_version.last_eval_score:'no eval'}</span>`
+        : `<span class="tag tn">NO LIVE VERSION</span>`}
+      <div class="vi-meta">${p.version_count} ver</div>
+      <div class="vi-meta" style="margin-left:4px">${p.tags?.join(', ')||''}</div>
+    </div>`).join('');
+}
+
+function filterRegistry(q){
+  const filtered = q ? S.prompts.filter(p=>p.key.toLowerCase().includes(q.toLowerCase())) : S.prompts;
+  renderRegistry(filtered);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// EDITOR
+// ══════════════════════════════════════════════════════════════════════
+let _editPromptId = null;
+let _editVersions = [];
+
+async function openPromptEditor(promptId){
+  pg('editor');
+  _editPromptId = promptId;
+  const data = await api('GET', `/api/v1/prompts/${promptId}`);
+  if(!data) return;
+  const p = data.prompt;
+  const versions = data.versions || [];
+  _editVersions = versions;
+  document.getElementById('e-key').value    = p.key || '';
+  document.getElementById('e-desc').value   = p.description || '';
+  document.getElementById('editor-meta').textContent = `${p.key} · ${versions.length} versions · env: ${S.env?.name}`;
+  // Load latest draft content if exists, else live version
+  const draft = versions.filter(v=>v.status==='draft').pop();
+  const live  = p.live_version;
+  const working = draft || live;
+  if(working){
+    document.getElementById('e-content').value = working.content || '';
+    document.getElementById('e-commit').value  = '';
+  }
+  renderVersionHistory(versions, p.live_version?.id);
+  detectVars();
+
+  // Show latest eval on live version
+  if(live && live.last_eval_score){
+    showInlineEval(live);
+  }
+}
+
+function detectVars(){
+  const content = document.getElementById('e-content').value;
+  const vars = [...new Set((content.match(/\{\{[\w_]+\}\}/g)||[]))];
+  const el = document.getElementById('e-vars');
+  if(!vars.length){ el.textContent='Write {{variable}} in your prompt to define dynamic values.'; return; }
+  el.innerHTML = vars.map(v => `
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+      <span style="color:var(--y);font-size:10px">${v}</span>
+      <span style="font-size:8px;color:var(--t3)">→ pass as ?vars=${v.replace(/[{}]/g,'')}=value</span>
+    </div>`).join('');
+}
+document.getElementById('e-content')?.addEventListener('input', detectVars);
+
+function renderVersionHistory(versions, liveId){
+  const el = document.getElementById('e-versions');
+  if(!el) return;
+  if(!versions.length){ el.innerHTML='<div style="font-size:9px;color:var(--t3)">No versions yet</div>'; return; }
+  el.innerHTML = [...versions].reverse().map(v => {
+    const isLive = v.id===liveId;
+    const statusMap = {approved:'tg',pending_review:'ty',draft:'tn',rejected:'tr',archived:'tn'};
+    const cls = statusMap[v.status]||'tn';
+    return `
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 7px;background:var(--bg3);border:1px solid ${isLive?'rgba(0,230,118,.3)':'var(--b2)'};margin-bottom:3px;cursor:pointer"
+           onclick="loadVersionIntoEditor('${v.id}')">
+        <div style="font-size:10px;color:${isLive?'var(--g)':'var(--t2)'}">v${v.version_num}</div>
+        <div style="flex:1;font-size:9px;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.commit_message||'—'}</div>
+        ${isLive?'<span style="font-size:8px;color:var(--g)">LIVE</span>':''}
+        <span class="tag ${cls}" style="font-size:7px">${v.status}</span>
+        ${v.last_eval_score?`<span style="font-size:8px;color:${v.last_eval_score>=8?'var(--g)':v.last_eval_score>=7?'var(--y)':'var(--r)'}">⚡${v.last_eval_score}</span>`:''}
+      </div>`;
+  }).join('');
+}
+
+function loadVersionIntoEditor(versionId){
+  const v = _editVersions.find(v=>v.id===versionId);
+  if(!v) return;
+  document.getElementById('e-content').value = v.content||'';
+  document.getElementById('e-commit').value  = `Based on v${v.version_num}`;
+  detectVars();
+  notif(`Loaded v${v.version_num} into editor`);
+}
+
+function showInlineEval(version){
+  const card = document.getElementById('eval-result-card');
+  const body = document.getElementById('eval-result-body');
+  if(!card||!body) return;
+  card.style.display='';
+  const score = version.last_eval_score;
+  const color = score>=8.5?'var(--g)':score>=7?'var(--y)':'var(--r)';
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="font-size:28px;font-weight:600;color:${color}">${score.toFixed(1)}</div>
+      <div style="font-size:9px;color:var(--t3)">Last eval: ${version.last_eval_at?.slice(0,16)||'—'}<br>
+      <span style="color:${version.last_eval_passed?'var(--g)':'var(--r)'}">${version.last_eval_passed?'PASSED ✓':'FAILED ✗'}</span></div>
+    </div>`;
+}
+
+async function saveAsDraft(){
+  if(!_editPromptId){ await createOrSaveDraft(); return; }
+  const content = document.getElementById('e-content').value.trim();
+  const commit  = document.getElementById('e-commit').value.trim();
+  if(!content){ notif('Content cannot be empty','warn'); return; }
+  const data = await api('POST', `/api/v1/prompts/${_editPromptId}/versions`, {
+    content, commit_message: commit||'Draft update'
+  });
+  if(data){ notif('Draft saved · v'+data.version.version_num); openPromptEditor(_editPromptId); }
+}
+
+async function createOrSaveDraft(){
+  const key     = document.getElementById('e-key').value.trim();
+  const content = document.getElementById('e-content').value.trim();
+  const desc    = document.getElementById('e-desc').value.trim();
+  const commit  = document.getElementById('e-commit').value.trim();
+  if(!key||!content){ notif('Key and content required','warn'); return; }
+  if(!S.env){ notif('Select an environment first','warn'); return; }
+  const data = await api('POST', '/api/v1/prompts', {
+    environment_id: S.env.id, key, content,
+    description: desc, commit_message: commit||'Initial version'
+  });
+  if(data){ notif('Prompt created ✓ — key: '+key); _editPromptId=data.prompt.id; openPromptEditor(_editPromptId); }
+}
+
+async function submitForReview(){
+  if(!_editPromptId){ notif('Save as draft first','warn'); return; }
+  // Find latest draft version
+  const draftV = _editVersions.filter(v=>v.status==='draft').pop();
+  if(!draftV){ notif('No draft version to submit. Save a draft first.','warn'); return; }
+  const note = prompt('Add a note for the reviewer (optional):');
+  const data = await api('POST', `/api/v1/prompts/${_editPromptId}/versions/${draftV.id}/submit`, {
+    note: note||''
+  });
+  if(data){ notif('Submitted for review ✓'); openPromptEditor(_editPromptId); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// APPROVALS
+// ══════════════════════════════════════════════════════════════════════
+async function loadApprovals(){
+  const data = await api('GET', '/api/v1/approvals');
+  if(!data) return;
+  const pending = data.pending || [];
+  const list  = document.getElementById('approval-list');
+  const empty = document.getElementById('approvals-empty');
+  updateBadge('bx-approvals', pending.length);
+  if(!pending.length){ list.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  list.innerHTML = pending.map(a => `
+    <div style="background:var(--bg2);border:1px solid var(--b2);margin-bottom:6px;overflow:hidden">
+      <div style="padding:10px 12px;border-bottom:1px solid var(--b2);display:flex;align-items:center;gap:8px">
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--t);font-weight:500">${a.prompt?.key||'unknown'}</div>
+          <div style="font-size:8px;color:var(--t3);margin-top:2px">
+            v${a.version?.version_num} · by ${a.requested_by?.email||'?'} ·
+            <span style="color:${a.environment?.color||'#888'}">${a.environment?.name||'?'}</span>
+            ${a.version?.eval_score!=null?` · eval: <span style="color:${a.version.eval_score>=8?'var(--g)':a.version.eval_score>=7?'var(--y)':'var(--r)'}">${a.version.eval_score.toFixed(1)}</span>`:''}
+          </div>
+          ${a.note?`<div style="font-size:8px;color:var(--t3);margin-top:3px;font-style:italic">"${esc(a.note)}"</div>`:''}
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn bp bxs" data-pid="${a.prompt?.id}" data-vid="${a.version?.id}" onclick="approveVersion(this.dataset.pid,this.dataset.vid)">✓ APPROVE</button>
+          <button class="btn br bxs" data-pid="${a.prompt?.id}" data-vid="${a.version?.id}" onclick="rejectVersion(this.dataset.pid,this.dataset.vid)">✕ REJECT</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr">
+        ${a.version?.parent_content
+          ? `<div style="padding:8px 10px;border-right:1px solid var(--b2)">
+               <div style="font-size:8px;color:var(--t3);margin-bottom:4px">BEFORE</div>
+               <div class="diff-old">${esc(a.version.parent_content.slice(0,300))}${a.version.parent_content.length>300?'...':''}</div>
+             </div>`
+          : '<div></div>'}
+        <div style="padding:8px 10px">
+          <div style="font-size:8px;color:var(--t3);margin-bottom:4px">PROPOSED</div>
+          <div class="diff-new">${esc((a.version?.content||'').slice(0,300))}${(a.version?.content||'').length>300?'...':''}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function approveVersion(promptId, versionId){
+  const note = prompt('Add an approval note (optional):');
+  const data = await api('POST', `/api/v1/prompts/${promptId}/versions/${versionId}/approve`, {note:note||''});
+  if(data){ notif('Version approved ✓ — now live'); loadApprovals(); loadDash(); }
+}
+
+async function rejectVersion(promptId, versionId){
+  const reason = prompt('Reason for rejection (required):');
+  if(!reason){ return; }
+  const data = await api('POST', `/api/v1/prompts/${promptId}/versions/${versionId}/reject`, {reason});
+  if(data){ notif('Version rejected'); loadApprovals(); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// EVALUATIONS
+// ══════════════════════════════════════════════════════════════════════
+const MODEL_MAP = {
+  anthropic: ['claude-sonnet-4-6','claude-haiku-4-5-20251001','claude-opus-4-6'],
+  openai:    ['gpt-4o','gpt-4o-mini','gpt-4-turbo'],
+  google:    ['gemini-2.0-flash','gemini-1.5-pro','gemini-1.5-flash'],
+  groq:      ['llama-3.3-70b-versatile','llama-3.1-8b-instant','mixtral-8x7b-32768'],
+  mistral:   ['mistral-small-latest','mistral-medium-latest','open-mistral-7b'],
+};
+
+function updateModelList(){
+  const provider = document.getElementById('ev-provider').value;
+  const sel = document.getElementById('ev-model');
+  sel.innerHTML = (MODEL_MAP[provider]||[]).map(m=>`<option value="${m}">${m}</option>`).join('');
+}
+
+function populatePromptSelectors(){
+  const selectors = ['ev-version','hist-select'];
+  selectors.forEach(id=>{
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    const current = sel.value;
+    // For ev-version we need versions not prompts — populate with prompt names
+    if(id==='ev-version'){
+      sel.innerHTML = '<option value="">— select prompt version —</option>' +
+        S.prompts.map(p=>{
+          const live = p.live_version;
+          if(!live) return '';
+          return `<option value="${live.id}">${p.key} (v${live.version_num} ${live.status})</option>`;
+        }).filter(Boolean).join('');
+    } else {
+      sel.innerHTML = '<option value="">— select prompt —</option>' +
+        S.prompts.map(p=>`<option value="${p.id}">${p.key}</option>`).join('');
+    }
+    if(current) sel.value=current;
+  });
+}
+
+async function runEval(){
+  const versionId = document.getElementById('ev-version').value;
+  const provider  = document.getElementById('ev-provider').value;
+  const model     = document.getElementById('ev-model').value;
+  const apiKey    = document.getElementById('ev-key').value.trim();
+  const testInput = document.getElementById('ev-input').value.trim();
+  if(!versionId){ notif('Select a version first','warn'); return; }
+  if(!apiKey){ notif('Enter your API key to run LLM eval','warn'); return; }
+  const btn = document.getElementById('eval-btn');
+  btn.disabled=true; btn.innerHTML='<span class="spin"></span> EVALUATING...';
+  const data = await api('POST', '/api/v1/evals/run', {
+    version_id: versionId, provider, model, api_key: apiKey,
+    test_input: testInput, eval_type: 'llm_judge'
+  });
+  btn.disabled=false; btn.textContent='◈ RUN EVAL';
+  if(data) renderEvalResult(data);
+}
+
+async function runRuleBasedEval(){
+  const versionId = document.getElementById('ev-version').value;
+  if(!versionId){ notif('Select a version first','warn'); return; }
+  const data = await api('POST', '/api/v1/evals/run', {
+    version_id: versionId, provider: 'rule_based',
+    model: 'rule_based', api_key: 'none',
+    test_input: '', eval_type: 'rule_based'
+  });
+  if(data) renderEvalResult(data);
+}
+
+function renderEvalResult(data){
+  const card = document.getElementById('eval-output');
+  const body = document.getElementById('eval-output-body');
+  if(!card||!body) return;
+  card.style.display='';
+  const score = data.overall_score||0;
+  const color = score>=8.5?'var(--g)':score>=7?'var(--y)':'var(--r)';
+  const criteria = data.criteria||{};
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+      <div style="font-size:36px;font-weight:600;color:${color}">${score.toFixed(1)}</div>
+      <div>
+        <div style="font-size:10px;color:${data.passed?'var(--g)':'var(--r)'}">
+          ${data.passed?'✓ PASSED':'✗ FAILED'}</div>
+        <div style="font-size:8px;color:var(--t3)">threshold: ${data.threshold||7} · ${data.duration_ms}ms</div>
+      </div>
+    </div>
+    ${Object.entries(criteria).map(([k,v])=>`
+      <div class="crit-bar">
+        <div class="crit-label">${k.replace('_',' ')}</div>
+        <div class="crit-track"><div class="crit-fill" style="width:${(v/10)*100}%;background:${v>=8?'var(--g)':v>=6?'var(--y)':'var(--r)'}"></div></div>
+        <div class="crit-val">${v}</div>
+      </div>`).join('')}
+    ${data.strengths?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--g);letter-spacing:.08em;margin-bottom:4px">STRENGTHS</div>${data.strengths.map(s=>`<div style="font-size:9px;color:var(--t3);margin-bottom:2px">✓ ${s}</div>`).join('')}</div>`:''}
+    ${data.issues?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--r);letter-spacing:.08em;margin-bottom:4px">ISSUES</div>${data.issues.map(i=>`<div style="font-size:9px;color:var(--t3);margin-bottom:2px">⚠ ${i}</div>`).join('')}</div>`:''}`;
+}
+
+async function loadTeamKeys(){
+  const data = await api('GET', '/api/v1/evals/keys');
+  if(!data) return;
+  const list = document.getElementById('team-keys-list');
+  if(!list) return;
+  const keys = data.keys||[];
+  if(!keys.length){ list.innerHTML='<div style="font-size:9px;color:var(--t3)">No saved keys.</div>'; return; }
+  list.innerHTML = keys.map(k=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;padding:5px 7px;background:var(--bg3);border:1px solid var(--b2)">
+      <div style="font-size:9px;color:var(--y);width:70px">${k.provider}</div>
+      <div style="font-size:9px;color:var(--t3);flex:1">${k.hint}</div>
+      <div style="font-size:8px;color:var(--t3)">${k.label}</div>
+      <button class="btn br bxs" style="font-size:7px" onclick="deleteTeamKey('${k.id}')">✕</button>
+    </div>`).join('');
+}
+
+function openSaveKeyModal(){
+  openModal('SAVE_TEAM_LLM_KEY', `
+    <div class="fg"><label>PROVIDER</label>
+    <select id="sk-prov"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="google">Google</option><option value="groq">Groq</option><option value="mistral">Mistral</option></select></div>
+    <div class="fg"><label>API KEY — stored encrypted (AES-256), never shown again</label><input type="password" id="sk-key" placeholder="sk-..."></div>
+    <div class="fg"><label>LABEL (optional)</label><input type="text" id="sk-label" placeholder="Team OpenAI key"></div>
+    <div style="font-size:8px;color:var(--t3);line-height:1.7;padding:8px;background:var(--bg3);border:1px solid var(--b2)">Your key is encrypted with AES-256-GCM before storage. Only decrypted in server memory during eval runs. Never logged or returned via API.</div>`,
+    [{label:'SAVE ENCRYPTED KEY', fn:'saveTeamKey()'}]
+  );
+}
+
+async function saveTeamKey(){
+  const provider = document.getElementById('sk-prov').value;
+  const apiKey   = document.getElementById('sk-key').value.trim();
+  const label    = document.getElementById('sk-label').value.trim();
+  if(!apiKey){ notif('Enter an API key','warn'); return; }
+  const data = await api('POST', '/api/v1/evals/keys', {provider, api_key:apiKey, label});
+  if(data){ notif('Key saved (encrypted) ✓'); closeModal(); loadTeamKeys(); }
+}
+
+async function deleteTeamKey(id){
+  if(!confirm('Remove this key?')) return;
+  const data = await api('DELETE', `/api/v1/evals/keys/${id}`);
+  if(data){ notif('Key removed'); loadTeamKeys(); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// VERSION HISTORY
+// ══════════════════════════════════════════════════════════════════════
+async function loadVersionHistory(promptId){
+  if(!promptId) return;
+  const data = await api('GET', `/api/v1/prompts/${promptId}`);
+  if(!data) return;
+  const versions = data.versions||[];
+  const el = document.getElementById('hist-list');
+  if(!el) return;
+  if(!versions.length){ el.innerHTML='<div class="empty">no versions yet</div>'; return; }
+  const liveId = data.prompt?.live_version?.id;
+  el.innerHTML = [...versions].reverse().map(v => {
+    const isLive = v.id===liveId;
+    const statusMap = {approved:'tg',pending_review:'ty',draft:'tn',rejected:'tr',archived:'tn'};
+    return `
+      <div style="background:var(--bg2);border:1px solid ${isLive?'rgba(0,230,118,.3)':'var(--b2)'};margin-bottom:4px;overflow:hidden">
+        <div style="padding:8px 12px;display:flex;align-items:center;gap:8px">
+          <div style="font-size:11px;color:${isLive?'var(--g)':'var(--t2)'}">v${v.version_num}</div>
+          <div style="flex:1;font-size:9px;color:var(--t3)">${v.commit_message||'no message'}</div>
+          <span class="tag ${statusMap[v.status]||'tn'}">${v.status}</span>
+          ${isLive?'<span style="font-size:8px;color:var(--g)">← LIVE</span>':''}
+          ${v.last_eval_score!=null?`<span style="font-size:8px;color:${v.last_eval_score>=8?'var(--g)':v.last_eval_score>=7?'var(--y)':'var(--r)'}">eval:${v.last_eval_score.toFixed(1)}</span>`:''}
+          <div style="font-size:8px;color:var(--t3)">${(v.created_at||'').slice(0,10)}</div>
+          ${v.status==='approved'&&!isLive?`<button class="btn bxs" onclick="rollbackTo('${data.prompt.id}','${v.id}',${v.version_num})">↩ ROLLBACK</button>`:''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function rollbackTo(promptId, versionId, vnum){
+  if(!confirm(`Rollback to v${vnum}? This creates a new approved version with that content.`)) return;
+  const data = await api('POST', `/api/v1/prompts/${promptId}/versions/${versionId}/rollback`);
+  if(data){ notif(data.message||'Rolled back ✓'); loadVersionHistory(promptId); loadDash(); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// API KEYS
+// ══════════════════════════════════════════════════════════════════════
+async function loadKeys(){
+  if(!S.env) return;
+  const data = await api('GET', `/api/v1/keys?environment_id=${S.env.id}`);
+  if(!data) return;
+  const keys = data.keys||[];
+  const list = document.getElementById('keys-list');
+  const empty = document.getElementById('keys-empty');
+  if(!keys.length){ list.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  list.innerHTML = keys.map(k=>`
+    <div style="background:var(--bg2);border:1px solid var(--b2);padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <div style="flex:1">
+        <div style="font-size:10px;color:var(--t)">${k.name}</div>
+        <div style="font-size:9px;color:var(--c);margin-top:2px;letter-spacing:.04em">${k.prefix}••••••••</div>
+        <div style="font-size:8px;color:var(--t3);margin-top:2px">
+          env: ${S.env?.name} · created ${(k.created_at||'').slice(0,10)} · last used: ${k.last_used_at?(k.last_used_at.slice(0,10)):'never'}
+        </div>
+      </div>
+      <button class="btn bxs" onclick="rotateKey('${k.id}','${k.name}')">↻ ROTATE</button>
+      <button class="btn br bxs" onclick="revokeKey('${k.id}','${k.name}')">✕ REVOKE</button>
+    </div>`).join('');
+}
+
+function openCreateKeyModal(){
+  if(!S.env){ notif('Select an environment first','warn'); return; }
+  openModal('CREATE_API_KEY', `
+    <div style="font-size:9px;color:var(--t3);margin-bottom:12px;line-height:1.7;padding:8px;background:var(--bg3);border-left:2px solid var(--y)">
+      ⚠ The full API key is shown ONCE on creation. Copy and store it securely. It cannot be recovered — only rotated.
+    </div>
+    <div class="fg"><label>KEY NAME</label><input type="text" id="ck-name" placeholder="n8n production · RADAR agent · chatbot key"></div>
+    <div style="font-size:9px;color:var(--t3)">Environment: <span style="color:${S.env.color}">${S.env.name}</span></div>`,
+    [{label:'CREATE KEY', fn:'createKey()'}]
+  );
+}
+
+async function createKey(){
+  const name = document.getElementById('ck-name')?.value.trim();
+  if(!name){ notif('Enter a key name','warn'); return; }
+  const data = await api('POST', '/api/v1/keys', {environment_id: S.env.id, name});
+  if(!data) return;
+  closeModal();
+  // Show the key — ONCE
+  openModal('YOUR_API_KEY', `
+    <div style="font-size:9px;color:var(--y);background:var(--y2);border:1px solid rgba(255,215,0,.3);padding:10px;margin-bottom:12px;letter-spacing:.04em;line-height:1.7">
+      ⚠ This key is shown ONCE. Copy it now. It cannot be retrieved again — only rotated.
+    </div>
+    <div class="fg"><label>FULL API KEY — COPY NOW</label>
+    <input type="text" value="${data.key}" readonly onclick="this.select()" style="color:var(--g);font-size:11px;cursor:pointer;letter-spacing:.04em">
+    </div>
+    <div style="font-size:9px;color:var(--t3);margin-top:8px">Add to your agent:<br>
+    <span style="color:var(--c)">Authorization: Bearer ${data.key}</span></div>`,
+    [{label:'I COPIED IT', fn:'closeModal();loadKeys()'}]
+  );
+}
+
+async function revokeKey(id, name){
+  if(!confirm(`Revoke key "${name}"? Agents using it will get 401 immediately.`)) return;
+  const data = await api('DELETE', `/api/v1/keys/${id}`);
+  if(data){ notif(data.message); loadKeys(); }
+}
+
+async function rotateKey(id, name){
+  if(!confirm(`Rotate key "${name}"? Old key stops working immediately. You'll get a new key to copy.`)) return;
+  const data = await api('POST', `/api/v1/keys/${id}/rotate`);
+  if(!data) return;
+  openModal('ROTATED_KEY', `
+    <div style="font-size:9px;color:var(--y);background:var(--y2);border:1px solid rgba(255,215,0,.3);padding:10px;margin-bottom:12px">
+      Old key revoked. Copy your new key now.
+    </div>
+    <div class="fg"><label>NEW API KEY</label>
+    <input type="text" value="${data.key}" readonly onclick="this.select()" style="color:var(--g);font-size:11px;cursor:pointer"></div>`,
+    [{label:'I COPIED IT', fn:'closeModal();loadKeys()'}]
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ENVIRONMENTS
+// ══════════════════════════════════════════════════════════════════════
+function renderEnvList(){
+  const el = document.getElementById('env-list');
+  if(!el) return;
+  if(!S.envs.length){ el.innerHTML='<div class="empty">no environments</div>'; return; }
+  el.innerHTML = S.envs.map(e => `
+    <div style="background:var(--bg2);border:1px solid var(--b2);padding:12px;margin-bottom:4px;display:flex;align-items:center;gap:12px;border-left:3px solid ${e.color||'#888'}">
+      <div style="flex:1">
+        <div style="font-size:11px;color:var(--t);font-weight:500">${e.display_name||e.name}</div>
+        <div style="font-size:8px;color:var(--t3);margin-top:4px;line-height:1.8">
+          ${e.is_protected?'🔒 Protected (approval required)':'🔓 Open (auto-approve in dev)'}
+          · Eval threshold: <span style="color:var(--y)">${e.eval_pass_threshold}</span>/10
+          ${e.promotion_source_id?'· Promotions only from staging':''}
+        </div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn bxs" onclick="switchEnv('${e.id}');pg('prompts')">VIEW PROMPTS →</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// AUDIT LOG
+// ══════════════════════════════════════════════════════════════════════
+async function loadAudit(){
+  const filter = document.getElementById('audit-filter')?.value||'';
+  const params = filter ? `?resource_type=${filter}` : '';
+  const data = await api('GET', `/api/v1/audit${params}&limit=50`);
+  if(!data) return;
+  const logs = data.logs||[];
+  const el = document.getElementById('audit-list');
+  if(!el) return;
+  if(!logs.length){ el.innerHTML='<div class="empty">no audit logs yet</div>'; return; }
+  const actionColor = a => a.includes('approved')?'var(--g)':a.includes('rejected')?'var(--r)':a.includes('created')?'var(--c)':'var(--t3)';
+  el.innerHTML = logs.map(l=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:var(--bg2);border:1px solid var(--b2);margin-bottom:3px">
+      <div style="font-size:9px;color:${actionColor(l.action)};width:160px;flex-shrink:0;letter-spacing:.04em">${l.action}</div>
+      <div style="font-size:8px;color:var(--t3);width:80px;flex-shrink:0">${l.resource_type}</div>
+      <div style="font-size:8px;color:var(--t2);flex:1">${l.actor_email||'system'}</div>
+      <div style="font-size:8px;color:var(--t3)">${(l.created_at||'').slice(0,16)}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// TEAM
+// ══════════════════════════════════════════════════════════════════════
+async function loadTeam(){
+  const data = await api('GET', `/api/v1/orgs/${S.org.id}/members`);
+  if(!data) return;
+  const members = data.members||[];
+  const el = document.getElementById('team-list');
+  if(!el) return;
+  const roleColor = r => ({owner:'var(--r)',admin:'var(--y)',engineer:'var(--g)',editor:'var(--c)',viewer:'var(--t3)'})[r]||'var(--t3)';
+  el.innerHTML = members.map(m=>`
+    <div style="background:var(--bg2);border:1px solid var(--b2);padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <div style="width:28px;height:28px;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--t2);font-weight:600;flex-shrink:0">
+        ${(m.full_name||m.email||'?')[0].toUpperCase()}</div>
+      <div style="flex:1">
+        <div style="font-size:10px;color:var(--t)">${m.full_name||m.email}</div>
+        <div style="font-size:8px;color:var(--t3)">${m.email}</div>
+      </div>
+      <span style="font-size:9px;color:${roleColor(m.role)};border:1px solid currentColor;padding:1px 6px">${m.role}</span>
+      ${m.user_id!==S.user?.id&&['admin','owner'].includes(S.org?.role)
+        ? `<button class="btn br bxs" onclick="removeMember('${m.user_id}','${m.email}')">✕</button>`
+        : ''}
+    </div>`).join('');
+}
+
+function openInviteModal(){
+  openModal('INVITE_TEAM_MEMBER', `
+    <div class="fg"><label>EMAIL ADDRESS</label><input type="email" id="inv-email" placeholder="colleague@company.com"></div>
+    <div class="fg"><label>ROLE</label>
+    <select id="inv-role">
+      <option value="editor">Editor — can propose versions, cannot approve</option>
+      <option value="engineer">Engineer — can approve/reject versions, create keys</option>
+      <option value="admin">Admin — full access, can invite others</option>
+      <option value="viewer">Viewer — read-only access</option>
+    </select></div>`,
+    [{label:'SEND INVITE', fn:'inviteMember()'}]
+  );
+}
+
+async function inviteMember(){
+  const email = document.getElementById('inv-email')?.value.trim();
+  const role  = document.getElementById('inv-role')?.value;
+  if(!email){ notif('Enter an email','warn'); return; }
+  const data = await api('POST', `/api/v1/orgs/${S.org.id}/members`, {email, role});
+  if(data){ notif(data.message||'Invited ✓'); closeModal(); loadTeam(); }
+}
+
+async function removeMember(userId, email){
+  if(!confirm(`Remove ${email} from the workspace?`)) return;
+  const data = await api('DELETE', `/api/v1/orgs/${S.org.id}/members/${userId}`);
+  if(data){ notif('Member removed'); loadTeam(); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// NEW PROMPT MODAL
+// ══════════════════════════════════════════════════════════════════════
+function openNewPromptModal(){
+  openModal('NEW_PROMPT', `
+    <div class="fg"><label>PROMPT KEY — dot notation, lowercase</label>
+    <input type="text" id="np-key" placeholder="assistant.system · radar.briefing · chatbot.greeting"></div>
+    <div class="fg"><label>INITIAL CONTENT</label>
+    <textarea id="np-content" rows="8" placeholder="You are a helpful assistant...&#10;&#10;Use {{variable}} for dynamic values."></textarea></div>
+    <div class="fg"><label>DESCRIPTION (optional)</label>
+    <input type="text" id="np-desc" placeholder="What this prompt does"></div>`,
+    [{label:'CREATE & OPEN EDITOR', fn:'createAndOpen()'}]
+  );
+}
+
+async function createAndOpen(){
+  const key     = document.getElementById('np-key')?.value.trim();
+  const content = document.getElementById('np-content')?.value.trim();
+  const desc    = document.getElementById('np-desc')?.value.trim();
+  if(!key||!content){ notif('Key and content required','warn'); return; }
+  if(!S.env){ notif('Select an environment first','warn'); return; }
+  const data = await api('POST', '/api/v1/prompts', {
+    environment_id: S.env.id, key, content,
+    description: desc, commit_message: 'Initial version'
+  });
+  if(data){
+    notif('Prompt created ✓');
+    S.prompts.push(data.prompt);
+    closeModal();
+    openPromptEditor(data.prompt.id);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// MODAL ENGINE
+// ══════════════════════════════════════════════════════════════════════
+function openModal(title, bodyHtml, actions=[]){
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = bodyHtml;
+  document.getElementById('modal-foot').innerHTML = actions.map(a=>
+    `<button class="btn bp" onclick="${a.fn}">${a.label}</button>`
+  ).join('') + '<button class="btn" onclick="closeModal()">CANCEL</button>';
+  document.getElementById('modal-overlay').classList.add('show');
+  // Focus first input
+  setTimeout(()=>{
+    const first = document.querySelector('#modal-body input,#modal-body textarea');
+    if(first) first.focus();
+  },80);
+}
+
+function closeModal(e){
+  if(e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════════════
+const PAGE_LOAD = {
+  prompts:      loadRegistry,
+  approvals:    loadApprovals,
+  evals:        ()=>{loadTeamKeys();populatePromptSelectors();},
+  versions:     ()=>populatePromptSelectors(),
+  keys:         loadKeys,
+  environments: renderEnvList,
+  audit:        loadAudit,
+  team:         loadTeam,
+};
+const TITLES = {
+  dash:'DASHBOARD',prompts:'PROMPT_REGISTRY',editor:'PROMPT_EDITOR',
+  approvals:'APPROVAL_QUEUE',evals:'EVALUATIONS',versions:'VERSION_HISTORY',
+  keys:'API_KEYS',environments:'ENVIRONMENTS',audit:'AUDIT_LOG',
+  integrate:'INTEGRATIONS',team:'TEAM',settings:'SETTINGS',
+};
+
+function pg(name){
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  const pane = document.getElementById('pane-'+name);
+  const ni   = document.getElementById('ni-'+name);
+  if(pane) pane.classList.add('on');
+  if(ni)   ni.classList.add('on');
+  setText('top-bc', TITLES[name]||name.toUpperCase());
+  if(PAGE_LOAD[name]) PAGE_LOAD[name]();
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// SIDEBAR TOGGLE
+// ══════════════════════════════════════════════════════════════════════
+let sbOpen=true;
+function toggleSb(){
+  sbOpen=!sbOpen;
+  const sb=document.getElementById('sb');
+  const tog=document.getElementById('sb-tog');
+  const lt=document.getElementById('logo-text');
+  sb.classList.toggle('col',!sbOpen);
+  if(tog) tog.textContent=sbOpen?'‹':'›';
+  if(lt)  lt.style.opacity=sbOpen?'1':'0';
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// NOTIFICATIONS
+// ══════════════════════════════════════════════════════════════════════
+function notif(msg, type='ok'){
+  const wrap=document.getElementById('notif');
+  const el=document.createElement('div');
+  el.className='nt'+(type==='err'?' err':type==='warn'?' warn':'');
+  el.textContent=msg;
+  wrap.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),250);},3200);
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════════════
+function setText(id,val){ const el=document.getElementById(id); if(el) el.textContent=val; }
+function updateBadge(id,n){ const el=document.getElementById(id); if(el) el.textContent=n||''; }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ══════════════════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ══════════════════════════════════════════════════════════════════════
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') closeModal();
+  if(e.key==='Enter' && document.getElementById('auth-overlay')?.style.display!=='none'){
+    if(document.getElementById('auth-login')?.style.display!=='none') doLogin();
+  }
+});
+// Enter in login fields
+document.getElementById('a-pass')?.addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('a-email')?.addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('a-pass')?.focus(); });
+
+// ══════════════════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════════════════
+checkPlanParam();
+(async()=>{
+  if(!await tryRestoreSession()){
+    // Show auth overlay (already visible by default)
+    checkServerHealth();
+  }
+})();
+</script>
+</body>
+</html>

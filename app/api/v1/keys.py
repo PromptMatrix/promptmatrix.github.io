@@ -1,0 +1,159 @@
+"""API Key management — /api/v1/keys"""
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+
+from app.database import get_db
+from app.models import ApiKey, Environment, Project, AuditLog
+from app.core.auth import get_current_user_and_org, require_role, generate_api_key
+from app.serve.cache import invalidate_key_cache
+
+router = APIRouter(prefix="/api/v1/keys", tags=["keys"])
+
+
+class CreateKeyIn(BaseModel):
+    environment_id: str
+    name: str
+
+
+@router.get("")
+async def list_keys(
+    environment_id: str,
+    auth=Depends(get_current_user_and_org),
+    db: Session = Depends(get_db)
+):
+    user, member = auth
+    if not member:
+        raise HTTPException(status_code=403, detail="No org context")
+
+    keys = db.query(ApiKey).filter(
+        ApiKey.environment_id == environment_id,
+        ApiKey.is_active == True
+    ).order_by(ApiKey.created_at.desc()).all()
+
+    return {"keys": [{
+        "id": k.id,
+        "name": k.name,
+        "prefix": k.key_prefix,
+        "is_active": k.is_active,
+        "created_at": k.created_at.isoformat() if k.created_at else None,
+        "last_used_at": k.last_used_at.isoformat() if k.last_used_at else None,
+    } for k in keys]}
+
+
+@router.post("")
+async def create_key(
+    body: CreateKeyIn,
+    auth=Depends(get_current_user_and_org),
+    db: Session = Depends(get_db)
+):
+    user, member = auth
+    if not member:
+        raise HTTPException(status_code=403, detail="No org context")
+    require_role(member, "engineer")
+
+    env = db.query(Environment).filter(Environment.id == body.environment_id).first()
+    if not env:
+        raise HTTPException(status_code=404, detail="Environment not found")
+
+    full_key, key_hash, key_prefix = generate_api_key(env.name)
+
+    api_key = ApiKey(
+        environment_id=body.environment_id,
+        name=body.name,
+        key_hash=key_hash,
+        key_prefix=key_prefix,
+        created_by_id=user.id,
+    )
+    db.add(api_key)
+    db.add(AuditLog(
+        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
+        action="key.created", resource_type="key", resource_id=api_key.id,
+        extra={"name": body.name, "env": env.name}
+    ))
+    db.commit()
+
+    return {
+        "key": full_key,   # shown ONCE — never stored
+        "prefix": key_prefix,
+        "id": api_key.id,
+        "message": "Copy this key now. It cannot be shown again."
+    }
+
+
+@router.delete("/{key_id}")
+async def revoke_key(
+    key_id: str,
+    auth=Depends(get_current_user_and_org),
+    db: Session = Depends(get_db)
+):
+    user, member = auth
+    if not member:
+        raise HTTPException(status_code=403, detail="No org context")
+    require_role(member, "engineer")
+
+    k = db.query(ApiKey).filter(ApiKey.id == key_id).first()
+    if not k:
+        raise HTTPException(status_code=404, detail="Key not found")
+
+    k.is_active = False
+    db.add(AuditLog(
+        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
+        action="key.revoked", resource_type="key", resource_id=key_id,
+        extra={"name": k.name}
+    ))
+    db.commit()
+
+    # Awaited directly — Vercel kills background tasks after response returns
+    await invalidate_key_cache(k.key_hash)
+
+    return {"message": f"Key '{k.name}' revoked"}
+
+
+@router.post("/{key_id}/rotate")
+async def rotate_key(
+    key_id: str,
+    auth=Depends(get_current_user_and_org),
+    db: Session = Depends(get_db)
+):
+    user, member = auth
+    if not member:
+        raise HTTPException(status_code=403, detail="No org context")
+    require_role(member, "engineer")
+
+    old = db.query(ApiKey).filter(ApiKey.id == key_id).first()
+    if not old:
+        raise HTTPException(status_code=404, detail="Key not found")
+
+    env = db.query(Environment).filter(Environment.id == old.environment_id).first()
+    full_key, key_hash, key_prefix = generate_api_key(env.name if env else "production")
+
+    old.is_active = False
+
+    new_key = ApiKey(
+        environment_id=old.environment_id,
+        name=old.name,
+        key_hash=key_hash,
+        key_prefix=key_prefix,
+        created_by_id=user.id,
+    )
+    db.add(new_key)
+    db.add(AuditLog(
+        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
+        action="key.rotated", resource_type="key", resource_id=key_id,
+        extra={"name": old.name}
+    ))
+
+    old_hash = old.key_hash   # capture before commit expires the object
+    db.commit()
+
+    # Invalidate old key from cache — awaited directly
+    await invalidate_key_cache(old_hash)
+
+    return {
+        "key": full_key,
+        "prefix": key_prefix,
+        "id": new_key.id,
+        "message": "Old key revoked. Copy the new key now."
+    }
