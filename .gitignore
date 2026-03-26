@@ -9,3 +9,15 @@ venv/
 .venv/
 dist/
 *.egg-info/
+
+# ── Personal / Private files — NEVER commit these ──────────────────
+jachin_os_master_blueprint_v2.html
+*_blueprint*.html
+*_master_*.html
+*_private*.html
+*_os_*.html
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
