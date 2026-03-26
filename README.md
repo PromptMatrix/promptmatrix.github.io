@@ -81,13 +81,6 @@ python -m uvicorn main:app --reload --port 8000
 
 ---
 
-## ☁️ Want Cloud?
-
-Need team collaboration, Upstash caching, email notifications, and zero-ops hosting?
-
-**→ [promptmatrixx.vercel.app](https://promptmatrixx.vercel.app)** — Managed cloud version with all the infrastructure handled for you.
-
----
 
 ## 📄 License
 

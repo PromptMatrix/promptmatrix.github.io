@@ -51,13 +51,42 @@ class _UpstashCache:
         except Exception as e:
             log.debug(f"Cache DEL error: {e}")
 
-class _NoopCache:
+class _MemoryCache:
+    def __init__(self):
+        self._data = {} # key -> (value, expiry_ts)
+
+    def _now(self):
+        import time
+        return time.time()
+
     async def get(self, key: str) -> Optional[str]:
-        return None
+        item = self._data.get(key)
+        if not item:
+            return None
+        val, expiry = item
+        if expiry and self._now() > expiry:
+            del self._data[key]
+            return None
+        return val
+
     async def set(self, key: str, value: str, ttl_seconds: int):
-        pass
+        expiry = self._now() + ttl_seconds if ttl_seconds > 0 else 0
+        self._data[key] = (value, expiry)
+
     async def delete(self, key: str):
-        pass
+        if key in self._data:
+            del self._data[key]
+
+    async def incr(self, key: str, ttl_seconds: int) -> int:
+        item = self._data.get(key)
+        now = self._now()
+        if not item or (item[1] and now > item[1]):
+            val = 1
+        else:
+            val = int(item[0]) + 1
+        expiry = now + ttl_seconds if not item or (item[1] and now > item[1]) else item[1]
+        self._data[key] = (str(val), expiry)
+        return val
 
 def _build_cache():
     if settings.upstash_redis_rest_url and settings.upstash_redis_rest_token:
@@ -66,8 +95,8 @@ def _build_cache():
             settings.upstash_redis_rest_url,
             settings.upstash_redis_rest_token
         )
-    log.info("Cache: disabled")
-    return _NoopCache()
+    log.info("Cache: Local memory cache enabled (Local-First)")
+    return _MemoryCache()
 
 _cache = _build_cache()
 
@@ -110,11 +139,14 @@ async def invalidate_prompt_cache(environment_id: str, prompt_key: str):
 async def check_rate_limit(key_hash: str, rpm_limit: int = 600) -> tuple[bool, int, int]:
     if rpm_limit == 0:
         return True, 0, 0
-    if isinstance(_cache, _NoopCache):
-        return True, 0, rpm_limit
     import time
     window = int(time.time() // 60)
     rate_key = f"rl:{key_hash}:{window}"
+    
+    if isinstance(_cache, _MemoryCache):
+        count = await _cache.incr(rate_key, 120)
+        return count <= rpm_limit, count, rpm_limit
+        
     try:
         import httpx
         headers = _cache._headers()

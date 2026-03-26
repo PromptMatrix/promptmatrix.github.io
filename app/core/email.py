@@ -28,8 +28,8 @@ def _html_wrapper(title: str, body: str) -> str:
   <h1>{title}</h1>
   {body}
   <div class="footer">
-    PromptMatrix · Prompt governance for AI applications ·
-    <a href="https://promptmatrixx.vercel.app" style="color:#00e676;">promptmatrixx.vercel.app</a>
+    PromptMatrix · Open Source Prompt Governance ·
+    <a href="https://github.com/jachinsaikiasonowal/promptmatrix" style="color:#00e676;">GitHub</a>
   </div>
 </div></body></html>"""
 
