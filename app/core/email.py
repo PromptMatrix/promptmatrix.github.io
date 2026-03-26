@@ -1,22 +1,8 @@
-"""
-Email Service — Resend.com
-===========================
-Free tier: 100 emails/day. Enough for early beta.
-
-All send_* functions are awaited directly in route handlers (not via
-asyncio.create_task). On Vercel, background tasks are killed when the
-function returns — asyncio.create_task silently drops emails.
-
-Timeout: 5 seconds. Email failure never raises — the route action succeeds
-regardless. Failure is logged to stdout (visible in Vercel function logs).
-"""
-
 import logging
 from app.config import get_settings
 
 settings = get_settings()
 log = logging.getLogger(__name__)
-
 
 def _html_wrapper(title: str, body: str) -> str:
     return f"""<!DOCTYPE html>
@@ -34,7 +20,7 @@ def _html_wrapper(title: str, body: str) -> str:
   .code {{background:#0F0F0F; border:1px solid #1E1E1E; padding:12px 16px;
           font-size:13px; color:#00e676; letter-spacing:1px; margin:16px 0;}}
   .footer {{margin-top:40px; padding-top:20px; border-top:1px solid #1E1E1E;
-             font-size:11px; color:#888070; letter-spacing:1px;}}
+              font-size:11px; color:#888070; letter-spacing:1px;}}
 </style>
 </head><body>
 <div class="container">
@@ -42,22 +28,15 @@ def _html_wrapper(title: str, body: str) -> str:
   <h1>{title}</h1>
   {body}
   <div class="footer">
-    PromptMatrix · Prompt governance for AI teams ·
-    <a href="https://promptmatrix.io" style="color:#00e676;">promptmatrix.io</a>
+    PromptMatrix · Prompt governance for AI applications ·
+    <a href="https://promptmatrixx.vercel.app" style="color:#00e676;">promptmatrixx.vercel.app</a>
   </div>
 </div></body></html>"""
 
-
 async def send_email(to: str, subject: str, html: str) -> bool:
-    """
-    Send via Resend. Returns True on success, False on failure.
-    Never raises — email failure is logged but never blocks the caller.
-    Timeout: 5 seconds to avoid holding up the Vercel function.
-    """
     if not settings.resend_api_key:
-        log.info(f"[EMAIL SKIP — no key] To: {to} | Subject: {subject}")
+        log.info(f"[EMAIL SKIP] To: {to} | Subject: {subject}")
         return False
-
     try:
         import httpx
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -81,9 +60,7 @@ async def send_email(to: str, subject: str, html: str) -> bool:
     except Exception as e:
         log.warning(f"[EMAIL ERROR] {e} | To: {to}")
         return False
-
-
-# ── Templates ─────────────────────────────────────────────────────
+    return False
 
 async def send_welcome(email: str, org_name: str, plan: str):
     body = f"""
@@ -91,13 +68,12 @@ async def send_welcome(email: str, org_name: str, plan: str):
     <div class="code">Organisation: {org_name}<br>Plan: {plan.upper()}</div>
     <p>Three things to do first:</p>
     <p>1. Create your first prompt key in the Registry<br>
-       2. Copy the serve endpoint URL — your agents call this<br>
-       3. Invite your team and set roles</p>
+       2. Copy the serve endpoint URL — your apps call this<br>
+       3. Connect your API keys</p>
     <a href="{settings.frontend_url}" class="btn">Open Dashboard →</a>
     """
     await send_email(email, "PromptMatrix · Your workspace is ready",
                      _html_wrapper("WORKSPACE READY", body))
-
 
 async def send_approval_needed(
     approver_email: str, requester_name: str,
@@ -121,7 +97,6 @@ async def send_approval_needed(
         _html_wrapper("APPROVAL NEEDED", body)
     )
 
-
 async def send_version_approved(
     requester_email: str, approver_name: str,
     prompt_key: str, version_num: int, env_name: str
@@ -141,7 +116,6 @@ async def send_version_approved(
         f"PromptMatrix · Approved: {prompt_key} v{version_num} is live",
         _html_wrapper("VERSION APPROVED", body)
     )
-
 
 async def send_version_rejected(
     requester_email: str, reviewer_name: str,
@@ -164,7 +138,6 @@ async def send_version_rejected(
         _html_wrapper("VERSION REJECTED", body)
     )
 
-
 async def send_eval_failed(
     user_email: str, prompt_key: str, version_num: int,
     score: float, threshold: float, issues: list
@@ -185,7 +158,6 @@ async def send_eval_failed(
         f"PromptMatrix · Eval failed: {prompt_key} v{version_num} ({score:.1f}/{threshold:.1f})",
         _html_wrapper("EVAL FAILED", body)
     )
-
 
 async def send_invite(
     invitee_email: str, inviter_name: str, org_name: str,

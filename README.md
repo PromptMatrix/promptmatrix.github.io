@@ -12,7 +12,24 @@ PromptMatrix is a high-performance, open-source infrastructure designed for AI e
 *   **📂 Structured Registry:** Organize prompts by project, environment (Production, Staging, Draft), and version.
 *   **⚖️ Governance & Audit:** Full version history with 1-click rollbacks for broken prompts.
 *   **🔌 Universal API:** Low-latency `GET` endpoint for any AI agent or service.
-*   **📦 Self-Host Ready:** Runs on SQLite/PostgreSQL with a single command.
+*   **📦 Self-Host Ready:** Runs on SQLite with a single command.
+
+---
+
+## 🧠 Who Is This For?
+
+If you're building with AI — agents, workflows, chatbots, copilots — and you have **hardcoded prompts sitting as raw strings in your codebase**, PromptMatrix governs those.
+
+```python
+# ❌ BEFORE: ungoverned, hardcoded, invisible
+SYSTEM_PROMPT = "You are an elite AGI-level operator..."
+
+# ✅ AFTER: governed, versioned, instantly updatable
+prompt = requests.get("http://localhost:8000/pm/serve/agent.system",
+    headers={"Authorization": "Bearer pm_dev_xxx"}).text
+```
+
+Every system prompt, every agent persona, every tool instruction — pulled from one registry, version-controlled, and updateable without a redeploy.
 
 ---
 
@@ -64,9 +81,11 @@ python -m uvicorn main:app --reload --port 8000
 
 ---
 
-## 🌐 Deployment (Cloud)
+## ☁️ Want Cloud?
 
-For production-grade deployments (Vercel + Supabase), refer to our [Deployment Guide (DEPLOY.md)](DEPLOY.md).
+Need team collaboration, Upstash caching, email notifications, and zero-ops hosting?
+
+**→ [promptmatrixx.vercel.app](https://promptmatrixx.vercel.app)** — Managed cloud version with all the infrastructure handled for you.
 
 ---
 

@@ -1,24 +1,3 @@
-"""
-Serve Router — GET /pm/serve/{key}
-====================================
-The ONLY endpoint agents call at runtime.
-Optimised for latency and availability.
-
-Flow:
-  1. Extract API key from Authorization header
-  2. Hash + cache lookup (Upstash Redis Level 1)
-  3. Cache miss → Supabase query → cache
-  4. Rate limit check (Upstash sliding window counter, per API key)
-  5. Prompt cache lookup (Upstash Redis Level 2)
-  6. Cache miss → Supabase query → cache
-  7. Variable substitution if ?vars= provided
-  8. Return plain text or JSON
-
-Latency targets (with Upstash):
-  Cache hit:  ~20-40ms
-  DB read:    ~80-150ms
-"""
-
 import time
 import datetime as dt
 from typing import Optional
@@ -45,6 +24,76 @@ def _db() -> Session:
     return SessionLocal()
 
 
+def _rk(a):
+    if not a or not a.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
+    return a[7:]
+
+
+async def _ak(h, d=None):
+    c = await get_cached_key(h)
+    if c is not None:
+        return c
+    db = d or _db()
+    try:
+        r = db.query(ApiKey).filter(ApiKey.key_hash == h, ApiKey.is_active == True).first()
+        if not r:
+            raise HTTPException(status_code=401, detail="Invalid API key")
+        if r.expires_at and r.expires_at < dt.datetime.utcnow():
+            raise HTTPException(status_code=401, detail="API key expired")
+        e = db.query(Environment).filter(Environment.id == r.environment_id).first()
+        if not e:
+            raise HTTPException(status_code=401, detail="Environment not found")
+        p = db.query(Project).filter(Project.id == e.project_id).first()
+        if not p:
+            raise HTTPException(status_code=401, detail="Project not found")
+        o = db.query(Organisation).filter(Organisation.id == p.org_id).first()
+        if not o:
+            raise HTTPException(status_code=401, detail="Organisation not found")
+        kd = {"environment_id": e.id, "env_name": e.name, "org_id": o.id, "plan": o.plan}
+        await cache_key(h, e.id, o.id, o.plan, e.name)
+        r.last_used_at = dt.datetime.utcnow()
+        db.commit()
+        return kd
+    finally:
+        if d is None:
+            db.close()
+
+
+async def _rp(eid, pk):
+    c = await get_cached_prompt(eid, pk)
+    if c is not None:
+        return c
+    db = _db()
+    try:
+        pr = db.query(Prompt).filter(Prompt.environment_id == eid, Prompt.key == pk).first()
+        if not pr:
+            raise HTTPException(status_code=404, detail=f"Prompt '{pk}' not found in this environment")
+        if not pr.live_version_id:
+            raise HTTPException(status_code=404, detail=f"Prompt '{pk}' has no approved version yet")
+        vr = db.query(PromptVersion).filter(
+            PromptVersion.id == pr.live_version_id, PromptVersion.status == "approved"
+        ).first()
+        if not vr:
+            raise HTTPException(status_code=404, detail=f"No approved version for '{pk}'")
+        cd = {"content": vr.content, "version_num": vr.version_num, "version_id": vr.id,
+              "variables": vr.variables or {}}
+        await cache_prompt(eid, pk, cd["content"], cd["version_num"], cd["version_id"], cd["variables"])
+        return cd
+    finally:
+        db.close()
+
+
+def _vs(content, vars_str):
+    if not vars_str:
+        return content
+    for pair in vars_str.split(","):
+        if "=" in pair:
+            k, v = pair.split("=", 1)
+            content = content.replace(f"{{{{{k.strip()}}}}}", v.strip())
+    return content
+
+
 @router.get("/pm/serve/{prompt_key:path}")
 async def serve_prompt(
     prompt_key: str,
@@ -53,164 +102,28 @@ async def serve_prompt(
     format: str = "text",
     vars: Optional[str] = None,
 ):
-    """
-    Runtime endpoint. Called by agents, n8n, LangChain, curl — anything.
-
-    Headers:
-      Authorization: Bearer pm_live_xxxxxxxx
-
-    Returns plain text by default. Add ?format=json for metadata.
-    Variable substitution: ?vars=tone=formal,name=Acme
-    """
-    t_start = time.monotonic()
-
-    # ── 1. Extract API key ───────────────────────────────────────
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
-
-    raw_key = authorization[7:]
-    key_hash = hash_api_key(raw_key)
-
-    # ── 2. Key cache lookup ──────────────────────────────────────
-    key_data = await get_cached_key(key_hash)
-
-    if key_data is None:
-        db = _db()
-        try:
-            api_key_row = db.query(ApiKey).filter(
-                ApiKey.key_hash == key_hash,
-                ApiKey.is_active == True
-            ).first()
-
-            if not api_key_row:
-                raise HTTPException(status_code=401, detail="Invalid API key")
-
-            if api_key_row.expires_at and api_key_row.expires_at < dt.datetime.utcnow():
-                raise HTTPException(status_code=401, detail="API key expired")
-
-            env = db.query(Environment).filter(
-                Environment.id == api_key_row.environment_id
-            ).first()
-            if not env:
-                raise HTTPException(status_code=401, detail="Environment not found")
-
-            project = db.query(Project).filter(Project.id == env.project_id).first()
-            if not project:
-                raise HTTPException(status_code=401, detail="Project not found")
-
-            org = db.query(Organisation).filter(Organisation.id == project.org_id).first()
-            if not org:
-                raise HTTPException(status_code=401, detail="Organisation not found")
-
-            key_data = {
-                "environment_id": env.id,
-                "env_name": env.name,
-                "org_id": org.id,
-                "plan": org.plan,
-            }
-            await cache_key(key_hash, env.id, org.id, org.plan, env.name)
-
-            api_key_row.last_used_at = dt.datetime.utcnow()
-            db.commit()
-        finally:
-            db.close()
-
-    environment_id = key_data["environment_id"]
-
-    # ── 3. Rate limit check ──────────────────────────────────────
-    # Sliding window counter keyed per API key hash.
-    # Uses Upstash INCR — works across all Vercel function instances.
-    # Fails open on any Redis error to never block legitimate traffic.
+    t0 = time.monotonic()
+    rk = _rk(authorization)
+    kh = hash_api_key(rk)
+    kd = await _ak(kh)
+    eid = kd["environment_id"]
     if settings.serve_rate_limit_rpm > 0:
-        allowed, count, limit = await check_rate_limit(
-            key_hash, settings.serve_rate_limit_rpm
-        )
-        if not allowed:
+        ok, cnt, lim = await check_rate_limit(kh, settings.serve_rate_limit_rpm)
+        if not ok:
             return JSONResponse(
                 status_code=429,
-                content={"detail": f"Rate limit exceeded: {limit} requests/minute per key"},
-                headers={
-                    "X-RateLimit-Limit": str(limit),
-                    "X-RateLimit-Remaining": "0",
-                    "Retry-After": "60",
-                }
+                content={"detail": f"Rate limit exceeded: {lim} requests/minute per key"},
+                headers={"X-RateLimit-Limit": str(lim), "X-RateLimit-Remaining": "0", "Retry-After": "60"}
             )
-
-    # ── 4. Prompt cache lookup ───────────────────────────────────
-    cached = await get_cached_prompt(environment_id, prompt_key)
-
-    if cached is None:
-        db = _db()
-        try:
-            prompt_row = db.query(Prompt).filter(
-                Prompt.environment_id == environment_id,
-                Prompt.key == prompt_key
-            ).first()
-
-            if not prompt_row:
-                raise HTTPException(
-                    status_code=404,
-                    detail=f"Prompt '{prompt_key}' not found in this environment"
-                )
-            if not prompt_row.live_version_id:
-                raise HTTPException(
-                    status_code=404,
-                    detail=f"Prompt '{prompt_key}' has no approved version yet"
-                )
-
-            version_row = db.query(PromptVersion).filter(
-                PromptVersion.id == prompt_row.live_version_id,
-                PromptVersion.status == "approved"
-            ).first()
-
-            if not version_row:
-                raise HTTPException(
-                    status_code=404,
-                    detail=f"No approved version for '{prompt_key}'"
-                )
-
-            cached = {
-                "content": version_row.content,
-                "version_num": version_row.version_num,
-                "version_id": version_row.id,
-                "variables": version_row.variables or {},
-            }
-            await cache_prompt(
-                environment_id, prompt_key,
-                cached["content"], cached["version_num"],
-                cached["version_id"], cached["variables"]
-            )
-        finally:
-            db.close()
-
-    content = cached["content"]
-
-    # ── 5. Variable substitution ─────────────────────────────────
-    if vars:
-        for pair in vars.split(","):
-            if "=" in pair:
-                k, v = pair.split("=", 1)
-                content = content.replace(f"{{{{{k.strip()}}}}}", v.strip())
-
-    # ── 6. Return ────────────────────────────────────────────────
-    latency_ms = round((time.monotonic() - t_start) * 1000, 2)
-
+    cd = await _rp(eid, prompt_key)
+    content = _vs(cd["content"], vars)
+    ms = round((time.monotonic() - t0) * 1000, 2)
     if format == "json":
-        return {
-            "key": prompt_key,
-            "content": content,
-            "version": cached["version_num"],
-            "version_id": cached["version_id"],
-            "environment": key_data.get("env_name", ""),
-            "variables": cached["variables"],
-            "latency_ms": latency_ms,
-            "served_at": dt.datetime.utcnow().isoformat() + "Z",
-        }
-
+        return {"key": prompt_key, "content": content, "version": cd["version_num"],
+                "version_id": cd["version_id"], "environment": kd.get("env_name", ""),
+                "variables": cd["variables"], "latency_ms": ms,
+                "served_at": dt.datetime.utcnow().isoformat() + "Z"}
     return PlainTextResponse(
         content=content,
-        headers={
-            "X-PM-Version": str(cached["version_num"]),
-            "X-PM-Latency": str(latency_ms),
-        }
+        headers={"X-PM-Version": str(cd["version_num"]), "X-PM-Latency": str(ms)}
     )

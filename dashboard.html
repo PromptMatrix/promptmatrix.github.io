@@ -251,7 +251,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 <div id="auth-overlay">
   <div class="auth-box">
     <div class="auth-header">
-      <div class="auth-logo">PROMPT<em>MATRIX</em> <span style="font-size:9px;color:var(--t3);margin-left:8px;letter-spacing:.04em">// PROMPT GOVERNANCE FOR AI TEAMS</span></div>
+      <div class="auth-logo">PROMPT<em>MATRIX</em> <span style="font-size:9px;color:var(--t3);margin-left:8px;letter-spacing:.04em">// PROMPT GOVERNANCE FOR AI APPLICATIONS</span></div>
     </div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="authTab('login')">SIGN_IN</button>
@@ -270,14 +270,13 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
         <div class="auth-field"><label>FULL NAME</label><input type="text" id="r-name" placeholder="Alex Chen" autocomplete="name"></div>
         <div class="auth-field"><label>EMAIL</label><input type="email" id="r-email" placeholder="you@company.com" autocomplete="email"></div>
         <div class="auth-field"><label>PASSWORD</label><input type="password" id="r-pass" placeholder="Min 8 characters" autocomplete="new-password"></div>
-        <div class="auth-field"><label>WORKSPACE NAME</label><input type="text" id="r-org" placeholder="Acme AI Team"></div>
         <div class="auth-err" id="auth-err-reg"></div>
-        <button class="auth-btn" onclick="doRegister()" id="reg-btn">CREATE_WORKSPACE →</button>
+        <button class="auth-btn" onclick="doRegister()" id="reg-btn">CREATE_LOCAL_ADMIN →</button>
       </div>
     </div>
     <div class="auth-footer">
-      Self-host free · Cloud plan $149 founding access ·
-      <a href="https://promptmatrix.io" style="color:var(--g);text-decoration:none">promptmatrix.io</a>
+      Self-host free · MIT Open Source ·
+      <a href="https://github.com/PromptMatrix/PromptMatrix" style="color:var(--g);text-decoration:none">github.com/PromptMatrix/PromptMatrix</a>
     </div>
   </div>
 </div>
@@ -321,7 +320,6 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <div class="ns">INTEGRATIONS</div>
       <div class="ni" onclick="pg('integrate')" id="ni-integrate"><span class="ic">⊕</span><span class="lb">Connect</span></div>
       <div class="ns">ACCOUNT</div>
-      <div class="ni" onclick="pg('team')" id="ni-team"><span class="ic">◫</span><span class="lb">Team</span></div>
       <div class="ni" onclick="pg('settings')" id="ni-settings"><span class="ic">⚙</span><span class="lb">Settings</span></div>
     </div>
     <div class="sf">
@@ -329,13 +327,13 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
         <div class="av" id="sb-av">?</div>
         <div class="ui">
           <div class="un" id="sb-name">loading...</div>
-          <div class="up" id="sb-plan">● FREE</div>
+          <div class="up" id="sb-plan">● LOCAL</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:5px;padding:4px 7px;margin-top:4px">
         <div class="sb-dot" id="sb-dot"></div>
         <div class="sb-clock" id="sb-clock">--:--:--</div>
-        <div class="sb-mode" id="sb-mode">CLOUD</div>
+        <div class="sb-mode" id="sb-mode">LOCAL</div>
       </div>
       <div class="sb-info" id="sb-org">loading workspace...</div>
     </div>
@@ -372,7 +370,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
           <div class="mc"><div class="ml">TOTAL_PROMPTS</div><div class="mv" id="dm-total">—</div><div class="mch ne" id="dm-total-ch">this environment</div></div>
           <div class="mc"><div class="ml">LIVE_IN_PROD</div><div class="mv" id="dm-prod">—</div><div class="mch up">approved versions</div></div>
           <div class="mc"><div class="ml">PENDING_REVIEW</div><div class="mv" id="dm-pending">—</div><div class="mch ne" id="dm-pend-ch">awaiting engineer</div></div>
-          <div class="mc"><div class="ml">TEAM_MEMBERS</div><div class="mv" id="dm-members">—</div><div class="mch ne">active</div></div>
+          <div class="mc"><div class="ml">LOCAL_MODE</div><div class="mv" id="dm-members">ON</div><div class="mch ne">self-hosted</div></div>
         </div>
         <div class="g2">
           <div class="card">
@@ -436,7 +434,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
             <div class="card">
               <div class="fg">
                 <label>PROMPT KEY</label>
-                <input type="text" id="e-key" placeholder="assistant.system · radar.briefing · chatbot.greeting">
+                <input type="text" id="e-key" placeholder="onboarding.email · data.cleaning.prompt · assistant.system">
               </div>
               <div class="fg">
                 <label>DESCRIPTION (optional)</label>
@@ -444,7 +442,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
               </div>
               <div class="fg">
                 <label>CONTENT — the actual prompt text</label>
-                <textarea id="e-content" rows="12" placeholder="You are a helpful assistant...&#10;&#10;Use {{variable}} for dynamic values.&#10;Example: Your name is {{user_name}} and you work at {{company}}."></textarea>
+                <textarea id="e-content" rows="12" placeholder="Govern agents, hardcoded strings, system prompts like:&#10;&#10;You are an elite, multidisciplinary AGI-level operator embodying the combined roles of Cognitive Architect, Game Theorist, System Designer...&#10;&#10;Use {{variable}} for dynamic values."></textarea>
               </div>
               <div class="fg">
                 <label>COMMIT MESSAGE</label>
@@ -525,7 +523,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
           </div>
           <div>
             <div class="card" style="margin-bottom:8px">
-              <div class="card-title">SAVED TEAM KEYS</div>
+              <div class="card-title">SAVED LLM KEYS</div>
               <div id="team-keys-list"><div style="font-size:9px;color:var(--t3)">No saved keys. Add one to run evals without pasting keys each time.</div></div>
               <button class="btn bxs" style="margin-top:8px" onclick="openSaveKeyModal()">+ SAVE KEY</button>
             </div>
@@ -566,7 +564,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
           <div class="codeblk"><span class="cm"># Python / any HTTP client</span>
 <span class="cm"># Replace pm_live_xxxx with your actual key</span>
 r = requests.get(
-    <span class="st">"https://api.promptmatrix.io/pm/serve/<span class="va">your.prompt.key</span>"</span>,
+    <span class="st">"http://localhost:8000/pm/serve/<span class="va">your.prompt.key</span>"</span>,
     headers={<span class="st">"Authorization"</span>: <span class="st">"Bearer <span class="va">pm_live_xxxx</span>"</span>},
     timeout=<span class="va">2</span>
 )
@@ -612,7 +610,7 @@ system_prompt = r.text  <span class="cm"># returns the approved content</span></
             <div class="codeblk"><span class="kw">import</span> requests
 
 <span class="fn">def</span> <span class="va">get_prompt</span>(key, vars={}):
-    url = <span class="st">f"https://api.promptmatrix.io/pm/serve/{key}"</span>
+    url = <span class="st">f"http://localhost:8000/pm/serve/{key}"</span>
     <span class="kw">if</span> vars:
         url += <span class="st">"?vars="</span> + <span class="st">","</span>.join(
             <span class="st">f"{k}={v}"</span> <span class="kw">for</span> k,v <span class="kw">in</span> vars.items()
@@ -630,7 +628,7 @@ system = get_prompt(<span class="st">"email.writer"</span>, {<span class="st">"t
             <div class="card-title">n8n / MAKE / ZAPIER</div>
             <div style="font-size:10px;color:var(--t2);line-height:1.8;margin-bottom:10px">Add an HTTP Request node before your AI node:</div>
             <div class="codeblk">Method:  GET
-URL:     https://api.promptmatrix.io
+URL:     http://localhost:8000
          /pm/serve/{{$vars.promptKey}}
 Headers:
   Authorization: Bearer YOUR_KEY
@@ -643,7 +641,7 @@ Headers:
             <div class="codeblk"><span class="kw">const</span> <span class="va">getPrompt</span> = <span class="kw">async</span> (key, vars={}) => {
   <span class="kw">const</span> q = <span class="va">Object</span>.entries(vars)
     .map(([k,v]) => <span class="st">`${k}=${v}`</span>).join(<span class="st">","</span>)
-  <span class="kw">const</span> url = <span class="st">`https://api.promptmatrix.io</span>
+  <span class="kw">const</span> url = <span class="st">`http://localhost:8000</span>
 <span class="st">    /pm/serve/${key}${q ? "?vars="+q : ""}`</span>
   <span class="kw">const</span> r = <span class="kw">await</span> fetch(url, {
     headers: { Authorization: <span class="st">"Bearer YOUR_KEY"</span> }
@@ -654,7 +652,7 @@ Headers:
           <div class="card">
             <div class="card-title">CURL</div>
             <div class="codeblk"><span class="cm"># Plain text response</span>
-curl https://api.promptmatrix.io \
+curl http://localhost:8000 \
   /pm/serve/assistant.system \
   -H <span class="st">"Authorization: Bearer YOUR_KEY"</span>
 
@@ -669,26 +667,7 @@ curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
         </div>
       </div>
 
-      <!-- ══ TEAM ══ -->
-      <div class="pane" id="pane-team">
-        <div class="row">
-          <div><div class="ph">◫ <span>TEAM</span></div><div class="ps2">members · roles · invite</div></div>
-          <div class="row-end">
-            <button class="btn bp bxs" onclick="openInviteModal()">+ INVITE</button>
-          </div>
-        </div>
-        <div class="card" style="margin-bottom:0">
-          <div class="card-title">ROLE PERMISSIONS</div>
-          <div style="font-size:9px;color:var(--t3);line-height:2">
-            <span style="color:var(--r)">owner</span> — full control, billing, delete org &nbsp;·&nbsp;
-            <span style="color:var(--y)">admin</span> — everything + invite members + promote to production &nbsp;·&nbsp;
-            <span style="color:var(--g)">engineer</span> — approve/reject versions, create API keys &nbsp;·&nbsp;
-            <span style="color:var(--c)">editor</span> — propose versions, cannot approve &nbsp;·&nbsp;
-            <span style="color:var(--t3)">viewer</span> — read-only
-          </div>
-        </div>
-        <div id="team-list"><div class="skel"></div><div class="skel"></div></div>
-      </div>
+
 
       <!-- ══ SETTINGS ══ -->
       <div class="pane" id="pane-settings">
@@ -733,7 +712,7 @@ curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
 // ══════════════════════════════════════════════════════════════════════
 // CONFIG — single source of truth
 // ══════════════════════════════════════════════════════════════════════
-const API = 'REPLACE_WITH_YOUR_VERCEL_BACKEND_URL'; // e.g. https://promptmatrix-backend-xxxx.vercel.app
+const API = ''; // e.g. 'http://localhost:8000' or leave empty for same origin
 
 // ══════════════════════════════════════════════════════════════════════
 // APP STATE — everything lives here, never scattered
@@ -831,18 +810,17 @@ async function doRegister(){
   const name  = document.getElementById('r-name').value.trim();
   const email = document.getElementById('r-email').value.trim();
   const pass  = document.getElementById('r-pass').value;
-  const org   = document.getElementById('r-org').value.trim();
   const errEl = document.getElementById('auth-err-reg');
   const btn   = document.getElementById('reg-btn');
   errEl.className='auth-err';
-  if(!name||!email||!pass||!org){ errEl.textContent='All fields required'; errEl.className='auth-err show'; return; }
+  if(!name||!email||!pass){ errEl.textContent='All fields required'; errEl.className='auth-err show'; return; }
   if(pass.length<8){ errEl.textContent='Password must be at least 8 characters'; errEl.className='auth-err show'; return; }
-  btn.disabled=true; btn.textContent='CREATING...';
+  btn.disabled=true; btn.textContent='CREATING LOCAL ADMIN...';
   const data = await api('POST', '/api/v1/auth/register', {
-    email, password: pass, full_name: name, org_name: org
+    email, password: pass, full_name: name
   }, '__no_token__');
-  btn.disabled=false; btn.textContent='CREATE_WORKSPACE →';
-  if(!data){ return; } // error shown by api()
+  btn.disabled=false; btn.textContent='CREATE_LOCAL_ADMIN →';
+  if(!data){ return; } 
   onAuthSuccess(data);
 }
 
@@ -902,17 +880,7 @@ async function tryRestoreSession(){
 
 // Handle ?plan=founding in URL (from landing page)
 function checkPlanParam(){
-  const params = new URLSearchParams(location.search);
-  if(params.get('plan')==='founding'){
-    authTab('register');
-    document.getElementById('r-org').placeholder='Your team workspace name';
-    // Show founding context
-    const body = document.querySelector('.auth-body');
-    const banner = document.createElement('div');
-    banner.style.cssText='font-size:9px;color:var(--y);background:var(--y2);border:1px solid rgba(255,215,0,.3);padding:8px 10px;margin-bottom:14px;letter-spacing:.06em;line-height:1.6';
-    banner.textContent='⚡ FOUNDING ACCESS — $149 one-time. Rate-locked forever. After registering you\'ll be redirected to checkout.';
-    body.querySelector('#auth-register').prepend(banner);
-  }
+  // Cloud parameters removed for local-only version
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -1003,10 +971,9 @@ function updateEnvDot(){
 async function loadDash(){
   if(!S.env) return;
   // Load prompts for current env
-  const [promptsData, approvalsData, teamData] = await Promise.all([
+  const [promptsData, approvalsData] = await Promise.all([
     api('GET', `/api/v1/prompts?environment_id=${S.env.id}`),
     api('GET', '/api/v1/approvals'),
-    api('GET', `/api/v1/orgs/${S.org.id}/members`),
   ]);
 
   if(promptsData){
@@ -1027,9 +994,7 @@ async function loadDash(){
     renderDashApprovals(pending.slice(0,3));
   }
 
-  if(teamData){
-    setText('dm-members', (teamData.members||[]).length);
-  }
+
 }
 
 function renderRecentPrompts(prompts){
@@ -1573,65 +1538,12 @@ async function loadAudit(){
 }
 
 // ══════════════════════════════════════════════════════════════════════
-// TEAM
-// ══════════════════════════════════════════════════════════════════════
-async function loadTeam(){
-  const data = await api('GET', `/api/v1/orgs/${S.org.id}/members`);
-  if(!data) return;
-  const members = data.members||[];
-  const el = document.getElementById('team-list');
-  if(!el) return;
-  const roleColor = r => ({owner:'var(--r)',admin:'var(--y)',engineer:'var(--g)',editor:'var(--c)',viewer:'var(--t3)'})[r]||'var(--t3)';
-  el.innerHTML = members.map(m=>`
-    <div style="background:var(--bg2);border:1px solid var(--b2);padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:10px">
-      <div style="width:28px;height:28px;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--t2);font-weight:600;flex-shrink:0">
-        ${(m.full_name||m.email||'?')[0].toUpperCase()}</div>
-      <div style="flex:1">
-        <div style="font-size:10px;color:var(--t)">${m.full_name||m.email}</div>
-        <div style="font-size:8px;color:var(--t3)">${m.email}</div>
-      </div>
-      <span style="font-size:9px;color:${roleColor(m.role)};border:1px solid currentColor;padding:1px 6px">${m.role}</span>
-      ${m.user_id!==S.user?.id&&['admin','owner'].includes(S.org?.role)
-        ? `<button class="btn br bxs" onclick="removeMember('${m.user_id}','${m.email}')">✕</button>`
-        : ''}
-    </div>`).join('');
-}
-
-function openInviteModal(){
-  openModal('INVITE_TEAM_MEMBER', `
-    <div class="fg"><label>EMAIL ADDRESS</label><input type="email" id="inv-email" placeholder="colleague@company.com"></div>
-    <div class="fg"><label>ROLE</label>
-    <select id="inv-role">
-      <option value="editor">Editor — can propose versions, cannot approve</option>
-      <option value="engineer">Engineer — can approve/reject versions, create keys</option>
-      <option value="admin">Admin — full access, can invite others</option>
-      <option value="viewer">Viewer — read-only access</option>
-    </select></div>`,
-    [{label:'SEND INVITE', fn:'inviteMember()'}]
-  );
-}
-
-async function inviteMember(){
-  const email = document.getElementById('inv-email')?.value.trim();
-  const role  = document.getElementById('inv-role')?.value;
-  if(!email){ notif('Enter an email','warn'); return; }
-  const data = await api('POST', `/api/v1/orgs/${S.org.id}/members`, {email, role});
-  if(data){ notif(data.message||'Invited ✓'); closeModal(); loadTeam(); }
-}
-
-async function removeMember(userId, email){
-  if(!confirm(`Remove ${email} from the workspace?`)) return;
-  const data = await api('DELETE', `/api/v1/orgs/${S.org.id}/members/${userId}`);
-  if(data){ notif('Member removed'); loadTeam(); }
-}
-
-// ══════════════════════════════════════════════════════════════════════
 // NEW PROMPT MODAL
 // ══════════════════════════════════════════════════════════════════════
 function openNewPromptModal(){
   openModal('NEW_PROMPT', `
     <div class="fg"><label>PROMPT KEY — dot notation, lowercase</label>
-    <input type="text" id="np-key" placeholder="assistant.system · radar.briefing · chatbot.greeting"></div>
+    <input type="text" id="np-key" placeholder="onboarding.email · data.cleaning.prompt · assistant.system"></div>
     <div class="fg"><label>INITIAL CONTENT</label>
     <textarea id="np-content" rows="8" placeholder="You are a helpful assistant...&#10;&#10;Use {{variable}} for dynamic values."></textarea></div>
     <div class="fg"><label>DESCRIPTION (optional)</label>
@@ -1691,13 +1603,12 @@ const PAGE_LOAD = {
   keys:         loadKeys,
   environments: renderEnvList,
   audit:        loadAudit,
-  team:         loadTeam,
 };
 const TITLES = {
   dash:'DASHBOARD',prompts:'PROMPT_REGISTRY',editor:'PROMPT_EDITOR',
   approvals:'APPROVAL_QUEUE',evals:'EVALUATIONS',versions:'VERSION_HISTORY',
   keys:'API_KEYS',environments:'ENVIRONMENTS',audit:'AUDIT_LOG',
-  integrate:'INTEGRATIONS',team:'TEAM',settings:'SETTINGS',
+  integrate:'INTEGRATIONS',settings:'SETTINGS',
 };
 
 function pg(name){

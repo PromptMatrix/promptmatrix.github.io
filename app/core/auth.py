@@ -1,43 +1,26 @@
-"""
-Core Auth
-=========
-JWT token creation/validation
-API key generation + hashing
-Password hashing
-AES-256-GCM encryption for stored LLM keys
-"""
-
 import secrets
 import hashlib
 import base64
 import os
 from datetime import datetime, timedelta
 from typing import Optional
-
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-
 from app.config import get_settings
 from app.database import get_db
 
 settings = get_settings()
-
-# ── Password hashing ─────────────────────────────────────────────
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def hash_password(plain: str) -> str:
     return pwd_context.hash(plain)
 
-
 def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
-
-# ── JWT ──────────────────────────────────────────────────────────
 def create_access_token(user_id: str, org_id: Optional[str] = None) -> str:
     payload = {
         "sub": user_id,
@@ -48,9 +31,7 @@ def create_access_token(user_id: str, org_id: Optional[str] = None) -> str:
     }
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
-
 def create_refresh_token(user_id: str, org_id: Optional[str] = None) -> str:
-    """org_id included so token refresh preserves org context."""
     payload = {
         "sub": user_id,
         "org": org_id,
@@ -59,7 +40,6 @@ def create_refresh_token(user_id: str, org_id: Optional[str] = None) -> str:
         "iat": datetime.utcnow(),
     }
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
-
 
 def decode_token(token: str) -> dict:
     try:
@@ -71,15 +51,7 @@ def decode_token(token: str) -> dict:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-
-# ── API Key generation ───────────────────────────────────────────
 def generate_api_key(env_name: str) -> tuple[str, str, str]:
-    """
-    Returns (full_key, key_hash, key_prefix)
-    full_key   — shown ONCE to the user, never stored
-    key_hash   — SHA-256 hash stored in DB for lookups
-    key_prefix — first 16 chars, stored for UI display ("pm_live_xxxx")
-    """
     prefix_map = {
         "production":  "pm_live_",
         "staging":     "pm_stg_",
@@ -92,14 +64,10 @@ def generate_api_key(env_name: str) -> tuple[str, str, str]:
     key_prefix = full_key[:16]
     return full_key, key_hash, key_prefix
 
-
 def hash_api_key(key: str) -> str:
     return hashlib.sha256(key.encode()).hexdigest()
 
-
-# ── FastAPI dependencies ─────────────────────────────────────────
 bearer_scheme = HTTPBearer(auto_error=False)
-
 
 def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
@@ -116,7 +84,6 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return user
-
 
 def get_current_user_and_org(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
@@ -143,10 +110,7 @@ def get_current_user_and_org(
         raise HTTPException(status_code=403, detail="Not a member of this organisation")
     return user, member
 
-
-# ── Role checks ──────────────────────────────────────────────────
 ROLE_HIERARCHY = {"viewer": 0, "editor": 1, "engineer": 2, "admin": 3, "owner": 4}
-
 
 def require_role(member, min_role: str):
     if not member:
@@ -157,42 +121,26 @@ def require_role(member, min_role: str):
             detail=f"Requires '{min_role}' or higher. You are '{member.role}'."
         )
 
-
-# ── AES-256-GCM encryption for stored LLM keys ──────────────────
 try:
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     _CRYPTO_OK = True
 except ImportError:
     _CRYPTO_OK = False
 
-
 def _derive_encryption_key() -> bytes:
-    """
-    Use ENCRYPTION_KEY if set (recommended in production).
-    Falls back to JWT secret only in development.
-    These two secrets should NEVER be the same value — rotating
-    JWT_SECRET_KEY must not break stored LLM keys.
-    """
     key_material = settings.encryption_key or settings.jwt_secret_key
     return hashlib.sha256(key_material.encode()).digest()
 
-
 def encrypt_api_key(plaintext: str) -> str:
-    """Encrypt a team LLM key. Returns base64-encoded nonce+ciphertext."""
     if not _CRYPTO_OK:
-        raise RuntimeError(
-            "cryptography package is required for LLM key encryption. "
-            "Run: pip install cryptography"
-        )
+        raise RuntimeError("cryptography package is required")
     key = _derive_encryption_key()
     aesgcm = AESGCM(key)
     nonce = os.urandom(12)
     ct = aesgcm.encrypt(nonce, plaintext.encode(), None)
     return base64.b64encode(nonce + ct).decode()
 
-
 def decrypt_api_key(ciphertext: str) -> str:
-    """Decrypt a stored LLM key. Only called in server memory during eval runs."""
     if not _CRYPTO_OK:
         raise RuntimeError("cryptography package is required")
     key = _derive_encryption_key()

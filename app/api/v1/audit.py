@@ -1,15 +1,11 @@
-"""Audit log — /api/v1/audit"""
-
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-
 from app.database import get_db
 from app.models import AuditLog
 from app.core.auth import get_current_user_and_org
 
 router = APIRouter(prefix="/api/v1/audit", tags=["audit"])
-
 
 @router.get("")
 async def list_audit(
@@ -21,14 +17,11 @@ async def list_audit(
 ):
     user, member = auth
     if not member:
-        raise HTTPException(status_code=403, detail="No org context")
-
+        raise HTTPException(status_code=403, detail="No org")
     q = db.query(AuditLog).filter(AuditLog.org_id == member.org_id)
     if resource_type:
         q = q.filter(AuditLog.resource_type == resource_type)
-
     logs = q.order_by(AuditLog.created_at.desc()).offset(offset).limit(min(limit, 200)).all()
-
     return {"logs": [{
         "id": l.id,
         "action": l.action,

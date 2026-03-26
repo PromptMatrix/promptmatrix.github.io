@@ -386,6 +386,13 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
             <button class="btn bg2b bxs" onclick="refreshDash()">↻ REFRESH</button>
           </div>
         </div>
+        
+        <div class="al warn" style="border-color:var(--y);background:var(--y2);margin-bottom:10px;">
+          <div class="al-ic" style="color:var(--y)">⚠</div>
+          <div class="al-msg">
+            <strong>LOCAL STORAGE WARNING:</strong> You are using the browser-only preview. Your data will be lost if you clear your browser cache. To persist data, connect to the SQLite backend. This self-hosted version has no team features. For team collaboration and zero-ops hosting, try the <a href="https://promptmatrixx.vercel.app" style="color:var(--y);text-decoration:underline;" target="_blank">Cloud Version</a>.
+          </div>
+        </div>
 
         <div class="g4">
           <div class="mc">
@@ -491,7 +498,7 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
 
             <div id="tab-sys">
               <label>SYSTEM_CONTEXT</label>
-              <textarea id="sys-p" style="height:160px" placeholder="You are a...&#10;&#10;## DIRECTIVES&#10;-" oninput="updCC()"></textarea>
+              <textarea id="sys-p" style="height:160px" placeholder="Govern agents, hardcoded strings, system prompts like:&#10;&#10;You are an elite, multidisciplinary AGI-level operator embodying the combined roles of Cognitive Architect, Game Theorist, System Designer...&#10;&#10;## DIRECTIVES&#10;-" oninput="updCC()"></textarea>
               <div style="font-size:8px;color:var(--t3);margin-top:3px"><span id="sys-cc">0</span> chars</div>
             </div>
             <div id="tab-usr" style="display:none">
@@ -526,8 +533,8 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
                   </select>
                 </div>
                 <div class="fg">
-                  <label>AGENT_TAG</label>
-                  <input type="text" id="p-agent" placeholder="e.g. SCOUT, NURTURE">
+                  <label>TAG/CATEGORY</label>
+                  <input type="text" id="p-agent" placeholder="e.g. CORE, SUPPORT, MARKETING">
                 </div>
               </div>
               <div class="fg">
@@ -598,7 +605,7 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
                 <th>VERSION</th>
                 <th>SCORE</th>
                 <th>UPDATED</th>
-                <th>AGENT</th>
+                <th>TAG</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
@@ -766,19 +773,19 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
         <!-- ── SERVE ENDPOINT REFERENCE ── -->
         <div class="card" style="margin-bottom:10px">
           <div class="card-title">SERVE_ENDPOINT — agents use this</div>
-          <div class="codeblk"><span class="cm">// agent calls this at runtime — returns plain text system prompt</span>
-<span class="kw">GET</span> <span class="st">http://localhost:5000/pm/serve/content.radar.system</span>
-<span class="cm">// → returns the approved system prompt as plain text</span>
+          <div class="codeblk"><span class="cm">// your app calls this at runtime — returns plain text prompt</span>
+<span class="kw">GET</span> <span class="st">http://localhost:8000/pm/serve/onboarding.email</span>
+<span class="cm">// → returns the approved prompt as plain text</span>
 <span class="cm">// priority: production > approved > staging > draft</span>
 
-<span class="cm">// python — in run_agent.py</span>
-<span class="kw">import</span> <span class="va">requests</span>
-<span class="va">key</span> = <span class="st">"content.radar.system"</span>
-<span class="va">r</span> = <span class="fn">requests</span>.<span class="fn">get</span>(<span class="st">f"http://localhost:5000/pm/serve/{key}"</span>)
-<span class="va">system_prompt</span> = <span class="va">r</span>.<span class="fn">text</span>  <span class="cm"># plain text — use directly</span>
+<span class="cm">// python — in your_app.py</span>
+<span class="kw">import</span> <span class="va">pm_sdk</span>
+
+<span class="va">key</span>    = <span class="st">"onboarding.email"</span>          <span class="cm"># your prompt key</span>
+<span class="va">prompt</span> = <span class="fn">pm_sdk</span>.<span class="fn">get_prompt</span>(<span class="va">key</span>) <span class="cm"># fetches from server, caches locally</span>
 
 <span class="cm">// list all synced prompts</span>
-<span class="kw">GET</span> <span class="st">http://localhost:5000/api/prompts</span></div>
+<span class="kw">GET</span> <span class="st">http://localhost:8000/api/prompts</span></div>
         </div>
 
         <div id="deploy-list"></div>
@@ -802,13 +809,11 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
 <span class="cm"># In the Registry tab: click + REGISTER, name it, save with status=production</span>
 <span class="cm"># That's it — the serve endpoint is live immediately</span>
 
-<span class="cm"># STEP 3 — wire into your agent / app</span>
-<span class="kw">import</span> <span class="va">requests</span>
+<span class="cm"># STEP 3 — wire into your app</span>
+<span class="kw">import</span> <span class="va">pm_sdk</span> <span class="cm"># pip install promptmatrix-sdk</span>
 
 <span class="va">key</span>    = <span class="st">"content.radar.system"</span>          <span class="cm"># your prompt key</span>
-<span class="va">prompt</span> = <span class="fn">requests</span>.<span class="fn">get</span>(
-    <span class="st">f"http://localhost:5000/pm/serve/{key}"</span>
-).<span class="fn">text</span>
+<span class="va">prompt</span> = <span class="fn">pm_sdk</span>.<span class="fn">get_prompt</span>(<span class="va">key</span>)
 
 <span class="cm"># Now use `prompt` as your system prompt in any LLM call.</span>
 <span class="cm"># When you edit + approve in this dashboard, the next call returns</span>
@@ -832,17 +837,13 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
      <span class="cm">Authorization: Bearer {PM_SECRET}</span>
 
 <span class="cm"># Python — recommended pattern with cache + fallback</span>
-<span class="va">_cache</span> = {}
+<span class="kw">import</span> <span class="va">pm_sdk</span> <span class="cm"># pip install promptmatrix-sdk</span>
+
 <span class="kw">def</span> <span class="fn">get_prompt</span>(<span class="va">key</span>, <span class="va">fallback</span>=<span class="st">""</span>):
-    <span class="kw">import</span> <span class="va">time</span>
-    <span class="kw">if</span> <span class="va">key</span> <span class="kw">in</span> <span class="va">_cache</span> <span class="kw">and</span> <span class="va">time</span>.<span class="fn">time</span>() - <span class="va">_cache</span>[<span class="va">key</span>][<span class="st">1</span>] < <span class="st">30</span>:
-        <span class="kw">return</span> <span class="va">_cache</span>[<span class="va">key</span>][<span class="st">0</span>]
-    <span class="kw">try</span>:
-        <span class="va">r</span> = <span class="fn">requests</span>.<span class="fn">get</span>(<span class="st">f"http://localhost:5000/pm/serve/{key}"</span>, <span class="va">timeout</span>=<span class="st">2</span>)
-        <span class="va">_cache</span>[<span class="va">key</span>] = (<span class="va">r</span>.<span class="fn">text</span>, <span class="va">time</span>.<span class="fn">time</span>())
-        <span class="kw">return</span> <span class="va">r</span>.<span class="fn">text</span>
-    <span class="kw">except</span>:
-        <span class="kw">return</span> <span class="va">fallback</span>  <span class="cm"># never break production</span></div>
+    <span class="kw">return</span> <span class="fn">pm_sdk</span>.<span class="fn">get_prompt</span>(<span class="va">key</span>, <span class="va">fallback</span>=<span class="va">fallback</span>)
+
+<span class="cm"># pm_sdk handles caching, server calls, and fallbacks automatically.</span>
+<span class="cm"># Configure server URL and token via pm_sdk.init(url, token).</span></div>
         </div>
 
         <!-- INTEGRATIONS LIST -->
@@ -850,8 +851,8 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
         <div class="int-card">
           <div class="int-ic">🐍</div>
           <div class="int-info">
-            <div class="int-name">Python · requests / httpx</div>
-            <div class="int-desc">No SDK needed — one GET call. Works with any LLM library: openai, anthropic, litellm, langchain.</div>
+            <div class="int-name">Python · pm_sdk</div>
+            <div class="int-desc">Official SDK for Python. Handles caching, server calls, and fallbacks. Works with any LLM library: openai, anthropic, litellm, langchain.</div>
           </div>
           <div class="int-act"><span class="tag tg">LIVE</span></div>
         </div>
@@ -950,7 +951,7 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
               <div class="card-title">API_CONFIG</div>
               <div class="fg">
                 <label>SERVER_URL</label>
-                <input type="text" id="s-url" placeholder="http://localhost:5000" value="http://localhost:5000">
+                <input type="text" id="s-url" placeholder="http://localhost:8000" value="http://localhost:8000">
               </div>
               <div class="fg">
                 <label>PM_TOKEN (PM_SECRET)</label>
@@ -1049,7 +1050,7 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
       <button class="modal-close" onclick="closeModal('ai-modal')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="fg"><label>DESCRIBE_TASK</label><textarea id="ai-task" style="height:60px" placeholder="e.g. customer support agent for a SaaS product that handles billing questions..."></textarea></div>
+      <div class="fg"><label>DESCRIBE_TASK</label><textarea id="ai-task" style="height:60px" placeholder="e.g. write a welcome email template for a new SaaS user..."></textarea></div>
       <div class="frow">
         <div class="fg"><label>MODEL</label>
           <select id="ai-model">
@@ -1109,6 +1110,7 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
           </select>
         </div>
       </div>
+      <div class="fg"><label>TAG</label><input type="text" id="nm-tag" placeholder="e.g. marketing, backend, support"></div>
     </div>
     <div class="modal-foot">
       <button class="btn bg2b" onclick="closeModal('new-modal')">CANCEL</button>
@@ -1163,7 +1165,7 @@ label{font-size:9px;color:var(--t3);letter-spacing:.08em;display:block;margin-bo
 // CONFIG
 // ══════════════════════════════════════════════════════════════════════
 const CFG = {
-  get url()   { return localStorage.getItem('pm_url')   || 'http://localhost:5000'; },
+  get url()   { return localStorage.getItem('pm_url')   || 'http://localhost:8000'; },
   get token() { return localStorage.getItem('pm_token') || ''; },
   get demo()  { return localStorage.getItem('pm_demo')  === 'true'; },
   set demo(v) { localStorage.setItem('pm_demo', v ? 'true' : 'false'); },
@@ -1733,7 +1735,7 @@ function fillEditor(data){
   modelSel.value = modelExists ? data.model : 'claude-sonnet-4-6';
   if(!modelExists && data.model) notif(`⚠ model '${data.model}' is external — using Sonnet 4.6 for testing`, 'warn');
   document.getElementById('p-status').value = data.status||'draft';
-  document.getElementById('p-agent').value = data.agent||'';
+  document.getElementById('p-tag').value = data.tag||'';
   const meta = document.getElementById('editor-meta');
   if(meta) meta.textContent = data.id+' · v'+(data.version||1)+' · '+(data.status||'draft');
   _varMap = data.vars||{};
@@ -1750,7 +1752,7 @@ function loadAndEdit(id){
 function clearEditor(){
   _currentPromptId = null;
   _varMap = {};
-  ['p-key','sys-p','usr-p','p-agent','p-commit-msg'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
+  ['p-key','sys-p','usr-p','p-tag','p-commit-msg'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
   document.getElementById('model-sel').value='claude-sonnet-4-6';
   document.getElementById('p-status').value='draft';
   document.getElementById('out-box').textContent='// run prompt to see output...';
@@ -1783,19 +1785,19 @@ function _savePrompt(key, status){
     : model;
   const system = document.getElementById('sys-p')?.value||'';
   const user   = document.getElementById('usr-p')?.value||'';
-  const agent  = document.getElementById('p-agent')?.value?.trim()||'';
+  const tag  = document.getElementById('p-tag')?.value?.trim()||'';
   const now    = ts();
   if(existing){
     existing.model   = finalModel;
     existing.system  = system;
     existing.user    = user;
     existing.status  = status;
-    existing.agent   = agent;
+    existing.tag   = tag;
     existing.updated = now;
     existing.version = (existing.version||1)+1;
     existing.vars    = {..._varMap};
   } else {
-    prompts.push({id:key,model,system,user,status,agent,created:now,updated:now,version:1,vars:{..._varMap}});
+    prompts.push({id:key,model,system,user,status,tag,created:now,updated:now,version:1,vars:{..._varMap}});
     _currentPromptId = key;
   }
   savePrompts(prompts);
@@ -2030,7 +2032,7 @@ function renderRegistry(){
       <td style="color:var(--t3)">v${p.version||1}</td>
       <td>${p.score?`<span style="color:${p.score>=8.5?'var(--g)':p.score>=7?'var(--y)':'var(--r)'}">${p.score}</span>`:'<span style="color:var(--t3)">—</span>'}</td>
       <td style="color:var(--t3)">${p.updated||p.created||'—'}</td>
-      <td style="color:var(--t3)">${p.agent||'—'}</td>
+      <td style="color:var(--t3)">${p.tag||'—'}</td>
       <td>
         <div style="display:flex;gap:3px">
           <button class="btn bxs bg2b" onclick="loadAndEdit('${p.id}')" title="Edit">✎</button>
@@ -2079,10 +2081,11 @@ function createPrompt(){
   const desc = document.getElementById('nm-desc')?.value?.trim()||'';
   const model= document.getElementById('nm-model')?.value||'claude-sonnet-4-6';
   const status=document.getElementById('nm-status')?.value||'draft';
+  const tag = document.getElementById('nm-tag')?.value?.trim()||'';
   if(!key){ notif('⚠ prompt key required'); return; }
   const prompts = getPrompts();
   if(prompts.find(p=>p.id===key)){ notif('⚠ key already exists'); return; }
-  prompts.push({id:key,model,status,system:'',user:'',created:ts(),updated:ts(),version:1,desc,vars:{}});
+  prompts.push({id:key,model,status,system:'',user:'',created:ts(),updated:ts(),version:1,desc,tag,vars:{}});
   savePrompts(prompts);
   closeModal('new-modal');
   loadAndEdit(key);
@@ -2850,28 +2853,19 @@ function seedDemo(){
   if(DB.get('seeded')) return;
   const now=ts();
 
-  // ── Example agent prompts — replace with your own ──────────
-  const EXAMPLE_AGENTS = [
-    // WRITING AGENTS
-    {id:'agent.writer.system',        model:'claude-sonnet-4-6', status:'production', agent:'WRITER',   system:'# WRITER — System Prompt\n\nYou are WRITER, a longform content writing agent.\n\n## Role\nDraft blog posts, essays, and articles based on a topic brief. Voice: clear, engaging, no filler.\n\n## Output Format\n- Title\n- Intro (hook in first sentence)\n- 3–5 body sections with ## headers\n- Closing paragraph with a clear takeaway\n\n## Constraints\n- Target length: {{word_count}} words\n- Tone: {{tone}}\n- Audience: {{audience}}\n\n## Instructions\nReplace the constraints above with your defaults. Add any style guide rules here.'},
-    {id:'agent.editor.system',        model:'claude-sonnet-4-6', status:'staging',    agent:'EDITOR',   system:'# EDITOR — System Prompt\n\nYou are EDITOR, a copy editing and proofreading agent.\n\n## Role\nTake any draft text and return a polished version. Fix grammar, tighten sentences, improve clarity.\n\n## Output Format\nReturn the edited text only. No commentary unless asked.\n\n## Constraints\n- Preserve the author\'s voice\n- Do not change meaning — only improve clarity\n- Flag any factual claims that seem uncertain with [CHECK THIS]\n\n## Instructions\n[Customize your EDITOR prompt here]'},
-    {id:'agent.summarizer.system',    model:'claude-haiku-4-5-20251001', status:'production', agent:'SUMMARIZER', system:'# SUMMARIZER — System Prompt\n\nYou are SUMMARIZER, a text compression agent.\n\n## Role\nTake any long text and return a concise summary. No fluff. Signal over noise.\n\n## Output Format\n- One-sentence TL;DR\n- 3–5 bullet key points\n- Any action items (if present in source)\n\n## Constraints\n- Max output: {{max_bullets}} bullets\n- Preserve all numbers, dates, and proper nouns exactly\n\n## Instructions\n[Customize your SUMMARIZER prompt here]'},
-    // CODING AGENTS
-    {id:'agent.coder.system',         model:'claude-sonnet-4-6', status:'production', agent:'CODER',    system:'# CODER — System Prompt\n\nYou are CODER, a software engineering agent.\n\n## Role\nWrite clean, production-ready code based on a specification. Default language: {{language}}.\n\n## Always\n- Include inline comments for non-obvious logic\n- Handle edge cases explicitly\n- Output complete, runnable code — no placeholders\n\n## Output Format\nCode block only. No preamble. Add a brief usage example at the end.\n\n## Instructions\n[Customize your CODER prompt here]'},
-    {id:'agent.debugger.system',      model:'claude-sonnet-4-6', status:'draft',      agent:'DEBUGGER', system:'# DEBUGGER — System Prompt\n\nYou are DEBUGGER, a code diagnosis and fix agent.\n\n## Role\nGiven broken code + error output, find the root cause and return a minimal fix.\n\n## Output Format\nRoot cause: [one sentence]\nFix: [exact code change with line reference]\nWhy it works: [one sentence]\n\n## Instructions\n[Customize your DEBUGGER prompt here]'},
-    {id:'agent.reviewer.system',      model:'claude-sonnet-4-6', status:'draft',      agent:'REVIEWER', system:'# REVIEWER — System Prompt\n\nYou are REVIEWER, a code review agent.\n\n## Role\nReview code for correctness, security issues, performance, and style. Return structured feedback.\n\n## Output Format\n- Overall verdict: APPROVE / REQUEST_CHANGES\n- Issues: [list with severity: critical / warning / suggestion]\n- Positive observations: [what was done well]\n\n## Instructions\n[Customize your REVIEWER prompt here]'},
-    // RESEARCH AGENTS
-    {id:'agent.researcher.system',    model:'claude-sonnet-4-6', status:'production', agent:'RESEARCHER',system:'# RESEARCHER — System Prompt\n\nYou are RESEARCHER, a deep research and synthesis agent.\n\n## Role\nGiven a topic or question, produce a structured research brief with key findings, open questions, and recommended sources.\n\n## Output Format\n- Summary (2–3 sentences)\n- Key findings (bullet list)\n- Open questions\n- Suggested next steps\n\n## Constraints\n- Depth level: {{depth}} (quick / standard / deep)\n- Flag anything uncertain or unverified\n\n## Instructions\n[Customize your RESEARCHER prompt here]'},
-    {id:'agent.analyst.system',       model:'claude-sonnet-4-6', status:'staging',    agent:'ANALYST',  system:'# ANALYST — System Prompt\n\nYou are ANALYST, a data interpretation agent.\n\n## Role\nTake raw data, metrics, or reports and surface the key insights. What changed? What matters? What to do next?\n\n## Output Format\n- Top 3 insights (ranked by importance)\n- One risk or anomaly to watch\n- Recommended action\n\n## Instructions\n[Customize your ANALYST prompt here]'},
-    // SUPPORT AGENTS
-    {id:'agent.support.system',       model:'claude-haiku-4-5-20251001', status:'production', agent:'SUPPORT',  system:'# SUPPORT — System Prompt\n\nYou are SUPPORT, a customer support response agent.\n\n## Role\nDraft helpful, empathetic replies to customer inquiries. Match the tone of the customer.\n\n## Always\n- Acknowledge the customer\'s issue first\n- Provide a clear answer or next step\n- Close with an offer to help further\n\n## Constraints\n- Brand voice: {{brand_voice}}\n- Max reply length: {{max_words}} words\n\n## Instructions\n[Customize your SUPPORT prompt here]'},
-    {id:'agent.triage.system',        model:'claude-haiku-4-5-20251001', status:'draft',      agent:'TRIAGE',   system:'# TRIAGE — System Prompt\n\nYou are TRIAGE, an inbox classification agent.\n\n## Role\nRead incoming messages and classify them by type and urgency. Output structured metadata only.\n\n## Output Format (JSON)\n{"category": "...", "urgency": "high|medium|low", "requires_human": true|false, "suggested_action": "..."}\n\n## Categories\nbug_report, feature_request, billing, general_inquiry, spam\n\n## Instructions\n[Customize your TRIAGE prompt here]'},
-    // ORCHESTRATION
-    {id:'agent.router.system',        model:'claude-sonnet-4-6', status:'production', agent:'ROUTER',   system:'# ROUTER — System Prompt\n\nYou are ROUTER, the master orchestration agent.\n\n## Role\nReceive any task. Identify which agent should handle it. Return a routing decision with rationale.\n\n## Available Agents\nWRITER, EDITOR, SUMMARIZER, CODER, DEBUGGER, RESEARCHER, ANALYST, SUPPORT, TRIAGE\n\n## Output Format (JSON)\n{"route_to": "AGENT_NAME", "task_summary": "...", "priority": "high|medium|low", "estimated_tokens": 0}\n\n## Instructions\n[Customize your ROUTER prompt here — add or remove agents to match your system]'},
-    {id:'agent.evaluator.system',     model:'claude-sonnet-4-6', status:'staging',    agent:'EVALUATOR',system:'# EVALUATOR — System Prompt\n\nYou are EVALUATOR, a prompt quality scoring agent.\n\n## Role\nRate any AI prompt on a 1–10 scale. Return a score, rationale, and specific improvement suggestions.\n\n## Scoring Criteria\n- Clarity (is the role unambiguous?)\n- Constraints (are boundaries set?)\n- Output format (is the expected format defined?)\n- Variable usage (are dynamic parts marked with {{placeholders}}?)\n\n## Output Format (JSON)\n{"score": 0, "rationale": "...", "strengths": [], "improvements": []}\n\n## Instructions\n[Customize your EVALUATOR prompt here]'},
+  // ── Example generic prompts — replace with your own ──────────
+  const EXAMPLE_PROMPTS = [
+    // TEMPLATES
+    {id:'marketing.welcome.email',        model:'claude-sonnet-4-6', status:'production', tag:'MARKETING',   system:'Subject: Welcome to {{product_name}}, {{user_name}}!\n\nHi {{user_name}},\n\nWe are thrilled to have you on board. Here are the top 3 things you can do to get started:\n\n1. Setup your profile\n2. Invite your team\n3. Create your first project\n\nCheers,\nThe {{product_name}} Team'},
+    {id:'data.cleaning.instructions',        model:'claude-sonnet-4-6', status:'staging',    tag:'BACKEND',   system:'You receive raw HTML input from user forms.\n\nYour task is to sanitize this input by stripping out all <script> tags, inline styles, and potentially malicious attributes. Only allow basic formatting tags like <b>, <i>, <p>, and <br>.\n\nInput format: string\nOutput format: sanitized string'},
+    {id:'support.auto.reply',    model:'claude-haiku-4-5-20251001', status:'production', tag:'SUPPORT', system:'Hello!\n\nWe have received your request regarding "{{topic}}". Our team is currently reviewing it and will get back to you within 24 hours.\n\nIf you have any urgent details to add, please reply directly to this thread.\n\nBest,\nSupport Team'},
+    // INSTRUCTIONS
+    {id:'feature.extraction.prompt',         model:'claude-sonnet-4-6', status:'production', tag:'CORE',    system:'You are an extraction utility.\n\nGiven the text enclosed in <document>, extract all dates, names of people, and company entities.\n\nOutput strictly as a JSON list of objects:\n[{"type": "date", "value": "..."}, ...]\n\nDo not include any conversational text or markdown code blocks around the JSON.'},
+    {id:'ui.button.component',      model:'claude-sonnet-4-6', status:'draft',      tag:'FRONTEND', system:'Generate a React function component for a Button based on the following props: `variant` (primary, secondary, danger), `size` (sm, md, lg), and `children`.\n\nUse Tailwind CSS for styling. Ensure accessible ARIA attributes are included.'},
+    {id:'assistant.system',    model:'claude-sonnet-4-6', status:'production', tag:'AI_AGENT',system:'You are a helpful, harmless, and honest assistant.\n\n## Core Directives\n- Always think step by step before answering.\n- If you do not know the answer, say "I don\'t know."\n- Keep your tone professional and concise.\n\nUser Profile: {{user_role}}'}
   ];
 
-  const prompts = EXAMPLE_AGENTS.map(a => ({
+  const prompts = EXAMPLE_PROMPTS.map(a => ({
     ...a,
     version: 1,
     score: null,
