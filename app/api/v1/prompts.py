@@ -9,7 +9,13 @@ from app.models import (
     Prompt, PromptVersion, Environment, OrgMember, AuditLog, User, Organisation
 )
 from app.core.auth import get_current_user_and_org, require_role
-from app.serve.cache import invalidate_prompt_cache
+from app.core.policy import redact_identified_secrets, analyze_prompt_safety
+import hashlib
+
+def _generate_integrity_hash(action: str, resource_id: str, ts: datetime) -> str:
+    """Generate a SHA-256 hash to ensure log integrity."""
+    ctx = f"{action}:{resource_id}:{ts.isoformat()}"
+    return hashlib.sha256(ctx.encode()).hexdigest()
 
 router = APIRouter(prefix="/api/v1/prompts", tags=["prompts"])
 
@@ -123,21 +129,30 @@ async def create_prompt(
     )
     db.add(prompt)
     db.flush()
+    # Security Policy: Redact Secrets
+    content_safe = redact_identified_secrets(body.content)
+    risks = analyze_prompt_safety(body.content)
+    
     v = PromptVersion(
         prompt_id=prompt.id,
         version_num=1,
-        content=body.content,
+        content=content_safe,
         commit_message=body.commit_message or "Initial version",
-        variables=_detect_variables(body.content),
+        variables=_detect_variables(content_safe),
         status="draft",
         proposed_by_id=user.id,
+        approval_note = f"Policy Check: {len(risks)} risks detected." if risks else "Policy Check: Pass.",
     )
     db.add(v)
     db.flush()
+    
+    ts = datetime.utcnow()
     db.add(AuditLog(
         org_id=member.org_id, actor_id=user.id, actor_email=user.email,
         action="prompt.created", resource_type="prompt", resource_id=prompt.id,
-        extra={"key": body.key, "env": body.environment_id}
+        extra={"key": body.key, "env": body.environment_id, "policy_risks": [r[0] for r in risks]},
+        created_at=ts,
+        integrity_hash=_generate_integrity_hash("prompt.created", prompt.id, ts)
     ))
     db.commit()
     db.refresh(prompt)

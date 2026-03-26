@@ -3,23 +3,38 @@ from pydantic import model_validator
 from functools import lru_cache
 
 class Settings(BaseSettings):
+    # Core Infrastructure
     database_url: str = "sqlite:///./promptmatrix.db"
     jwt_secret_key: str = "dev-secret-change-in-production"
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
     encryption_key: str = ""
-    app_env: str = "development"
+    app_env: str = "local" # local, development, production, cloud
     app_url: str = "http://localhost:8000"
     frontend_url: str = "http://localhost:3000"
     debug: bool = False
+
+    # SaaS / Cloud Modules (Optional - Activated by presence of keys)
     resend_api_key: str = ""
     from_email: str = "noreply@promptmatrix.local"
     upstash_redis_rest_url: str = ""
     upstash_redis_rest_token: str = ""
+    
+    # Supabase / Private Cloud specific
+    supabase_url: str = ""
+    supabase_key: str = ""
+    
+    # Internal Performance
     prompt_cache_ttl_seconds: int = 30
     api_key_cache_ttl_seconds: int = 300
     serve_rate_limit_rpm: int = 600
+
+    @property
+    def is_cloud_mode(self) -> bool:
+        """Returns True if the instance is configured for cloud-managed services."""
+        return bool(self.upstash_redis_rest_url or self.supabase_url)
+
 
     @model_validator(mode="after")
     def validate_production_secrets(self) -> "Settings":

@@ -164,6 +164,7 @@ class AuditLog(Base):
     resource_type = Column(String(40), default="")
     resource_id = Column(String, nullable=True)
     extra = Column(JSON, default=dict)
+    integrity_hash = Column(String(64), nullable=True) # SHA-256 hash of (action + resource_id + created_at)
     created_at = Column(DateTime, default=_now)
     __table_args__ = (
         Index("ix_audit_org_created", "org_id", "created_at"),

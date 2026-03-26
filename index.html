@@ -14,9 +14,36 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://promptmatrix.github.io/">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PromptMatrix — Every Prompt. One Governed Registry.">
+<meta name="twitter:description" content="Hardcoded prompts are ungoverned. PromptMatrix governs them — version control, approval workflow, audit trail. Free & open source. MIT.">
+<meta name="twitter:image" content="https://promptmatrix.github.io/og-image.png">
+<meta property="og:image" content="https://promptmatrix.github.io/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="theme-color" content="#000301">
+<meta name="robots" content="index, follow">
+<meta name="author" content="PromptMatrix">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PromptMatrix","description":"Prompt governance infrastructure for AI teams. Version-controlled, auditable, instantly updatable.","url":"https://promptmatrix.github.io/","applicationCategory":"DeveloperApplication","offers":[{"@type":"Offer","price":"0","priceCurrency":"USD","name":"Free"},{"@type":"Offer","price":"19","priceCurrency":"USD","priceSpecification":{"@type":"UnitPriceSpecification","billingDuration":"P1M"},"name":"Solo"},{"@type":"Offer","price":"79","priceCurrency":"USD","priceSpecification":{"@type":"UnitPriceSpecification","billingDuration":"P1M"},"name":"Team"}]}</script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+/* ── FIBONACCI SPACING SYSTEM ─────────────────────────────────
+   φ = 1.618 · Sequence: 3,5,8,13,21,34,55,89,144,233
+   Used for: padding, gap, margin, border-radius, font-size
+   ────────────────────────────────────────────────────────── */
+:root{
+  --f3:3px;   --f5:5px;   --f8:8px;   --f13:13px;
+  --f21:21px; --f34:34px; --f55:55px; --f89:89px;
+  --f144:144px; --f233:233px;
+  /* Font scale (Fibonacci-anchored) */
+  --fs-xs:8px;    /* labels, badges */
+  --fs-sm:13px;   /* body text — Fib exact */
+  --fs-md:21px;   /* subheadings — Fib exact */
+  --fs-lg:34px;   /* section headings — Fib exact */
+  --fs-xl:55px;   /* hero — Fib exact */
+  --fs-2xl:89px;  /* display — Fib exact */
+}
 :root{
   --g:   #00e676;
   --g2:  #00c853;
@@ -30,8 +57,8 @@
   --bl:  #448aff;
   --txt:  #e0ffe0;
   --txt2: #a5d6a7;
-  --txt3: #2e7d32;
-  --txt4: #1b5e20;
+  --txt3: #4caf50;
+  --txt4: #2e7d32;
   --b:   rgba(0,230,118,.05);
   --b2:  rgba(0,230,118,.11);
   --b3:  rgba(0,230,118,.22);
@@ -70,8 +97,8 @@ body{background:#000301;color:var(--txt);font-family:var(--ui);overflow-x:hidden
 }
 
 #cd,#cr{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
-#cd{width:5px;height:5px;background:var(--g);border-radius:50%;box-shadow:0 0 8px var(--g),0 0 20px rgba(0,230,118,.4);opacity:0;transition:opacity .3s}
-#cr{width:28px;height:28px;border:1px solid rgba(0,230,118,.4);border-radius:50%;transition:width .2s var(--ease),height .2s var(--ease),border-color .2s,opacity .2s;opacity:0}
+#cd{width:5px;height:5px;background:var(--g);border-radius:50%;box-shadow:0 0 10px var(--g),0 0 24px rgba(0,230,118,.5),0 0 40px rgba(0,230,118,.2);opacity:0;transition:opacity .3s}
+#cr{width:34px;height:34px;border:1px solid rgba(0,230,118,.35);border-radius:50%;transition:width .2s var(--ease),height .2s var(--ease),border-color .2s,opacity .2s;opacity:0;box-shadow:inset 0 0 8px rgba(0,230,118,.04)}
 
 @keyframes pip  {0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
@@ -124,12 +151,12 @@ nav.ink{background:rgba(0,3,1,.97);border-color:var(--b3);backdrop-filter:blur(2
 .hk-dot{width:4px;height:4px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g),0 0 16px rgba(0,230,118,.5);animation:pip 1.4s infinite}
 
 .h1-wrap{margin-bottom:6px;overflow:hidden;animation:rise .7s .06s var(--ease) both}
-h1{font-family:var(--ui);font-size:clamp(52px,5.8vw,88px);line-height:.95;font-weight:800;letter-spacing:-.02em;color:#fff;text-shadow:0 0 40px rgba(0,230,118,.18),0 0 80px rgba(0,230,118,.06)}
+h1{font-family:var(--ui);font-size:clamp(55px,5.8vw,89px);line-height:.95;font-weight:800;letter-spacing:-.02em;color:#fff;text-shadow:0 0 40px rgba(0,230,118,.22),0 0 80px rgba(0,230,118,.08)}
 h1 .serif-em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--g);text-shadow:0 0 70px rgba(0,230,118,.7),0 0 140px rgba(0,230,118,.35),0 0 200px rgba(0,230,118,.15);animation:flick 9s 3s infinite}
 h1 .dim{color:rgba(255,255,255,.38)}
 
 .h1-sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--txt3);margin:14px 0 22px;animation:rise .7s .12s var(--ease) both}
-.hdesc{font-size:15.5px;color:rgba(200,255,200,.46);line-height:1.82;max-width:440px;margin-bottom:28px;animation:rise .7s .18s var(--ease) both;font-weight:400}
+.hdesc{font-size:16px;color:rgba(200,255,200,.46);line-height:1.82;max-width:440px;margin-bottom:28px;animation:rise .7s .18s var(--ease) both;font-weight:400}
 .hdesc strong{color:rgba(200,255,200,.8);font-weight:600}
 
 .hroles{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px;animation:rise .7s .22s var(--ease) both}
@@ -150,10 +177,10 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .hp::before{content:'✓';color:var(--g3)}
 
 .hstats{display:flex;border:1px solid var(--b3);border-radius:5px;overflow:hidden;margin-top:28px;animation:rise .7s .34s var(--ease) both;background:rgba(0,8,3,.7);box-shadow:0 0 20px rgba(0,230,118,.05),inset 0 1px 0 rgba(0,230,118,.08)}
-.hst{flex:1;padding:13px;text-align:center;border-right:1px solid var(--b2);cursor:default;transition:background .2s;position:relative;overflow:hidden}
+.hst{flex:1;padding:var(--f13);text-align:center;border-right:1px solid var(--b2);cursor:default;transition:background .2s;position:relative;overflow:hidden}
 .hst:last-child{border-right:none}
 .hst:hover{background:rgba(0,230,118,.04)}
-.hst-v{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.7),0 0 40px rgba(0,230,118,.3);display:block;line-height:1}
+.hst-v{font-family:var(--mono);font-size:21px;font-weight:600;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.7),0 0 40px rgba(0,230,118,.3);display:block;line-height:1}
 .hst-k{font-family:var(--mono);font-size:7px;color:var(--txt3);letter-spacing:.15em;margin-top:5px;display:block}
 
 .hr{padding:76px 56px 72px;display:flex;flex-direction:column;justify-content:center;gap:10px;align-items:center;position:relative}
@@ -211,25 +238,25 @@ h1 .dim{color:rgba(255,255,255,.38)}
 
 .wrap{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:0 48px}
 .slabel{font-family:var(--mono);font-size:8.5px;letter-spacing:.24em;color:var(--g3);margin-bottom:10px}
-.stitle{font-family:var(--ui);font-size:clamp(40px,4.8vw,62px);line-height:.96;font-weight:800;letter-spacing:-.03em;color:#fff}
+.stitle{font-family:var(--ui);font-size:clamp(34px,4.8vw,55px);line-height:.96;font-weight:800;letter-spacing:-.03em;color:#fff}
 .stitle .em{color:var(--g);text-shadow:0 0 44px rgba(0,230,118,.28)}
 .stitle .si{font-family:var(--serif);font-style:italic;font-weight:400}
-.sbody{font-size:14px;color:rgba(200,255,200,.36);line-height:1.85;max-width:500px}
+.sbody{font-size:14px;color:rgba(200,255,200,.55);line-height:1.85;max-width:500px}
 
-.prob{padding:104px 0}
+.prob{padding:89px 0}
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:44px}
-.pc{background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:7px;padding:24px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;cursor:default}
+.pc{background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:var(--f5);padding:var(--f21);position:relative;overflow:hidden;transition:border-color .2s,transform .2s;cursor:default}
 .pc:hover{border-color:var(--b3);transform:translateY(-2px)}
 .pc::before{content:'';position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,60,60,.2),transparent)}
 .pc-n{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.2em;margin-bottom:11px}
 .pc-ico{font-size:20px;margin-bottom:9px;line-height:1}
 .pc-t{font-size:13.5px;font-weight:700;color:var(--txt2);margin-bottom:7px;letter-spacing:-.01em;line-height:1.35}
-.pc-b{font-size:12px;color:rgba(200,255,200,.34);line-height:1.75}
+.pc-b{font-size:13px;color:rgba(200,255,200,.34);line-height:1.75}
 .pc-cost{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:7.5px;color:var(--rd);border:1px solid rgba(255,82,82,.16);padding:3px 8px;border-radius:2px;letter-spacing:.07em;background:rgba(255,82,82,.03)}
 
 .prob-head{max-width:640px}
 .testih{margin-bottom:44px}
-.testi{padding:104px 0}
+.testi{padding:89px 0}
 .testig{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
 @media(max-width:900px){.testig{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.testig{grid-template-columns:1fr}}
@@ -247,7 +274,7 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .ci-s{font-family:var(--mono);font-size:10px;flex-shrink:0;margin-top:2px}
 .ci-s.b{color:var(--rd)}.ci-s.g{color:var(--g);text-shadow:0 0 6px rgba(0,230,118,.4)}
 
-.hiw{position:relative;z-index:2;border-top:1px solid var(--b);border-bottom:1px solid var(--b);background:linear-gradient(180deg,rgba(0,6,0,.55),rgba(0,3,0,.55));padding:104px 48px}
+.hiw{position:relative;z-index:2;border-top:1px solid var(--b);border-bottom:1px solid var(--b);background:linear-gradient(180deg,rgba(0,6,0,.55),rgba(0,3,0,.55));padding:89px 34px}
 .hiw-in{max-width:960px;margin:0 auto}
 .hiw-h{text-align:center;margin-bottom:60px}
 .steps{display:grid;grid-template-columns:repeat(4,1fr);position:relative;gap:20px}
@@ -257,11 +284,11 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .snum{width:38px;height:38px;border-radius:50%;border:1px solid var(--b3);background:#000;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--g);box-shadow:0 0 16px rgba(0,230,118,.05);transition:all .22s}
 .step:hover .snum{border-color:rgba(0,230,118,.5);box-shadow:0 0 26px rgba(0,230,118,.16);background:rgba(0,230,118,.05)}
 .st{font-size:13.5px;font-weight:700;color:var(--txt2);margin-bottom:9px;letter-spacing:-.01em;line-height:1.3}
-.sd{font-size:11.5px;color:rgba(200,255,200,.33);line-height:1.72}
+.sd{font-size:13px;color:rgba(200,255,200,.33);line-height:1.72}
 .sw-who{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 .sw{font-family:var(--mono);font-size:7.5px;letter-spacing:.09em;padding:2px 8px;border-radius:20px;border:1px solid}
 
-.diff-sect{padding:104px 0}
+.diff-sect{padding:89px 0}
 .diffg{display:grid;grid-template-columns:1fr 1.3fr;gap:52px;align-items:center}
 .dfile{background:rgba(0,4,0,.96);border:1px solid var(--b2);border-radius:7px;overflow:hidden;font-family:var(--mono);font-size:10.5px}
 .dfh{background:rgba(0,5,0,1);border-bottom:1px solid var(--b2);padding:9px 13px;display:flex;align-items:center;justify-content:space-between}
@@ -286,10 +313,10 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .ama-approve:hover{background:rgba(0,230,118,.14);box-shadow:0 0 16px rgba(0,230,118,.14)}
 .ama-reject{color:rgba(200,200,200,.4);border-color:var(--b);background:transparent}
 
-.feats{padding:104px 0}
+.feats{padding:89px 0}
 .fhead{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:flex-end;margin-bottom:44px}
 .fgrid{display:grid;grid-template-columns:1.5fr 1fr 1fr;grid-template-rows:auto auto;gap:11px}
-.fc{background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:7px;padding:24px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;cursor:default}
+.fc{background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:var(--f5);padding:var(--f21);position:relative;overflow:hidden;transition:border-color .2s,transform .2s;cursor:default}
 .fc::before{content:'';position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,230,118,.16),transparent);opacity:0;transition:opacity .2s}
 .fc:hover{border-color:var(--b3);transform:translateY(-2px)}.fc:hover::before{opacity:1}
 .fc.big{grid-row:span 2}
@@ -298,7 +325,7 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .fc.big .fc-i{font-size:28px;margin-bottom:13px}
 .fc-t{font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:7px;letter-spacing:-.01em}
 .fc.big .fc-t{font-size:18px;margin-bottom:9px}
-.fc-d{font-size:12px;color:rgba(200,255,200,.35);line-height:1.78}
+.fc-d{font-size:13px;color:rgba(200,255,200,.35);line-height:1.78}
 .fc.big .fc-d{font-size:13.5px;max-width:300px;margin-bottom:16px}
 .fc-code{border:1px solid var(--b2);border-radius:5px;padding:10px 13px;background:rgba(0,5,0,.97);font-family:var(--mono);font-size:10px;line-height:1.72;color:rgba(200,255,200,.38);margin-bottom:12px}
 .fc-code .h{color:var(--g)}.fc-code .c{color:var(--cy)}.fc-code .a{color:var(--am)}.fc-code .p{color:var(--pu)}
@@ -306,7 +333,7 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .fcw{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .fcwr{font-family:var(--mono);font-size:7.5px;letter-spacing:.09em;padding:2px 8px;border-radius:2px;border:1px solid}
 
-.testi{padding:104px 0;border-top:1px solid var(--b)}
+.testi{padding:89px 0;border-top:1px solid var(--b)}
 .testig{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:40px}
 .tc2{background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:7px;padding:24px;position:relative;overflow:hidden;transition:all .2s}
 .tc2:hover{border-color:var(--b3);transform:translateY(-2px)}
@@ -332,40 +359,44 @@ h1 .dim{color:rgba(255,255,255,.38)}
 @media(max-width:768px){.tc2-builder{grid-template-columns:1fr}.tcb-avatar{display:none}}
 .tstars{display:flex;gap:2px;margin-bottom:12px}
 .star{color:var(--am);font-size:11px}
-.tq{font-size:13px;color:rgba(200,255,200,.46);line-height:1.84;margin-bottom:18px}
+.tq{font-size:14px;color:rgba(200,255,200,.46);line-height:1.84;margin-bottom:18px}
 .tq strong{color:rgba(200,255,200,.8);font-weight:600}
 .tau{display:flex;align-items:center;gap:8px}
 .tav{width:30px;height:30px;border-radius:50%;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;flex-shrink:0}
 .tn{font-size:12px;font-weight:700;color:var(--txt2);font-family:var(--ui)}
 .tr{font-family:var(--mono);font-size:8.5px;color:var(--txt3);margin-top:2px}
 
-.pricing{position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,3,0,.4);padding:104px 48px}
-.prinr{max-width:1060px;margin:0 auto}
-.prih{text-align:center;margin-bottom:44px}
-.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
-.plan{background:rgba(0,4,0,.94);border:1px solid var(--b2);border-radius:7px;padding:28px 24px;position:relative;overflow:hidden;transition:all .2s}
-.plan:hover{transform:translateY(-3px)}
-.plan.hot{border-color:rgba(0,230,118,.3);background:rgba(0,8,0,1);box-shadow:0 0 50px rgba(0,230,118,.05)}
-.plan.hot::before{content:'';position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent)}
-.phot{font-family:var(--mono);font-size:7.5px;background:rgba(0,230,118,.09);border:1px solid rgba(0,230,118,.22);color:var(--g);padding:3px 9px;border-radius:2px;letter-spacing:.12em;display:inline-block;margin-bottom:13px}
-.pname{font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.18em;margin-bottom:8px}
-.pprice{font-family:var(--mono);font-size:36px;font-weight:600;color:var(--g);text-shadow:0 0 20px rgba(0,230,118,.28);line-height:1;margin-bottom:3px}
-.pprice sup{font-size:16px;vertical-align:super;margin-right:1px}
-.pprice sub{font-size:12px;color:var(--txt3)}
-.pperiod{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.1em;margin-bottom:14px}
-.pdesc{font-size:12.5px;color:rgba(200,255,200,.34);line-height:1.75;margin-bottom:16px}
-.pitems{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:20px}
-.pitems li{font-family:var(--mono);font-size:10.5px;color:rgba(200,255,200,.46);display:flex;align-items:center;gap:7px}
-.pitems li::before{content:'→';color:var(--g3);flex-shrink:0}
-.pitems li.off{color:rgba(200,255,200,.2)}
-.pitems li.off::before{content:'—';color:var(--txt3)}
-.pbtn{width:100%;font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.07em;padding:10px;border-radius:3px;border:1px solid;cursor:pointer;transition:all .18s}
-.pbtn.g{background:transparent;color:var(--txt3);border-color:var(--b2)}
-.pbtn.g:hover{color:var(--txt2);border-color:var(--b3);background:rgba(0,230,118,.04)}
-.pbtn.p{background:rgba(0,230,118,.1);color:var(--g);border-color:rgba(0,230,118,.3);text-shadow:0 0 8px rgba(0,230,118,.3)}
-.pbtn.p:hover{background:rgba(0,230,118,.2);box-shadow:0 0 24px rgba(0,230,118,.14)}
 
-.rmap{padding:104px 0}
+
+@media(max-width:1380px){}
+@media(max-width:900px){}
+@media(max-width:600px){}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.pitems li::before{content:'→';color:var(--g3);flex-shrink:0}
+
+
+
+
+
+
+
+
+.rmap{padding:89px 0}
 .rmapg{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:44px}
 .rcard{background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:7px;padding:24px;position:relative;overflow:hidden;transition:border-color .2s}
 .rcard:hover{border-color:var(--b3)}
@@ -375,7 +406,7 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .rcl{list-style:none;display:flex;flex-direction:column;gap:7px}
 .rcl li{font-size:12px;color:rgba(200,255,200,.36);display:flex;align-items:flex-start;gap:7px;line-height:1.6}
 
-.faq{position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,2,0,.4);padding:104px 48px}
+.faq{position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,2,0,.4);padding:89px 34px}
 .faq-in{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:1fr 1.65fr;gap:68px;align-items:flex-start}
 .faqh{position:sticky;top:76px}
 .faqlink{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9.5px;color:var(--g2);text-decoration:none;letter-spacing:.08em;margin-top:14px;transition:color .15s}
@@ -388,7 +419,7 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .faqitem.open .faqico{color:var(--g)}
 .faqa{max-height:0;overflow:hidden;transition:max-height .36s var(--ease),padding .28s}
 .faqitem.open .faqa{max-height:300px;padding-bottom:16px}
-.faqa p{font-size:13px;color:rgba(200,255,200,.38);line-height:1.85}
+.faqa p{font-size:14px;color:rgba(200,255,200,.38);line-height:1.85}
 
 .cta{position:relative;z-index:2;padding:112px 48px;text-align:center;overflow:hidden}
 .cta::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(0,230,118,.05),transparent 62%);pointer-events:none}
@@ -401,8 +432,8 @@ h1 .dim{color:rgba(255,255,255,.38)}
 .ctaform:focus-within{border-color:var(--b3)}
 .ctainput{flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);font-size:10px;color:var(--txt2);padding:12px 13px;letter-spacing:.04em}
 .ctainput::placeholder{color:var(--txt3)}
-.ctabtn{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.07em;background:rgba(0,230,118,.12);color:var(--g);border:none;border-left:1px solid var(--b2);padding:12px 18px;cursor:pointer;transition:background .18s;text-shadow:0 0 8px rgba(0,230,118,.4);white-space:nowrap}
-.ctabtn:hover{background:rgba(0,230,118,.22)}
+.ctabtn{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.07em;background:rgba(0,230,118,.12);color:var(--g);border:1px solid rgba(0,230,118,.3);border-radius:3px;padding:12px 21px;cursor:pointer;transition:all .18s;text-shadow:0 0 8px rgba(0,230,118,.4);white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.ctabtn:hover{background:rgba(0,230,118,.22);transform:translateY(-1px)}
 .ctafine{font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.1em;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
 .ctafine span{display:flex;align-items:center;gap:4px}
 .ctafine span::before{content:'✓';color:var(--g3)}
@@ -475,6 +506,8 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 @keyframes dpulse{0%,100%{opacity:1}50%{opacity:.3}}
 .dash-frame-note{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(0,230,118,.25);text-align:center;padding:14px;letter-spacing:.08em;border-top:1px solid rgba(0,230,118,.06)}
 
+@media(max-width:1200px){.plans[style*="grid-template-columns:repeat(5"]{grid-template-columns:repeat(3,1fr)!important}}
+@media(max-width:768px){.plans[style*="grid-template-columns:repeat(5"]{grid-template-columns:1fr!important}}
 @media(max-width:1060px){
   .hero{grid-template-columns:1fr}.hero::after{display:none}
   .hr{border-top:1px solid var(--b2)}
@@ -494,7 +527,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
   .pgrid,.testig,.rmapg,.plans,.steps{grid-template-columns:1fr}
   .tc2-builder{grid-template-columns:auto 1fr !important;gap:16px !important;padding:20px !important}
   .fhead{grid-template-columns:1fr}
-  .faq,.pricing{padding-left:20px;padding-right:20px}
+  .faq,
   .faq-in{grid-template-columns:1fr;gap:36px}.faqh{position:static}
   .fmain{grid-template-columns:1fr;padding:32px 20px}
   .fbot{flex-direction:column;gap:6px;padding:12px 20px;text-align:center}
@@ -504,6 +537,132 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
   .pt-grid{grid-template-columns:1fr}
 }
 @media(max-width:900px){.pt-grid{grid-template-columns:repeat(2,1fr)}}
+
+
+
+  .pricing-bottom-row{grid-template-columns:1fr 1fr !important}
+}
+
+}
+/* plan card button alignment */
+
+.plan 
+
+.pitems li::before{flex-shrink:0;margin-top:2px}
+
+/* ══ PRICING ════════════════════════════════════════════════════════ */
+.pricing{position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,3,0,.4);padding:89px 34px}
+.prinr{max-width:1080px;margin:0 auto}
+.prih{text-align:center;margin-bottom:55px}
+
+/* Plan card — shared base */
+.plan{
+  background:rgba(0,4,0,.95);
+  border:1px solid var(--b2);
+  border-radius:5px;
+  padding:28px 24px;
+  position:relative;overflow:hidden;
+  transition:border-color .2s,transform .18s;
+  display:flex;flex-direction:column;
+}
+.plan::before{
+  content:'';position:absolute;top:0;inset-inline:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,230,118,.15),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.plan:hover{border-color:var(--b3);transform:translateY(-2px)}
+.plan:hover::before{opacity:1}
+
+/* HOT plan — Team */
+.plan.hot{
+  border-color:rgba(0,230,118,.28);
+  background:rgba(0,7,0,.98);
+  box-shadow:0 0 44px rgba(0,230,118,.04);
+}
+.plan.hot::before{
+  background:linear-gradient(90deg,transparent,var(--g),transparent);
+  opacity:1;height:2px;
+}
+.plan.hot:hover{border-color:rgba(0,230,118,.45);transform:translateY(-2px)}
+
+/* FOUNDER plan */
+.plan.founder{
+  border-color:rgba(255,204,2,.3);
+  background:rgba(5,4,0,.99);
+}
+.plan.founder::before{
+  background:linear-gradient(90deg,transparent,var(--am) 40%,var(--am) 60%,transparent);
+  opacity:1;height:2px;
+}
+.plan.founder:hover{border-color:rgba(255,204,2,.5);transform:translateY(-2px)}
+
+/* Badge above card title */
+.phot{
+  font-family:var(--mono);font-size:7.5px;
+  background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);
+  color:var(--g);padding:3px 10px;border-radius:2px;
+  letter-spacing:.12em;display:inline-flex;
+  align-items:center;gap:5px;
+  margin-bottom:13px;width:fit-content;
+}
+
+/* Price display */
+.pname{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.2em;margin-bottom:10px}
+.pprice{
+  font-family:var(--mono);font-size:42px;font-weight:600;
+  color:var(--g);text-shadow:0 0 24px rgba(0,230,118,.25);
+  line-height:1;margin-bottom:5px;letter-spacing:-.02em;
+}
+.pprice sup{font-size:18px;vertical-align:super;margin-right:2px;font-weight:400}
+.pprice sub{font-size:11px;color:var(--txt3);font-weight:400;letter-spacing:.04em}
+.pperiod{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.1em;margin-bottom:16px}
+.pdesc{font-size:13px;color:rgba(200,255,200,.42);line-height:1.75;margin-bottom:18px}
+
+/* Feature list */
+.pitems{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:21px;flex:1}
+.pitems li{
+  font-family:var(--mono);font-size:10.5px;
+  color:rgba(200,255,200,.52);
+  display:flex;align-items:flex-start;gap:8px;
+  line-height:1.5;
+}
+.pitems li::before{content:'→';color:var(--g3);flex-shrink:0;margin-top:1px}
+.pitems li.off{color:rgba(200,255,200,.2)}
+.pitems li.off::before{content:'—';color:var(--b3)}
+
+/* CTA button inside plan card */
+.pbtn{
+  width:100%;font-family:var(--mono);font-size:10px;font-weight:700;
+  letter-spacing:.08em;padding:11px 16px;border-radius:3px;
+  border:1px solid;cursor:pointer;transition:all .18s;
+  white-space:nowrap;
+}
+.pbtn.g{background:transparent;color:var(--txt3);border-color:var(--b2)}
+.pbtn.g:hover{color:var(--txt2);border-color:var(--b3);background:rgba(0,230,118,.03)}
+.pbtn.p{background:rgba(0,230,118,.1);color:var(--g);border-color:rgba(0,230,118,.3);text-shadow:0 0 8px rgba(0,230,118,.3)}
+.pbtn.p:hover{background:rgba(0,230,118,.2);box-shadow:0 0 24px rgba(0,230,118,.12)}
+.pbtn.am{background:rgba(255,204,2,.12);color:var(--am);border-color:rgba(255,204,2,.35);text-shadow:0 0 10px rgba(255,204,2,.3)}
+.pbtn.am:hover{background:rgba(255,204,2,.22);box-shadow:0 0 28px rgba(255,204,2,.14)}
+
+/* Pricing grid layouts */
+.pricing-row1{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.pricing-row2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:34px}
+
+@media(max-width:1060px){
+  .pricing-row1{grid-template-columns:1fr}
+  .pricing-row2{grid-template-columns:1fr 1fr}
+}
+@media(max-width:680px){
+  .pricing-row1,.pricing-row2{grid-template-columns:1fr}
+}
+
+/* Spot pip */
+.spot-pip{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--am);box-shadow:0 0 7px var(--am);
+  animation:pip 1.2s infinite;flex-shrink:0;display:inline-block;
+}
+.spot-pip.g{background:var(--g);box-shadow:0 0 7px var(--g)}
 </style>
 </head>
 <body>
@@ -528,13 +687,12 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="nl" href="#how-it-works">PROTOCOL</a>
     <a class="nl" href="#features">FEATURES</a>
     <a class="nl" href="#quickstart">INTEGRATION</a>
-    <a class="nl" href="#pricing">ACCESS</a>
+    <a class="nl" href="#pricing">PRICING</a>
     <a class="nl" href="#faq">FAQ</a>
   </div>
   <div class="nact">
-    <a class="btn btn-ghost" href="https://github.com/jachinsaikiasonowal/promptmatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="btn btn-ghost" href="https://promptmatrixx.vercel.app/dashboard" target="_blank" rel="noopener">LIVE DEMO</a>
-    <a class="btn btn-primary" href="#quickstart">GET STARTED</a>
+    <a class="btn btn-ghost" href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener">GITHUB</a>
+    <a class="btn btn-ghost" href="https://app.promptmatrix.io" style="margin-right:4px">SIGN IN</a><a class="btn btn-primary" href="javascript:void(0)" onclick="claimSpot(this)">★ GET STARTED FREE</a>
   </div>
   <button class="nhbg" id="nhbg" onclick="toggleMobNav()" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
@@ -545,12 +703,11 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="#how-it-works" onclick="closeMobNav()">PROTOCOL</a>
     <a class="mob-nl" href="#features" onclick="closeMobNav()">FEATURES</a>
     <a class="mob-nl" href="#quickstart" onclick="closeMobNav()">INTEGRATION</a>
-    <a class="mob-nl" href="#pricing" onclick="closeMobNav()">ACCESS</a>
+    <a class="mob-nl" href="#pricing" onclick="closeMobNav()">PRICING</a>
     <a class="mob-nl" href="#faq" onclick="closeMobNav()">FAQ</a>
     <div class="mob-divider"></div>
-    <a class="mob-nl" href="https://github.com/jachinsaikiasonowal/promptmatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="mob-nl" href="https://promptmatrixx.vercel.app/dashboard" target="_blank" rel="noopener">LIVE DEMO</a>
-    <a class="mob-nl mob-cta" href="#quickstart" onclick="closeMobNav()">▶ GET STARTED</a>
+    <a class="mob-nl" href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener">GITHUB</a>
+    <a class="mob-nl mob-cta" href="javascript:void(0)" onclick="closeMobNav();claimSpot(this)">★ GET STARTED FREE</a>
   </div>
 </div>
 
@@ -586,26 +743,39 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <span>No server needed to start — runs entirely in your browser. Upgrade storage when you're ready.</span>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;animation:rise .7s .26s var(--ease) both">
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button onclick="location.href='#pricing'"
-          style="font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;padding:14px 28px;background:rgba(0,230,118,.18);color:var(--g);border:1px solid var(--b3);border-radius:3px;cursor:pointer;transition:all .18s;white-space:nowrap;text-shadow:0 0 12px rgba(0,230,118,.5);flex-shrink:0"
+    <!-- EMAIL WAITLIST INPUT -->
+    <div style="display:flex;flex-direction:column;gap:8px;max-width:480px;animation:rise .7s .26s var(--ease) both">
+
+      <!-- Row 1: email + waitlist button (long primary) -->
+      <div style="display:flex;align-items:stretch;border:1px solid var(--b3);border-radius:3px;overflow:hidden;background:rgba(0,6,2,.95);box-shadow:0 0 28px rgba(0,230,118,.08)">
+        <input id="hero-email" class="hinput" type="email" placeholder="your@email.com" style="flex:1;padding:12px 14px;font-size:10.5px;min-width:0" onkeydown="if(event.key==='Enter')heroJoinWaitlist()" autocomplete="email" />
+        <button id="hero-waitlist-btn" onclick="heroJoinWaitlist()"
+          style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;padding:12px 22px;background:rgba(0,230,118,.18);color:var(--g);border:none;border-left:1px solid var(--b3);cursor:pointer;transition:all .18s;white-space:nowrap;text-shadow:0 0 12px rgba(0,230,118,.5);flex-shrink:0"
           onmouseover="this.style.background='rgba(0,230,118,.3)';this.style.boxShadow='0 0 24px rgba(0,230,118,.18)'"
           onmouseout="this.style.background='rgba(0,230,118,.18)';this.style.boxShadow='none'">
-          GET STARTED →
-        </button>
-        <button onclick="window.open('https://github.com/jachinsaikiasonowal/promptmatrix','_blank')"
-          style="font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;padding:14px 28px;background:transparent;color:var(--txt2);border:1px solid var(--b2);border-radius:3px;cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0"
-          onmouseover="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='var(--b3)'"
-          onmouseout="this.style.background='transparent';this.style.borderColor='var(--b2)'">
-          VIEW ON GITHUB ◈
+          JOIN WAITLIST →
         </button>
       </div>
+
+      <!-- Row 2: spots counter + early seat button (shorter secondary) -->
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onclick="claimSpot(this)"
+          style="font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.1em;padding:10px 20px;background:transparent;color:rgba(255,204,2,.75);border:1px solid rgba(255,204,2,.28);border-radius:3px;cursor:pointer;transition:all .16s;white-space:nowrap;flex-shrink:0"
+          onmouseover="this.style.background='rgba(255,204,2,.07)';this.style.color='var(--am)';this.style.borderColor='rgba(255,204,2,.5)';this.style.boxShadow='0 0 16px rgba(255,204,2,.1)'"
+          onmouseout="this.style.background='transparent';this.style.color='rgba(255,204,2,.75)';this.style.borderColor='rgba(255,204,2,.28)';this.style.boxShadow='none'">
+          ★ GET STARTED — $149 FOUNDING
+        </button>
+        <span style="font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.08em;display:flex;align-items:center;gap:5px">
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--am);box-shadow:0 0 6px rgba(255,204,2,.6);display:inline-block;flex-shrink:0;animation:pip 1.4s infinite"></span>
+          <span id="hero-spots-count">5 OF 5 SEATS LEFT</span>
+        </span>
+      </div>
+
     </div>
 
     <!-- GITHUB GHOST LINK -->
     <div style="margin-top:11px;margin-bottom:2px;display:flex;align-items:center;gap:12px;animation:rise .7s .28s var(--ease) both">
-      <a href="https://github.com/jachinsaikiasonowal/promptmatrix" target="_blank" rel="noopener" style="font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--txt3);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .15s" onmouseover="this.style.color='var(--g2)'" onmouseout="this.style.color='var(--txt3)'">
+      <a href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener" style="font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--txt3);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .15s" onmouseover="this.style.color='var(--g2)'" onmouseout="this.style.color='var(--txt3)'">
         <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         VIEW ON GITHUB — FREE · MIT
       </a>
@@ -831,12 +1001,12 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <div class="rv" style="transition-delay:.21s;background:rgba(3,4,0,.9);border:1px solid rgba(255,204,2,.18);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
         <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.22),transparent)"></div>
         <div style="font-family:var(--mono);font-size:22px;margin-bottom:10px">☁️</div>
-        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--am);margin-bottom:8px">// TIER 4 · CLOUD · Q2 2026</div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--am);margin-bottom:8px">// TIER 4 · CLOUD · COMING</div>
         <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Managed Cloud</div>
-        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Zero ops. Fully managed backend — login, sync, team access, audit trail, from anywhere. Ships Q2 2026. Two ways in: grab one of 5 founding seats at $149 one-time, or wait for the Pro subscription at launch.</p>
-        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--am)">⚡</span> Ships Q2 2026 — building now</div>
-        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> 5 founding seats · $149 one-time · or Pro $29/mo</div>
-        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Team seats + sync + cross-device</div>
+        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Zero ops. Fully managed backend — login, sync, team access, audit trail, from anywhere. Ships when 5 people register. No infrastructure bill until there's real demand. You could be one of those 5.</p>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--am)">⚡</span> Ships at 5 registrations</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Team seats + sync</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Founding rate: $149 one-time</div>
       </div>
 
     </div>
@@ -1052,7 +1222,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
           <div class="fc-t">The Approval Workflow</div>
           <p class="fc-d">The core of the system. Non-engineers propose changes in plain text. Engineers see the full diff before approving — old content vs new, line by line. Reject with a note, or approve and it's live in 10 seconds. Nothing reaches production without an explicit human decision.</p>
           <div class="fc-code">
-            <div>proposed_by: <span class="a">sarah@yourteam.com</span></div>
+            <div>proposed_by: <span class="a">hello@promptmatrix.io</span></div>
             <div>status: <span class="h">PENDING_REVIEW</span></div>
             <div>diff: <span class="c">-1 line / +1 line</span></div>
             <div style="margin-top:6px">→ engineer approves</div>
@@ -1277,7 +1447,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   <span class="st">"key"</span>:          <span class="gr">"assistant.persona"</span>,
   <span class="st">"content"</span>:      <span class="gr">"I'm your AI assistant. Ask me anything — I'll give you a direct answer."</span>,
   <span class="st">"version"</span>:      <span class="dim">14</span>,
-  <span class="st">"approved_by"</span>:  <span class="dim">"eng@yourteam.com"</span>,
+  <span class="st">"approved_by"</span>:  <span class="dim">"hello@promptmatrix.io"</span>,
   <span class="st">"approved_at"</span>:  <span class="dim">"2026-03-12T09:41:02Z"</span>,
   <span class="st">"latency_ms"</span>:   <span class="dim">11</span>
 }</div>
@@ -1722,7 +1892,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       </div>
       <div class="dash-frame-note">
         DEMO MODE · All data is simulated · No backend required ·
-        <a href="https://github.com/jachinsaikiasonowal/promptmatrix" target="_blank" rel="noopener" style="color:rgba(0,230,118,.45);text-decoration:none">Self-host on GitHub →</a>
+        <a href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener" style="color:rgba(0,230,118,.45);text-decoration:none">Self-host on GitHub →</a>
       </div>
     </div>
   </div>
@@ -1732,67 +1902,163 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
 <section class="pricing" id="pricing">
   <div class="prinr">
     <div class="prih rv">
-      <div class="slabel" style="text-align:center">// ACCESS</div>
-      <h2 class="stitle" style="text-align:center">Free forever.<br><span class="em si">Local-first by design.</span></h2>
-      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:520px">PromptMatrix is open source — run it in your browser, SQLite, or self-host on your own infrastructure. No lock-in, no telemetry, no subscription. Just you and your prompts.</p>
+      <div class="slabel" style="text-align:center">// ACCESS_TIERS</div>
+      <h2 class="stitle" style="text-align:center">Free forever.<br><span class="em si">Or lock a seat early.</span></h2>
+      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:500px">Start in your browser today — no card, no backend. The cloud builds when 5 people register. Founder seats are limited and price-locked forever.</p>
     </div>
 
-    <div class="plans" style="justify-content:center">
+    <!-- ROW 1: FREE + FOUNDER -->
+    <div class="pricing-row1">
 
       <!-- FREE -->
-      <div class="plan rv" style="max-width:600px">
-        <div class="pname">// FREE · OPEN SOURCE</div>
+      <div class="plan rv">
+        <div class="pname">// FREE · OPEN SOURCE · MIT</div>
         <div class="pprice"><sup>$</sup>0</div>
-        <div class="pperiod">MIT LICENSE · YOUR INFRASTRUCTURE</div>
-        <p class="pdesc">The complete governance system. Run it in your browser today — zero setup, zero cost. Download the repository for persistent SQLite or self-hosted database support. Full approval workflow, version history, and serve endpoint. Your prompts, your rules.</p>
+        <div class="pperiod">FOREVER · YOUR INFRASTRUCTURE · NO EXPIRY</div>
+        <p class="pdesc">The complete governance stack. Run it in your browser today — zero setup, zero backend. Self-host on SQLite or Postgres when you outgrow it. Full feature set. No license. No vendor.</p>
         <ul class="pitems">
           <li>Unlimited prompts + unlimited agent keys</li>
           <li>Browser localStorage — zero setup, runs now</li>
           <li>SQLite mode — persistent, portable, offline</li>
-          <li>Self-hosted database — Postgres, MySQL, your infra</li>
-          <li>Full approval workflow + diff view</li>
+          <li>Self-hosted DB — Postgres, MySQL, your infra</li>
+          <li>Full approval workflow + line-by-line diff</li>
           <li>Version history + 1-click rollback</li>
-          <li>Serve endpoint <code style="color:var(--am);font-size:9px">/api/v1/serve/:key</code></li>
-          <li>Immutable audit trail & project exports</li>
+          <li>Serve endpoint <code style="color:var(--am);font-size:9px">/pm/serve/:key</code></li>
+          <li>Immutable audit trail</li>
+          <li class="off">Managed cloud hosting</li>
+          <li class="off">Cross-device sync + team seats</li>
+          <li class="off">Automatic updates + uptime SLA</li>
         </ul>
-        <button class="pbtn g" onclick="window.open('https://github.com/jachinsaikiasonowal/promptmatrix','_blank')">CLONE ON GITHUB →</button>
-        <p style="font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.08em;margin-top:10px;text-align:center">MIT licensed · browser, SQLite, or self-hosted · no backend required to start</p>
+        <button class="pbtn g" onclick="window.open('https://github.com/PromptMatrix/promptmatrix.github.io','_blank')">CLONE FREE ON GITHUB →</button>
+        <p style="font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.06em;margin-top:10px">MIT licensed · browser, SQLite, or self-hosted · no backend required to start</p>
+      </div>
+
+      <!-- FOUNDER ACCESS -->
+      <div class="plan founder rv" style="transition-delay:.08s">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse 90% 55% at 50% 0%,rgba(255,204,2,.035),transparent 70%);pointer-events:none"></div>
+        <div style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%">
+          <div style="display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:7.5px;color:var(--am);background:rgba(255,204,2,.08);border:1px solid rgba(255,204,2,.25);padding:3px 10px;border-radius:2px;letter-spacing:.12em;margin-bottom:13px;width:fit-content">
+            <span class="spot-pip"></span>
+            ★ EARLY ACCESS · <span id="pro-spots-badge">5 SEATS LEFT</span>
+          </div>
+          <div class="pname" style="color:rgba(255,204,2,.55)">// CLOUD · FOUNDING SEAT · FOREVER</div>
+          <div class="pprice" style="color:var(--am);text-shadow:0 0 28px rgba(255,204,2,.3)"><sup style="color:var(--am)">$</sup>149<sub style="font-size:11px;color:rgba(255,204,2,.45)"> once</sub></div>
+          <div class="pperiod" style="color:rgba(255,204,2,.55)">PAY ONCE · PRICE LOCKED FOREVER · NO SUBSCRIPTION</div>
+          <p class="pdesc" style="color:rgba(255,240,180,.42)">Team plan access — permanently. When this moves to recurring pricing, founding members pay nothing more. Ever. You get the cloud the moment it ships, and your price stays at $149 for the life of the product.</p>
+          <ul class="pitems" style="flex:1">
+            <li style="color:rgba(255,204,2,.65)"><span style="color:var(--am);font-size:11px">⚡</span> Everything in Team plan — forever</li>
+            <li style="color:rgba(255,204,2,.65)"><span style="color:var(--am);font-size:11px">⚡</span> Price never increases. Ever.</li>
+            <li style="color:rgba(255,204,2,.65)"><span style="color:var(--am);font-size:11px">⚡</span> Cloud ships when 5 seats register</li>
+            <li>Managed cloud backend — zero ops</li>
+            <li>Up to 5 team seats + role-based access</li>
+            <li>Cross-device sync from anywhere</li>
+            <li>Direct line to the builder</li>
+            <li>Shape what gets built next</li>
+            <li class="off">SSO / SAML</li>
+            <li class="off">Custom data residency</li>
+          </ul>
+          <button class="pbtn am" id="claim-btn" onclick="claimSpot(this)">★ GET STARTED — $149 FOUNDING →</button>
+          <p style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.35);letter-spacing:.06em;margin-top:10px">Founding rate · $149 one-time · locked forever · no subscription ever</p>
+        </div>
       </div>
 
     </div>
 
-    <!-- HOW ACCESS WORKS -->
-    <div class="rv" style="transition-delay:.28s;margin-top:40px;border:1px solid var(--b2);border-radius:6px;padding:22px 32px;background:rgba(0,4,0,.7);max-width:680px;margin-left:auto;margin-right:auto">
-      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--g3);text-align:center;margin-bottom:18px">// HOW TO DEPLOY</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+    <!-- ROW 2: SOLO + TEAM + ENTERPRISE -->
+    <div class="pricing-row2">
+
+      <!-- SOLO -->
+      <div class="plan rv" style="transition-delay:.05s">
+        <div class="pname">// SOLO</div>
+        <div class="pprice"><sup>$</sup>19<sub>/mo</sub></div>
+        <div class="pperiod">1 SEAT · MANAGED CLOUD</div>
+        <p class="pdesc">Everything in Free, hosted and synced. Zero ops — login, edit, serve. Your prompts available from any device.</p>
+        <ul class="pitems">
+          <li>Everything in Free</li>
+          <li>Managed cloud backend</li>
+          <li>Cross-device access</li>
+          <li>1 workspace seat</li>
+          <li>Automatic updates</li>
+          <li>99.9% uptime SLA</li>
+          <li class="off">Team seats</li>
+          <li class="off">Role-based access</li>
+          <li class="off">Slack notifications</li>
+        </ul>
+        <button class="pbtn g" onclick="openWaitlist('solo')">JOIN WAITLIST →</button>
+      </div>
+
+      <!-- TEAM — most popular -->
+      <div class="plan hot rv" style="transition-delay:.10s">
+        <div class="phot">
+          <span class="spot-pip g"></span>
+          MOST POPULAR
+        </div>
+        <div class="pname">// TEAM</div>
+        <div class="pprice"><sup>$</sup>79<sub>/mo</sub></div>
+        <div class="pperiod">UP TO 10 SEATS · CLOUD</div>
+        <p class="pdesc">The full governance protocol for engineering teams. Role-based access, Slack approvals, LLM eval scoring — everything your org needs to ship AI safely.</p>
+        <ul class="pitems">
+          <li>Everything in Solo</li>
+          <li>Up to 10 team seats</li>
+          <li>Role-based access — 5 levels</li>
+          <li>Slack approval notifications</li>
+          <li>LLM-as-judge eval scoring</li>
+          <li>CSV audit log export</li>
+          <li>Priority support</li>
+          <li class="off">SSO / SAML</li>
+          <li class="off">Custom data residency</li>
+          <li class="off">Dedicated onboarding</li>
+        </ul>
+        <button class="pbtn p" onclick="openWaitlist('team')">JOIN WAITLIST →</button>
+      </div>
+
+      <!-- ENTERPRISE — contact sales -->
+      <div class="plan rv" style="transition-delay:.15s">
+        <div class="pname">// ENTERPRISE</div>
+        <div style="font-family:var(--mono);font-size:28px;font-weight:600;color:var(--g);line-height:1;margin-bottom:5px;letter-spacing:-.01em">CONTACT<br><span style="font-size:13px;color:var(--txt3);font-weight:400;letter-spacing:.06em">hello@promptmatrix.io</span></div>
+        <div class="pperiod">ANNUAL CONTRACT · UNLIMITED SEATS</div>
+        <p class="pdesc">For organisations with compliance mandates, large engineering teams, and enterprise procurement requirements.</p>
+        <ul class="pitems">
+          <li>Everything in Team</li>
+          <li>Unlimited seats</li>
+          <li>SSO / SAML</li>
+          <li>Custom data residency</li>
+          <li>SOC 2 Type II (roadmap)</li>
+          <li>Dedicated onboarding</li>
+          <li>Custom SLA</li>
+          <li>Audit log API export</li>
+          <li>On-premise deployment option</li>
+          <li>24/7 support channel</li>
+        </ul>
+        <button class="pbtn g" onclick="submitEmail(null,'enterprise')">CONTACT SALES →</button>
+        <p style="font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.06em;margin-top:10px;text-align:center">hello@promptmatrix.io · response within 48h</p>
+      </div>
+
+    </div>
+
+    <!-- HOW FOUNDING ACCESS WORKS -->
+    <div class="rv" style="transition-delay:.22s;border:1px solid rgba(255,204,2,.15);border-radius:5px;padding:28px 34px;background:rgba(4,3,0,.85);max-width:680px;margin:0 auto 13px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.18),transparent)"></div>
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(255,204,2,.4);text-align:center;margin-bottom:21px">// HOW FOUNDING ACCESS WORKS</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:21px">
         <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.3);line-height:1;margin-bottom:8px">01</div>
-          <div style="font-size:12px;color:rgba(200,255,200,.5);line-height:1.6">Open the index file in any browser. Start adding prompts immediately. No backend or database required to begin.</div>
+          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.28);line-height:1;margin-bottom:8px">01</div>
+          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">Grab a seat. Email confirms your spot. No card charged now.</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--am);text-shadow:0 0 18px rgba(255,204,2,.3);line-height:1;margin-bottom:8px">02</div>
-          <div style="font-size:12px;color:rgba(200,255,200,.5);line-height:1.6">Clone the repository. Set up SQLite for a persistent, local-first environment with zero external dependencies.</div>
+          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--am);text-shadow:0 0 18px rgba(255,204,2,.28);line-height:1;margin-bottom:8px">05</div>
+          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">Seat reserved. Cloud build starts at 5 registrations. Email when it ships.</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.3);line-height:1;margin-bottom:8px">03</div>
-          <div style="font-size:12px;color:rgba(200,255,200,.5);line-height:1.6">Deploy to your own infrastructure. Use Postgres or MySQL for multi-user governance and high-availability serving.</div>
+          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.28);line-height:1;margin-bottom:8px">∞</div>
+          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">One payment — $149. Team access. Price locked forever. No subscriptions. No surprises.</div>
         </div>
       </div>
     </div>
-    <p class="rv" style="transition-delay:.34s;text-align:center;margin-top:14px;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.08em">Free · Open Source · <a href="mailto:jachinchsaikiasonowal@gmail.com" style="color:var(--txt3)">jachinchsaikiasonowal@gmail.com</a></p>
+    <p class="rv" style="transition-delay:.28s;text-align:center;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.07em">5 founding seats · hello@promptmatrix.io · or self-host free forever</p>
   </div>
 </section>
 
-<style>
-/* Spot pip CSS — appended inline here so no separate file needed */
-.spot-pip-badge{display:inline-block;width:7px;height:7px;border-radius:1px;background:var(--am);box-shadow:0 0 5px rgba(255,204,2,.45);transition:background .4s,box-shadow .4s;vertical-align:middle}
-.spot-pip-badge.gone{background:rgba(200,255,200,.07);box-shadow:none}
-/* plan card layout fix */
-.plan{display:flex;flex-direction:column}
-.plan .pitems{flex:1}
-.pitems li{line-height:1.55;align-items:flex-start}
-.pitems li::before{flex-shrink:0;margin-top:2px}
-</style>
 
 <!-- ROADMAP -->
 <section id="roadmap" style="position:relative;z-index:2">
@@ -1855,7 +2121,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       <div class="slabel">// FAQ</div>
       <h2 class="stitle">Questions<br>engineers ask.</h2>
       <p class="sbody" style="margin-top:10px">Can't find your answer here? Reach out directly.</p>
-      <a class="faqlink" href="mailto:jachinchsaikiasonowal@gmail.com">jachinchsaikiasonowal@gmail.com →</a>
+      <a class="faqlink" href="mailto:hello@promptmatrix.io">hello@promptmatrix.io →</a>
     </div>
     <div class="faqlist rv" style="transition-delay:.1s">
       <div class="faqitem">
@@ -1868,7 +2134,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">What storage options are available and when should I upgrade? <span class="faqico">+</span></button>
-        <div class="faqa"><p>There are three primary tiers: <strong>Browser localStorage</strong> — zero setup, start immediately, data lives in your browser. <strong>SQLite</strong> — clone the repo, point it at a local file, data persists across sessions and is git-friendly. <strong>Self-hosted database</strong> — Postgres, MySQL, or any backend you already run, for full data sovereignty and multi-user access. You can export your prompt registry and migrate between tiers at any time. Your prompts, your schema, no lock-in.</p></div>
+        <div class="faqa"><p>There are four tiers: <strong>Browser localStorage</strong> — zero setup, start immediately, data lives in your browser. <strong>SQLite</strong> — download the repo, point it at a local file, data persists across sessions and is git-friendly. <strong>Self-hosted database</strong> — Postgres, MySQL, or any backend you already run, full data sovereignty. <strong>Managed cloud</strong> — coming when 5 people register, handles sync, team access, and cross-device availability. You can export your prompt registry and migrate between tiers at any time. Your prompts, your schema, no lock-in.</p></div>
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">Why not use environment variables or a database config table? <span class="faqico">+</span></button>
@@ -1896,11 +2162,11 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">What if no engineer is available to review? <span class="faqico">+</span></button>
-        <div class="faqa"><p>Multiple engineers can be designated as approvers for any prompt. Any one of them can approve a pending change. The pending change queues until reviewed — it never auto-approves, which is the entire point of the system. The local-first version uses a unified approval queue for the workspace.</p></div>
+        <div class="faqa"><p>Multiple engineers can be designated as approvers for any prompt. Any one of them can approve a pending change. The pending change queues until reviewed — it never auto-approves, which is the entire point of the system. Email and Slack notifications for pending approvals are on the cloud roadmap.</p></div>
       </div>
       <div class="faqitem">
-        <button class="faqq" onclick="toggleFaq(this)">Is the free version actually usable in a real project? <span class="faqico">+</span></button>
-        <div class="faqa"><p>Yes. The free, open-source version is the complete system. It includes the full governance workflow, serve endpoint, version history, and audit trail. It is not a feature-limited demo. You can run it on your own infrastructure and wire it into production applications today.</p></div>
+        <button class="faqq" onclick="toggleFaq(this)">Is the free plan actually usable in a real project? <span class="faqico">+</span></button>
+        <div class="faqa"><p>The self-hosted tier gives you the full governance system with unlimited prompts — the complete approval workflow, serve endpoint, version history, and audit trail. It's not a limited demo. Run it on your own infrastructure and wire it into a real application. Managed cloud with zero-ops hosting and team auth is coming — get notified when it ships.</p></div>
       </div>
     </div>
   </div>
@@ -1910,18 +2176,31 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
 <section class="cta rv" id="cta">
   <div class="slabel" style="text-align:center;margin-bottom:12px">// GET STARTED NOW</div>
   <h2 class="ctah">Your prompts don't<br>belong in <span class="em"><span class="si">your code.</span></span></h2>
-  <p class="ctab">Start in your browser right now — no install, no account, no setup required. Or clone the repository to host your own governed registry with SQLite or Postgres.</p>
-  <div class="ctaform" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-    <button class="ctabtn" onclick="window.open('https://github.com/jachinsaikiasonowal/promptmatrix','_blank')">CLONE ON GITHUB →</button>
-    <button class="ctabtn" onclick="location.href='#hero'" style="background:rgba(255,255,255,.05);border:1px solid var(--b3);color:var(--txt2)">TRY IN BROWSER ↓</button>
+  <p class="ctab">Start in your browser right now — no install, no account, no card. Every hardcoded prompt is one registration away from being versioned, governed, and instantly updatable.</p>
+  <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin-bottom:13px">
+    <button
+      style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;padding:13px 28px;background:transparent;color:var(--txt3);border:1px solid var(--b2);border-radius:3px;cursor:pointer;transition:all .18s;white-space:nowrap"
+      onmouseover="this.style.color='var(--txt2)';this.style.borderColor='var(--b3)';this.style.background='rgba(0,230,118,.03)'"
+      onmouseout="this.style.color='var(--txt3)';this.style.borderColor='var(--b2)';this.style.background='transparent'"
+      onclick="window.open('https://github.com/PromptMatrix/promptmatrix.github.io','_blank')">
+      CLONE FREE ON GITHUB →
+    </button>
+    <button
+      style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:13px 28px;background:rgba(0,230,118,.12);color:var(--g);border:1px solid rgba(0,230,118,.35);border-radius:3px;cursor:pointer;transition:all .18s;text-shadow:0 0 10px rgba(0,230,118,.4);box-shadow:0 0 24px rgba(0,230,118,.06);white-space:nowrap"
+      onmouseover="this.style.background='rgba(0,230,118,.2)';this.style.boxShadow='0 0 40px rgba(0,230,118,.15)';this.style.transform='translateY(-1px)'"
+      onmouseout="this.style.background='rgba(0,230,118,.12)';this.style.boxShadow='0 0 24px rgba(0,230,118,.06)';this.style.transform=''"
+      onclick="claimSpot(this)">
+      ★ GET STARTED — $149 FOUNDING →
+    </button>
   </div>
   <div class="ctafine">
-    <span>Browser · SQLite · Self-hosted</span>
-    <span>No card required</span>
-    <span>MIT Licensed</span>
-    <span>Complete Governance Suite</span>
+    <span>Browser · SQLite · self-hosted · cloud</span>
+    <span>No card to self-host</span>
+    <span>Cloud ships at 5 registrations</span>
+    <span>$149 one-time · price locked forever</span>
   </div>
 </section>
+
 
 <!-- FOOTER -->
 <footer>
@@ -1950,24 +2229,24 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
         <li><a href="#features">Approval Workflow</a></li>
         <li><a href="#features">Audit Trail</a></li>
         <li><a href="#features">Version History</a></li>
-        <li><a href="#pricing">Local Persistence</a></li>
+        <li><a href="#pricing">Enterprise Controls</a></li>
         <li><a href="#features">Diff Review</a></li>
       </ul>
     </div>
     <div>
       <div class="fcolh">PROJECT</div>
       <ul class="flinks">
-        <li><a href="https://github.com/jachinsaikiasonowal/promptmatrix" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://github.com/jachinsaikiasonowal/promptmatrix#readme" target="_blank" rel="noopener">Documentation</a></li>
-        <li><a href="mailto:jachinchsaikiasonowal@gmail.com">jachinchsaikiasonowal@gmail.com</a></li>
-        <li><a href="mailto:jachinchsaikiasonowal@gmail.com?subject=Privacy Policy">Privacy Policy</a></li>
-        <li><a href="mailto:jachinchsaikiasonowal@gmail.com?subject=Terms of Service">Terms of Service</a></li>
+        <li><a href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://github.com/PromptMatrix/promptmatrix.github.io#readme" target="_blank" rel="noopener">Documentation</a></li>
+        <li><a href="mailto:hello@promptmatrix.io">hello@promptmatrix.io</a></li>
+        <li><a href="mailto:hello@promptmatrix.io?subject=Privacy%20Policy">Privacy Policy</a></li>
+        <li><a href="mailto:hello@promptmatrix.io?subject=Terms%20of%20Service">Terms of Service</a></li>
       </ul>
     </div>
   </div>
   <div class="fbot">
     <p>© 2026 PromptMatrix · Open Source · MIT License</p>
-    <p>v0.1.0 BETA · <a href="mailto:jachinchsaikiasonowal@gmail.com" style="color:var(--txt3)">jachinchsaikiasonowal@gmail.com</a></p>
+    <p>v0.1.0 BETA · hello@promptmatrix.io</p>
   </div>
 </footer>
 
@@ -2005,15 +2284,15 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
 
 /* CURSOR */
 const cd=document.getElementById('cd'),cr=document.getElementById('cr');
-let mx=-9999,my=-9999,rx=-9999,ry=-9999,cursorReady=false;
+let mx=0,my=0,rx=0,ry=0,cursorReady=false;
 document.addEventListener('mousemove',e=>{
   mx=e.clientX;my=e.clientY;
   if(!cursorReady){cursorReady=true;cd.style.opacity='1';cr.style.opacity='1';}
 });
 (function loop(){cd.style.left=mx+'px';cd.style.top=my+'px';rx+=(mx-rx)*.18;ry+=(my-ry)*.18;cr.style.left=rx+'px';cr.style.top=ry+'px';requestAnimationFrame(loop)})();
 document.querySelectorAll('a,button,.plan,.tc2,.rcard,.faqq,.fc,.flow-step,.pc,.hst,.pt-card,.arch-cell,.faqitem,.em-card,.dept-card,.poc-body,.acard').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cr.style.width='44px';cr.style.height='44px';cr.style.borderColor='rgba(0,230,118,.8)';});
-  el.addEventListener('mouseleave',()=>{cr.style.width='28px';cr.style.height='28px';cr.style.borderColor='rgba(0,230,118,.4)';});
+  el.addEventListener('mouseenter',()=>{cr.style.width='55px';cr.style.height='55px';cr.style.borderColor='var(--g)';cr.style.boxShadow='0 0 20px rgba(0,230,118,.15)';});
+  el.addEventListener('mouseleave',()=>{cr.style.width='34px';cr.style.height='34px';cr.style.borderColor='rgba(0,230,118,.35)';cr.style.boxShadow='inset 0 0 8px rgba(0,230,118,.04)';});
 });
 
 /* NAV */
@@ -2173,41 +2452,23 @@ function showToast(msg){const t=document.getElementById('toast');t.innerHTML='<s
 
 /* SPOTS COUNTER — shared state */
 var _spotsLeft=5;
-/* ── RAZORPAY PAYMENT LINK — replace this URL with your live Razorpay link ──
-   Create at: razorpay.com/payment-links → set max uses = 5, amount = 14900 (₹149 * 100 paise)
-   OR use USD via Lemon Squeezy / Gumroad and paste the link here              */
-var RAZORPAY_LINK='https://razorpay.me/@promptmatrix'; /* ← REPLACE BEFORE LAUNCH */
-
 function _updateSpotsBadges(){
   const gone=_spotsLeft<=0;
-  const label=gone?'SOLD OUT':''+_spotsLeft+' OF 5 LEFT';
+  const label=gone?'SOLD OUT':''+_spotsLeft+' SEAT'+((_spotsLeft===1)?'':' LEFT')+' OF 5';
   ['hero-spots-count','pro-spots-badge'].forEach(id=>{
     const el=document.getElementById(id);if(el)el.textContent=label;
   });
   const cb=document.getElementById('claim-btn');
-  if(cb&&gone){cb.textContent='SOLD OUT — JOIN PRO WAITLIST';cb.disabled=true;cb.style.opacity='.45';}
+  if(cb&&gone){cb.textContent='SOLD OUT';cb.disabled=true;cb.style.opacity='.45';}
 }
 _updateSpotsBadges();
 
-/* CLAIM SPOT (founding seat) */
+/* CLAIM SPOT (early seat) */
 function claimSpot(btn){
-  if(_spotsLeft<=0){
-    showToast('All 5 founding seats taken — join the Pro waitlist instead.');
-    submitEmail(null,'waitlist');
-    return;
-  }
-  _spotsLeft=Math.max(0,_spotsLeft-1);
-  _updateSpotsBadges();
-  /* Opens payment link — Razorpay/Gumroad/LemonSqueezy depending on your setup */
-  window.open(RAZORPAY_LINK,'_blank');
-  showToast("Opening payment — $149 one-time, price locked forever.");
-  if(btn){
-    const orig=btn.textContent;
-    btn.textContent='OPENING PAYMENT ✓';
-    btn.style.color='var(--am)';
-    btn.disabled=true;
-    setTimeout(()=>{btn.textContent=orig;btn.style.color='';btn.disabled=false;},4000);
-  }
+  // Razorpay payment link — $149 founding seat
+  if(btn){btn.textContent='OPENING...';btn.disabled=true;}
+  window.open('RAZORPAY_PAYMENT_LINK_HERE','_blank');
+  if(btn){setTimeout(()=>{btn.textContent='★ GET STARTED — $149 FOUNDING';btn.disabled=false;},2000);}
 }
 
 /* HERO WAITLIST — reads hero-email input, validates, opens Beehiiv */
@@ -2226,9 +2487,17 @@ function heroJoinWaitlist(){
   const base='https://ainewsindia.beehiiv.com/subscribe';
   const params=new URLSearchParams({email,utm_source:'hero',utm_medium:'landing_page',utm_campaign:'cloud_waitlist'});
   window.open(`${base}?${params}`,'_blank');
-  showToast("You're on the waitlist — I'll email when cloud ships.");
+  showToast("You're on the waitlist — we'll email you when cloud launches.");
   input.value='';
   if(btn){setTimeout(()=>{btn.textContent='JOINED ✓';btn.style.color='var(--g)';btn.style.background='rgba(0,230,118,.22)';setTimeout(()=>{btn.textContent='JOIN WAITLIST →';btn.style.color='';btn.style.background='rgba(0,230,118,.16)';btn.disabled=false;},4200);},100);}
+}
+
+/* OPEN WAITLIST — for solo/team tiers (pre-launch) */
+function openWaitlist(plan){
+  const base='https://ainewsindia.beehiiv.com/subscribe';
+  const params=new URLSearchParams({utm_source:plan,utm_medium:'pricing',utm_campaign:'cloud_waitlist'});
+  window.open(`${base}?${params}`,'_blank');
+  showToast("You're on the waitlist — we'll notify you when "+plan+" tier launches.");
 }
 
 /* EMAIL — generic (pricing section forms) */
@@ -2243,42 +2512,109 @@ async function submitEmail(id,plan){
   const orig=btn?btn.textContent:'';
   if(btn){btn.textContent='...';btn.disabled=true;}
   if(plan==='founding'||plan==='pro'){
-    claimSpot(btn);return;
+    // Razorpay payment link
+    window.open('RAZORPAY_PAYMENT_LINK_HERE','_blank');
+    if(btn){btn.textContent='OPENING...';setTimeout(()=>{btn.textContent=orig;btn.disabled=false;},2000);}
+    return;
   } else if(plan==='enterprise'||plan==='team'){
-    window.open('mailto:jachinchsaikiasonowal@gmail.com?subject=Enterprise%20Waitlist%20%E2%80%94%20PromptMatrix&body=Hi%2C%0A%0AI%27d%20like%20to%20join%20the%20Enterprise%20waitlist.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0AUse%20case%3A%20%0A%0AThanks','_blank');
-    showToast("Waitlist confirmed — we'll reach out within 48h.");
-  } else if(plan==='waitlist'||plan==='subscription'){
-    const base='https://ainewsindia.beehiiv.com/subscribe';
-    const params=new URLSearchParams({utm_source:'pro_waitlist',utm_medium:'landing_page',utm_campaign:'pro_launch'});
-    if(email)params.set('email',email);
-    window.open(`${base}?${params}`,'_blank');
-    showToast("You're on the Pro waitlist — email when Pro launches Q2 2026.");
-  } else {
+    window.open('mailto:hello@promptmatrix.io?subject=Enterprise%20%E2%80%94%20PromptMatrix&body=Hi%2C%0A%0AInterested%20in%20PromptMatrix%20for%20our%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0AUse%20case%3A%20%0A%0AThanks','_blank');
+    showToast("We'll reach out within 48h.");
+  } else if(plan==='waitlist'){
     const base='https://ainewsindia.beehiiv.com/subscribe';
     const params=new URLSearchParams({utm_source:'general',utm_medium:'landing_page',utm_campaign:'cloud_waitlist'});
     if(email)params.set('email',email);
     window.open(`${base}?${params}`,'_blank');
     showToast("Subscribed — we'll be in touch.");
+  } else {
+    const base='https://ainewsindia.beehiiv.com/subscribe';
+    const params=new URLSearchParams({utm_source:'cta',utm_medium:'landing_page',utm_campaign:'cloud_waitlist'});
+    if(email)params.set('email',email);
+    window.open(`${base}?${params}`,'_blank');
+    showToast("You're on the list — we'll be in touch.");
   }
   if(input)input.value='';
   if(btn){btn.textContent='NOTED ✓';btn.style.color='var(--g)';setTimeout(()=>{btn.textContent=orig;btn.style.color='';btn.disabled=false;},4000);}
 }
 
-/* APPROVE DEMO */
-function handleApprove(btn){
-  const panel=btn.closest('[id="approval-actions"]')||btn.closest('.dvbtns');
-  if(btn){btn.textContent='✓ APPROVED — LIVE IN 10s';btn.style.color='var(--g)';btn.style.background='rgba(0,230,118,.14)';btn.disabled=true;}
-  showToast('Change approved — serve endpoint updated. Zero redeploy.');
-}
-
 /* FAQ */
 function toggleFaq(btn){
   const item=btn.closest('.faqitem');
-  const open=item.classList.contains('open');
+  const wasOpen=item.classList.contains('open');
   document.querySelectorAll('.faqitem.open').forEach(i=>{
     i.classList.remove('open');
-    i.querySelector('.faqico').textContent='+';
+    const ico=i.querySelector('.faqico');
+    if(ico)ico.textContent='+';
   });
-  if(!open){
+  if(!wasOpen){
     item.classList.add('open');
-    item.queryS
+    const ico=btn.querySelector('.faqico');
+    if(ico)ico.textContent='×';
+  }
+}
+
+/* MOBILE NAV */
+function toggleMobNav(){
+  const nav=document.getElementById('mob-nav');
+  const btn=document.getElementById('nhbg');
+  nav.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+function closeMobNav(){
+  document.getElementById('mob-nav').classList.remove('open');
+  document.getElementById('nhbg').classList.remove('open');
+}
+
+/* HANDLE APPROVE (diff demo section) */
+function handleApprove(btn){
+  if(!btn)return;
+  const actions=document.getElementById('approval-actions');
+  btn.textContent='✓ APPROVED';
+  btn.style.background='rgba(0,230,118,.22)';
+  btn.style.borderColor='var(--g)';
+  btn.style.boxShadow='0 0 24px rgba(0,230,118,.2)';
+  btn.disabled=true;
+  if(actions){
+    const reject=actions.querySelector('.ama-reject');
+    if(reject)reject.disabled=true;
+  }
+  // Also the top diff approve button
+  document.querySelectorAll('.dvbtns .ama-approve').forEach(b=>{
+    b.textContent='✓ APPROVED — LIVE';
+    b.style.background='rgba(0,230,118,.18)';
+    b.disabled=true;
+  });
+  showToast('Version approved — now live in 9 seconds');
+}
+
+/* NAV SCROLL */
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('ink',scrollY>28);
+});
+
+</script>
+<script>
+  // 🚀 Deployment Intelligence
+  (function() {
+    const isVercel = window.location.hostname.includes('vercel.app');
+    const isGithub = window.location.hostname.includes('github.io');
+    const ctas = document.querySelectorAll('.btn-primary, .mob-cta');
+    const demoBtns = document.querySelectorAll('a[href*="vercel.app"]');
+    
+    if (isVercel) {
+      // ☁️ Managed Mode: Direct to Login
+      ctas.forEach(btn => {
+        btn.textContent = "LOGIN / ACCESS";
+        btn.href = "/dashboard";
+      });
+      demoBtns.forEach(btn => btn.style.display = 'none');
+    } else if (isGithub) {
+      // 🛠 OSS Mode: Direct to GitHub
+      ctas.forEach(btn => {
+        btn.textContent = "DOWNLOAD OSS";
+        btn.href = "https://github.com/jachinsaikiasonowal/promptmatrix";
+      });
+    }
+  })();
+</script>
+</body>
+</html>

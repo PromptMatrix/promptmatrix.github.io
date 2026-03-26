@@ -14,6 +14,11 @@ PromptMatrix is a high-performance, open-source infrastructure designed for AI e
 *   **🔌 Universal API:** Low-latency `GET` endpoint for any AI agent or service.
 *   **📦 Self-Host Ready:** Runs on SQLite with a single command.
 
+The unified landing page (`index.html`) is environmental-aware:
+- On **GitHub Pages**, it shows a "DOWNLOAD OSS" button to get this repo.
+- On **Vercel**, it shows a "LOGIN / ACCESS" button for your managed cloud platform.
+- The **Dashboard** connects to your local SQLite or your Cloud Supabase based on your `.env` settings.
+
 ---
 
 ## 🧠 Who Is This For?
