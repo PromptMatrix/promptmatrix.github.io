@@ -1,0 +1,9 @@
+# Mark HTML dashboards and landing pages as documentation/vendored
+# so they don't skew the repository language statistics (which should be Python)
+*.html linguist-vendored
+index.html linguist-documentation
+dashboard.html linguist-documentation
+standalone.html linguist-documentation
+
+# Ensure Python files are prioritized
+*.py linguist-detectable=true

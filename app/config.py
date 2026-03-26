@@ -1,3 +1,4 @@
+import os
 from pydantic_settings import BaseSettings
 from pydantic import model_validator
 from functools import lru_cache
@@ -14,6 +15,17 @@ class Settings(BaseSettings):
     app_url: str = "http://localhost:8000"
     frontend_url: str = "http://localhost:3000"
     debug: bool = False
+
+    @model_validator(mode="after")
+    def handle_vercel_sqlite(self) -> "Settings":
+        # Vercel filesystem is read-only except for /tmp
+        if "VERCEL" in os.environ and self.database_url.startswith("sqlite"):
+            if "./" in self.database_url:
+                self.database_url = self.database_url.replace("./", "/tmp/")
+                # Ensure the path is valid for SQLite
+                if self.database_url == "sqlite:///tmp/promptmatrix.db":
+                    self.database_url = "sqlite:////tmp/promptmatrix.db"
+        return self
 
     # SaaS / Cloud Modules (Optional - Activated by presence of keys)
     resend_api_key: str = ""

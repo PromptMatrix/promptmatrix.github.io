@@ -89,9 +89,9 @@ async def register(body: RegisterIn, db: Session = Depends(get_db)):
     user = User(email=body.email, hashed_pw=hash_password(body.password), full_name=body.full_name)
     db.add(user)
     db.flush()
-    # Auto-generate a local workspace
-    org_name = "Local Workspace"
-    org = Organisation(name=org_name, slug=_unique_slug(_slugify(org_name), db), plan="solo")
+    # Auto-generate the primary workspace (aligned with Organization ID)
+    org_name = "PromptMatrix"
+    org = Organisation(name=org_name, slug=_unique_slug("promptmatrix", db), plan="free")
     db.add(org)
     db.flush()
     member = OrgMember(org_id=org.id, user_id=user.id, role="owner")

@@ -1898,6 +1898,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
           <li>Unlimited prompts + agent keys</li>
           <li>Full version history + diff view</li>
           <li>1-click rollback functionality</li>
+          <li>JSON export + import for portability</li>
           <li>Instant serve endpoint via localhost</li>
           <li>Browser-only mode (No server needed)</li>
         </ul>
@@ -1946,6 +1947,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
             <li><span style="color:var(--g)">✓</span> Serve endpoint (/pm/serve/:key)</li>
             <li><span style="color:var(--g)">✓</span> Version history + 1-click rollback</li>
             <li><span style="color:var(--g)">✓</span> Role-based access control</li>
+            <li><span style="color:var(--g)">✓</span> JSON export + import portability</li>
             <li><span style="color:var(--g)">✓</span> Immutable audit trail</li>
           </ul>
         </div>
@@ -1968,7 +1970,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
           <h3 class="rct">Enterprise Controls</h3>
           <ul class="rcl">
             <li><span style="color:var(--txt3)">◦</span> Enterprise SSO / SAML</li>
-            <li><span style="color:var(--txt3)">◦</span> Audit log export (CSV, API)</li>
+            <li><span style="color:var(--g)">✓</span> Audit log export (JSON, CSV, API)</li>
             <li><span style="color:var(--txt3)">◦</span> On-premise deployment option</li>
             <li><span style="color:var(--txt3)">◦</span> SOC 2 Type II certification</li>
             <li><span style="color:var(--txt3)">◦</span> Multi-region data storage</li>
@@ -2453,23 +2455,29 @@ window.addEventListener('scroll',()=>{
 <script>
   // 🚀 Deployment Intelligence
   (function() {
-    const isVercel = window.location.hostname.includes('vercel.app');
+    const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('promptmatrix');
     const isGithub = window.location.hostname.includes('github.io');
-    const ctas = document.querySelectorAll('.btn-primary, .mob-cta');
+    const ctas = document.querySelectorAll('.pbtn, .auth-btn, .btn-primary, .mob-cta');
     const demoBtns = document.querySelectorAll('a[href*="vercel.app"]');
     
     if (isVercel) {
       // ☁️ Managed Mode: Direct to Login
       ctas.forEach(btn => {
-        btn.textContent = "LOGIN / ACCESS";
-        btn.href = "/dashboard";
+        if (!btn.href.includes('github.com')) {
+          btn.textContent = "LOGIN / ACCESS";
+          btn.href = "/dashboard";
+        }
       });
-      demoBtns.forEach(btn => btn.style.display = 'none');
+      demoBtns.forEach(btn => {
+        if (!btn.classList.contains('pbtn')) btn.style.display = 'none';
+      });
     } else if (isGithub) {
       // 🛠 OSS Mode: Direct to GitHub Engine
       ctas.forEach(btn => {
-        btn.textContent = "DOWNLOAD OSS";
-        btn.href = "https://github.com/PromptMatrix/PromptMatrix";
+        if (!btn.href.includes('github.com')) {
+          btn.textContent = "DOWNLOAD OSS";
+          btn.href = "https://github.com/PromptMatrix/PromptMatrix";
+        }
       });
     }
   })();

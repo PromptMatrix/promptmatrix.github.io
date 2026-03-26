@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse, RedirectResponse
@@ -58,13 +60,15 @@ async def status():
         "env": settings.app_env,
     }
 
+BASE_DIR = Path(__file__).resolve().parent
+
 @app.get("/")
 async def root():
-    return FileResponse("index.html")
+    return FileResponse(BASE_DIR / "index.html")
 
 @app.get("/dashboard")
 async def dashboard():
-    return FileResponse("dashboard.html")
+    return FileResponse(BASE_DIR / "dashboard.html")
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):

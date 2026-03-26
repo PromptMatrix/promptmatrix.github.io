@@ -695,6 +695,19 @@ curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
               <div class="card-title">ACCOUNT</div>
               <div id="set-user-info" style="font-size:9px;color:var(--t3);line-height:2;margin-bottom:10px"></div>
             </div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">DATA PORTABILITY</div>
+              <div style="font-size:9px;color:var(--t3);line-height:1.6;margin-bottom:12px">
+                Export your entire registry (prompts, versions, environments) as a JSON file. Use this for backups or to migrate to a self-hosted instance.
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn bxs" onclick="exportWorkspace()">⇩ EXPORT JSON</button>
+                <label class="btn bxs" style="cursor:pointer;display:inline-block">
+                  ⇧ IMPORT JSON
+                  <input type="file" id="import-file" style="display:none" onchange="importWorkspace(this)">
+                </label>
+              </div>
+            </div>
             <div class="card" style="border-color:rgba(255,68,68,.2)">
               <div class="card-title" style="color:var(--r)">DANGER ZONE</div>
               <button class="btn br bxs" onclick="doLogout()">SIGN OUT</button>
@@ -1665,6 +1678,43 @@ document.addEventListener('keydown', e=>{
     if(document.getElementById('auth-login')?.style.display!=='none') doLogin();
   }
 });
+// ══════════════════════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ══════════════════════════════════════════════════════════════════════
+async function exportWorkspace(){
+  const data = await api('GET', '/api/v1/projects/export');
+  if(!data) return;
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `PromptMatrix_Export_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  notif('Workspace exported ✓');
+}
+
+async function importWorkspace(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const json = JSON.parse(e.target.result);
+      if(!confirm('Importing will merge these projects/prompts into your current workspace. Existing versions will not be overwritten. Continue?')) return;
+      const res = await api('POST', '/api/v1/projects/import', json);
+      if(res){
+        notif(res.message);
+        loadDash();
+      }
+    } catch(err){
+      notif('Invalid JSON file','err');
+    }
+  };
+  reader.readAsText(file);
+  input.value = ''; // Reset for next time
+}
+
 // Enter in login fields
 document.getElementById('a-pass')?.addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 document.getElementById('a-email')?.addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('a-pass')?.focus(); });

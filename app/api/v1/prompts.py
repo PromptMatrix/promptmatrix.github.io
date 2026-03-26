@@ -9,6 +9,7 @@ from app.models import (
     Prompt, PromptVersion, Environment, OrgMember, AuditLog, User, Organisation
 )
 from app.core.auth import get_current_user_and_org, require_role
+from app.serve.cache import invalidate_prompt_cache
 from app.core.policy import redact_identified_secrets, analyze_prompt_safety
 import hashlib
 
