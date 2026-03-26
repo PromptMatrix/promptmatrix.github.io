@@ -104,11 +104,6 @@ async def register(body: RegisterIn, db: Session = Depends(get_db)):
         extra={"mode": "local"}
     ))
     db.commit()
-    try:
-        from app.core.email import send_welcome
-        await send_welcome(user.email, org_name, org.plan)
-    except Exception:
-        pass
     return _build_auth_response(user, member, org)
 
 @router.post("/login")

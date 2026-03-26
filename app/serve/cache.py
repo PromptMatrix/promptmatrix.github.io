@@ -1,4 +1,9 @@
+"""
+Local-only in-memory cache.
+No external dependencies. No Redis. No Upstash. No network calls.
+"""
 import json
+import time
 import logging
 from typing import Optional
 from app.config import get_settings
@@ -6,57 +11,14 @@ from app.config import get_settings
 settings = get_settings()
 log = logging.getLogger(__name__)
 
-class _UpstashCache:
-    def __init__(self, url: str, token: str):
-        self._url = url.rstrip("/")
-        self._token = token
-
-    def _headers(self) -> dict:
-        return {"Authorization": f"Bearer {self._token}"}
-
-    async def get(self, key: str) -> Optional[str]:
-        try:
-            import httpx
-            async with httpx.AsyncClient(timeout=2.0) as client:
-                r = await client.get(
-                    f"{self._url}/get/{key}",
-                    headers=self._headers()
-                )
-                data = r.json()
-                return data.get("result")
-        except Exception as e:
-            log.debug(f"Cache GET error: {e}")
-            return None
-
-    async def set(self, key: str, value: str, ttl_seconds: int):
-        try:
-            import httpx
-            async with httpx.AsyncClient(timeout=2.0) as client:
-                await client.get(
-                    f"{self._url}/set/{key}/{value}",
-                    params={"ex": ttl_seconds},
-                    headers=self._headers()
-                )
-        except Exception as e:
-            log.debug(f"Cache SET error: {e}")
-
-    async def delete(self, key: str):
-        try:
-            import httpx
-            async with httpx.AsyncClient(timeout=2.0) as client:
-                await client.get(
-                    f"{self._url}/del/{key}",
-                    headers=self._headers()
-                )
-        except Exception as e:
-            log.debug(f"Cache DEL error: {e}")
 
 class _MemoryCache:
-    def __init__(self):
-        self._data = {} # key -> (value, expiry_ts)
+    """Pure Python in-process TTL cache. Zero external deps."""
 
-    def _now(self):
-        import time
+    def __init__(self):
+        self._data: dict = {}  # key -> (value: str, expiry_ts: float)
+
+    def _now(self) -> float:
         return time.time()
 
     async def get(self, key: str) -> Optional[str]:
@@ -74,49 +36,50 @@ class _MemoryCache:
         self._data[key] = (value, expiry)
 
     async def delete(self, key: str):
-        if key in self._data:
-            del self._data[key]
+        self._data.pop(key, None)
 
     async def incr(self, key: str, ttl_seconds: int) -> int:
         item = self._data.get(key)
         now = self._now()
         if not item or (item[1] and now > item[1]):
             val = 1
+            expiry = now + ttl_seconds
         else:
             val = int(item[0]) + 1
-        expiry = now + ttl_seconds if not item or (item[1] and now > item[1]) else item[1]
+            expiry = item[1]
         self._data[key] = (str(val), expiry)
         return val
 
-def _build_cache():
-    if settings.upstash_redis_rest_url and settings.upstash_redis_rest_token:
-        log.info("Cache: Upstash Redis enabled")
-        return _UpstashCache(
-            settings.upstash_redis_rest_url,
-            settings.upstash_redis_rest_token
-        )
-    log.info("Cache: Local memory cache enabled (Local-First)")
-    return _MemoryCache()
 
-_cache = _build_cache()
+# Singleton — one cache for the lifetime of the process
+_cache = _MemoryCache()
+log.info("Cache: Local memory cache active (standalone mode)")
+
+
+# ── Public API ────────────────────────────────────────────────────────────
 
 async def get_cached_key(key_hash: str) -> Optional[dict]:
     raw = await _cache.get(f"key:{key_hash}")
     return json.loads(raw) if raw else None
 
+
 async def cache_key(key_hash: str, environment_id: str, org_id: str, plan: str, env_name: str):
     await _cache.set(
         f"key:{key_hash}",
-        json.dumps({"environment_id": environment_id, "org_id": org_id, "plan": plan, "env_name": env_name}),
+        json.dumps({"environment_id": environment_id, "org_id": org_id,
+                    "plan": plan, "env_name": env_name}),
         settings.api_key_cache_ttl_seconds
     )
+
 
 async def invalidate_key_cache(key_hash: str):
     await _cache.delete(f"key:{key_hash}")
 
+
 async def get_cached_prompt(environment_id: str, prompt_key: str) -> Optional[dict]:
     raw = await _cache.get(f"prompt:{environment_id}:{prompt_key}")
     return json.loads(raw) if raw else None
+
 
 async def cache_prompt(
     environment_id: str, prompt_key: str,
@@ -133,34 +96,15 @@ async def cache_prompt(
         settings.prompt_cache_ttl_seconds
     )
 
+
 async def invalidate_prompt_cache(environment_id: str, prompt_key: str):
     await _cache.delete(f"prompt:{environment_id}:{prompt_key}")
+
 
 async def check_rate_limit(key_hash: str, rpm_limit: int = 600) -> tuple[bool, int, int]:
     if rpm_limit == 0:
         return True, 0, 0
-    import time
     window = int(time.time() // 60)
     rate_key = f"rl:{key_hash}:{window}"
-    
-    if isinstance(_cache, _MemoryCache):
-        count = await _cache.incr(rate_key, 120)
-        return count <= rpm_limit, count, rpm_limit
-        
-    try:
-        import httpx
-        headers = _cache._headers()
-        base_url = _cache._url
-        async with httpx.AsyncClient(timeout=1.0) as client:
-            r = await client.get(f"{base_url}/incr/{rate_key}", headers=headers)
-            count = int(r.json().get("result", 1))
-            if count == 1:
-                await client.get(
-                    f"{base_url}/expire/{rate_key}/120",
-                    headers=headers
-                )
-        allowed = count <= rpm_limit
-        return allowed, count, rpm_limit
-    except Exception as e:
-        log.debug(f"Rate limit check error: {e}")
-        return True, 0, rpm_limit
+    count = await _cache.incr(rate_key, 120)
+    return count <= rpm_limit, count, rpm_limit

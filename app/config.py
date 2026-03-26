@@ -1,72 +1,30 @@
-import os
 from pydantic_settings import BaseSettings
 from pydantic import model_validator
 from functools import lru_cache
 
+
 class Settings(BaseSettings):
-    # Core Infrastructure
+    # ── Core ─────────────────────────────────────────────────────────────
     database_url: str = "sqlite:///./promptmatrix.db"
-    jwt_secret_key: str = "dev-secret-change-in-production"
+    jwt_secret_key: str = "dev-secret-change-me"
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
     encryption_key: str = ""
-    app_env: str = "local" # local, development, production, cloud
+    app_env: str = "local"
     app_url: str = "http://localhost:8000"
-    frontend_url: str = "http://localhost:3000"
     debug: bool = False
 
-    @model_validator(mode="after")
-    def handle_vercel_sqlite(self) -> "Settings":
-        # Vercel filesystem is read-only except for /tmp
-        if "VERCEL" in os.environ and self.database_url.startswith("sqlite"):
-            if "./" in self.database_url:
-                self.database_url = self.database_url.replace("./", "/tmp/")
-                # Ensure the path is valid for SQLite
-                if self.database_url == "sqlite:///tmp/promptmatrix.db":
-                    self.database_url = "sqlite:////tmp/promptmatrix.db"
-        return self
-
-    # SaaS / Cloud Modules (Optional - Activated by presence of keys)
-    resend_api_key: str = ""
-    from_email: str = "noreply@promptmatrix.local"
-    upstash_redis_rest_url: str = ""
-    upstash_redis_rest_token: str = ""
-    
-    # Supabase / Private Cloud specific
-    supabase_url: str = ""
-    supabase_key: str = ""
-    
-    # Internal Performance
+    # ── Local Performance ────────────────────────────────────────────────
     prompt_cache_ttl_seconds: int = 30
     api_key_cache_ttl_seconds: int = 300
     serve_rate_limit_rpm: int = 600
-
-    @property
-    def is_cloud_mode(self) -> bool:
-        """Returns True if the instance is configured for cloud-managed services."""
-        return bool(self.upstash_redis_rest_url or self.supabase_url)
-
-
-    @model_validator(mode="after")
-    def validate_production_secrets(self) -> "Settings":
-        if self.app_env == "production":
-            errors = []
-            if self.jwt_secret_key == "dev-secret-change-in-production":
-                errors.append("JWT_SECRET_KEY must be set")
-            if not self.encryption_key:
-                errors.append("ENCRYPTION_KEY must be set")
-            if self.encryption_key and self.encryption_key == self.jwt_secret_key:
-                errors.append("ENCRYPTION_KEY and JWT_SECRET_KEY must be different")
-            # Relaxed for self-hosting: Allow SQLite in production mode
-            if errors:
-                raise ValueError("Production startup failed:\n" + "\n".join(f"  • {e}" for e in errors))
-        return self
 
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
         extra = "ignore"
+
 
 @lru_cache()
 def get_settings() -> Settings:
