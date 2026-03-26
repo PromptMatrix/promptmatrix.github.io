@@ -528,11 +528,12 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="nl" href="#how-it-works">PROTOCOL</a>
     <a class="nl" href="#features">FEATURES</a>
     <a class="nl" href="#quickstart">INTEGRATION</a>
+    <a class="nl" href="#pricing">PRICING</a>
     <a class="nl" href="#faq">FAQ</a>
   </div>
   <div class="nact">
     <a class="btn btn-ghost" href="https://github.com/jachinsaikiasonowal/promptmatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="btn btn-primary" href="/dashboard">★ GET STARTED</a>
+    <a class="btn btn-primary" href="#pricing">GET EARLY ACCESS</a>
   </div>
   <button class="nhbg" id="nhbg" onclick="toggleMobNav()" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
@@ -543,10 +544,11 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="#how-it-works" onclick="closeMobNav()">PROTOCOL</a>
     <a class="mob-nl" href="#features" onclick="closeMobNav()">FEATURES</a>
     <a class="mob-nl" href="#quickstart" onclick="closeMobNav()">INTEGRATION</a>
+    <a class="mob-nl" href="#pricing" onclick="closeMobNav()">PRICING</a>
     <a class="mob-nl" href="#faq" onclick="closeMobNav()">FAQ</a>
     <div class="mob-divider"></div>
     <a class="mob-nl" href="https://github.com/jachinsaikiasonowal/promptmatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="mob-nl mob-cta" href="/dashboard" onclick="closeMobNav()">▶ GET STARTED</a>
+    <a class="mob-nl mob-cta" href="#pricing" onclick="closeMobNav()">▶ GET STARTED</a>
   </div>
 </div>
 
@@ -582,9 +584,21 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <span>No server needed to start — runs entirely in your browser. Upgrade storage when you're ready.</span>
     </div>
 
-    <!-- GET STARTED BUTTON -->
-    <div style="display:flex;flex-direction:column;gap:8px;max-width:480px;animation:rise .7s .26s var(--ease) both">
-      <a href="/dashboard" class="btn btn-primary" style="padding:16px 32px;justify-content:center;font-size:12px">★ SET UP LOCAL INSTANCE →</a>
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;animation:rise .7s .26s var(--ease) both">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button onclick="location.href='#pricing'"
+          style="font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;padding:14px 28px;background:rgba(0,230,118,.18);color:var(--g);border:1px solid var(--b3);border-radius:3px;cursor:pointer;transition:all .18s;white-space:nowrap;text-shadow:0 0 12px rgba(0,230,118,.5);flex-shrink:0"
+          onmouseover="this.style.background='rgba(0,230,118,.3)';this.style.boxShadow='0 0 24px rgba(0,230,118,.18)'"
+          onmouseout="this.style.background='rgba(0,230,118,.18)';this.style.boxShadow='none'">
+          GET STARTED →
+        </button>
+        <button onclick="window.open('https://github.com/jachinsaikiasonowal/promptmatrix','_blank')"
+          style="font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.12em;padding:14px 28px;background:transparent;color:var(--txt2);border:1px solid var(--b2);border-radius:3px;cursor:pointer;transition:all .18s;white-space:nowrap;flex-shrink:0"
+          onmouseover="this.style.background='rgba(255,255,255,.05)';this.style.borderColor='var(--b3)'"
+          onmouseout="this.style.background='transparent';this.style.borderColor='var(--b2)'">
+          VIEW ON GITHUB ◈
+        </button>
+      </div>
     </div>
 
     <!-- GITHUB GHOST LINK -->
@@ -800,15 +814,27 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
         <div style="font-family:var(--mono);font-size:8px;color:rgba(128,222,234,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--cy)">✓</span> No network dependency</div>
       </div>
 
-      <!-- Tier 3: Production Server -->
+      <!-- Tier 3: Self-hosted DB -->
       <div class="rv" style="transition-delay:.14s;background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
         <div style="font-family:var(--mono);font-size:22px;margin-bottom:10px">🖥️</div>
-        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--pu);margin-bottom:8px">// TIER 3 · PRODUCTION</div>
-        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Self-Hosted Server</div>
-        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Deploy to your own infrastructure. Connect to Postgres, MySQL, or SQLite. Full control, zero vendor lock-in. Ideal for teams who need data residency and integration with private LLMs.</p>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--pu);margin-bottom:8px">// TIER 3 · SELF-HOSTED</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Your Own Server</div>
+        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Point PromptMatrix at your own Postgres, MySQL, or any database backend. Full control, zero vendor relationship. Teams and orgs who need data residency, custom auth, or integration into an existing stack.</p>
         <div style="font-family:var(--mono);font-size:8px;color:rgba(179,136,255,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--pu)">✓</span> Any database backend</div>
         <div style="font-family:var(--mono);font-size:8px;color:rgba(179,136,255,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--pu)">✓</span> Full data sovereignty</div>
-        <div style="font-family:var(--mono);font-size:8px;color:rgba(179,136,255,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--pu)">✓</span> Open source · MIT</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(179,136,255,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--pu)">✓</span> MIT licensed · self-managed</div>
+      </div>
+
+      <!-- Tier 4: Cloud -->
+      <div class="rv" style="transition-delay:.21s;background:rgba(3,4,0,.9);border:1px solid rgba(255,204,2,.18);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.22),transparent)"></div>
+        <div style="font-family:var(--mono);font-size:22px;margin-bottom:10px">☁️</div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--am);margin-bottom:8px">// TIER 4 · CLOUD · Q2 2026</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Managed Cloud</div>
+        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Zero ops. Fully managed backend — login, sync, team access, audit trail, from anywhere. Ships Q2 2026. Two ways in: grab one of 5 founding seats at $149 one-time, or wait for the Pro subscription at launch.</p>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--am)">⚡</span> Ships Q2 2026 — building now</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> 5 founding seats · $149 one-time · or Pro $29/mo</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Team seats + sync + cross-device</div>
       </div>
 
     </div>
@@ -1700,6 +1726,60 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   </div>
 </section>
 
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="prinr">
+    <div class="prih rv">
+      <div class="slabel" style="text-align:center">// ACCESS</div>
+      <h2 class="stitle" style="text-align:center">Free forever.<br><span class="em si">Local-first by design.</span></h2>
+      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:520px">PromptMatrix is open source — run it in your browser, SQLite, or self-host on your own infrastructure. No lock-in, no telemetry, no subscription. Just you and your prompts.</p>
+    </div>
+
+    <div class="plans" style="justify-content:center">
+
+      <!-- FREE -->
+      <div class="plan rv" style="max-width:600px">
+        <div class="pname">// FREE · OPEN SOURCE</div>
+        <div class="pprice"><sup>$</sup>0</div>
+        <div class="pperiod">MIT LICENSE · YOUR INFRASTRUCTURE</div>
+        <p class="pdesc">The complete governance system. Run it in your browser today — zero setup, zero cost. Download the repository for persistent SQLite or self-hosted database support. Full approval workflow, version history, and serve endpoint. Your prompts, your rules.</p>
+        <ul class="pitems">
+          <li>Unlimited prompts + unlimited agent keys</li>
+          <li>Browser localStorage — zero setup, runs now</li>
+          <li>SQLite mode — persistent, portable, offline</li>
+          <li>Self-hosted database — Postgres, MySQL, your infra</li>
+          <li>Full approval workflow + diff view</li>
+          <li>Version history + 1-click rollback</li>
+          <li>Serve endpoint <code style="color:var(--am);font-size:9px">/api/v1/serve/:key</code></li>
+          <li>Immutable audit trail & project exports</li>
+        </ul>
+        <button class="pbtn g" onclick="window.open('https://github.com/jachinsaikiasonowal/promptmatrix','_blank')">CLONE ON GITHUB →</button>
+        <p style="font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.08em;margin-top:10px;text-align:center">MIT licensed · browser, SQLite, or self-hosted · no backend required to start</p>
+      </div>
+
+    </div>
+
+    <!-- HOW ACCESS WORKS -->
+    <div class="rv" style="transition-delay:.28s;margin-top:40px;border:1px solid var(--b2);border-radius:6px;padding:22px 32px;background:rgba(0,4,0,.7);max-width:680px;margin-left:auto;margin-right:auto">
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--g3);text-align:center;margin-bottom:18px">// HOW TO DEPLOY</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+        <div style="text-align:center">
+          <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.3);line-height:1;margin-bottom:8px">01</div>
+          <div style="font-size:12px;color:rgba(200,255,200,.5);line-height:1.6">Open the index file in any browser. Start adding prompts immediately. No backend or database required to begin.</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--am);text-shadow:0 0 18px rgba(255,204,2,.3);line-height:1;margin-bottom:8px">02</div>
+          <div style="font-size:12px;color:rgba(200,255,200,.5);line-height:1.6">Clone the repository. Set up SQLite for a persistent, local-first environment with zero external dependencies.</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-family:var(--mono);font-size:26px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.3);line-height:1;margin-bottom:8px">03</div>
+          <div style="font-size:12px;color:rgba(200,255,200,.5);line-height:1.6">Deploy to your own infrastructure. Use Postgres or MySQL for multi-user governance and high-availability serving.</div>
+        </div>
+      </div>
+    </div>
+    <p class="rv" style="transition-delay:.34s;text-align:center;margin-top:14px;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.08em">Free · Open Source · <a href="mailto:jachinchsaikiasonowal@gmail.com" style="color:var(--txt3)">jachinchsaikiasonowal@gmail.com</a></p>
+  </div>
+</section>
 
 <style>
 /* Spot pip CSS — appended inline here so no separate file needed */
@@ -1785,8 +1865,8 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
         <div class="faqa"><p>Yes — that's the default mode. Open the HTML file in your browser, start adding prompts. Everything persists in localStorage. Your local agents and scripts can call the serve endpoint directly. No installation, no backend, no account required. The browser mode is the zero-infrastructure starting point. When you need durability across browser restarts, move to SQLite mode — one flag in the config.</p></div>
       </div>
       <div class="faqitem">
-        <button class="faqq" onclick="toggleFaq(this)">What storage options are available? <span class="faqico">+</span></button>
-        <div class="faqa"><p>There are three main options for open-source users: <strong>Browser localStorage</strong> — zero setup, start immediately, data lives in your browser. <strong>SQLite</strong> — persistent, portable, and git-friendly. <strong>Self-hosted database</strong> — Postgres, MySQL, or any backend you already run, for full data sovereignty. You can export your prompt registry and migrate between tiers at any time. Your prompts, your schema, no lock-in.</p></div>
+        <button class="faqq" onclick="toggleFaq(this)">What storage options are available and when should I upgrade? <span class="faqico">+</span></button>
+        <div class="faqa"><p>There are three primary tiers: <strong>Browser localStorage</strong> — zero setup, start immediately, data lives in your browser. <strong>SQLite</strong> — clone the repo, point it at a local file, data persists across sessions and is git-friendly. <strong>Self-hosted database</strong> — Postgres, MySQL, or any backend you already run, for full data sovereignty and multi-user access. You can export your prompt registry and migrate between tiers at any time. Your prompts, your schema, no lock-in.</p></div>
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">Why not use environment variables or a database config table? <span class="faqico">+</span></button>
@@ -1814,11 +1894,11 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">What if no engineer is available to review? <span class="faqico">+</span></button>
-        <div class="faqa"><p>Multiple engineers can be designated as approvers for any prompt. Any one of them can approve a pending change. The pending change queues until reviewed — it never auto-approves, which is the entire point of the system.</p></div>
+        <div class="faqa"><p>Multiple engineers can be designated as approvers for any prompt. Any one of them can approve a pending change. The pending change queues until reviewed — it never auto-approves, which is the entire point of the system. The local-first version uses a unified approval queue for the workspace.</p></div>
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">Is the free version actually usable in a real project? <span class="faqico">+</span></button>
-        <div class="faqa"><p>Yes. the open-source version gives you the full governance system with unlimited prompts — the complete approval workflow, serve endpoint, version history, and audit trail. It's not a limited demo. Run it on your own infrastructure and wire it into a real application today.</p></div>
+        <div class="faqa"><p>Yes. The free, open-source version is the complete system. It includes the full governance workflow, serve endpoint, version history, and audit trail. It is not a feature-limited demo. You can run it on your own infrastructure and wire it into production applications today.</p></div>
       </div>
     </div>
   </div>
@@ -1828,15 +1908,16 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
 <section class="cta rv" id="cta">
   <div class="slabel" style="text-align:center;margin-bottom:12px">// GET STARTED NOW</div>
   <h2 class="ctah">Your prompts don't<br>belong in <span class="em"><span class="si">your code.</span></span></h2>
-  <p class="ctab">Start in your browser right now — no install, no account required. Download the repo to enable SQLite or Postgres persistence.</p>
-  <div class="ctaform" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-    <button class="ctabtn" onclick="window.open('https://github.com/jachinsaikiasonowal/promptmatrix','_blank')">VIEW ON GITHUB →</button>
-    <a href="/dashboard" class="ctabtn" style="background:var(--g);color:var(--b);border:none;text-decoration:none;display:flex;align-items:center;justify-content:center">★ OPEN LOCAL DASHBOARD →</a>
+  <p class="ctab">Start in your browser right now — no install, no account, no setup required. Or clone the repository to host your own governed registry with SQLite or Postgres.</p>
+  <div class="ctaform" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="ctabtn" onclick="window.open('https://github.com/jachinsaikiasonowal/promptmatrix','_blank')">CLONE ON GITHUB →</button>
+    <button class="ctabtn" onclick="location.href='#hero'" style="background:rgba(255,255,255,.05);border:1px solid var(--b3);color:var(--txt2)">TRY IN BROWSER ↓</button>
   </div>
   <div class="ctafine">
-    <span>Browser · SQLite · Self-Hosted</span>
-    <span>No cloud required</span>
-    <span>MIT Licensed · Open Source</span>
+    <span>Browser · SQLite · Self-hosted</span>
+    <span>No card required</span>
+    <span>MIT Licensed</span>
+    <span>Complete Governance Suite</span>
   </div>
 </section>
 
@@ -1848,14 +1929,15 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
         <div class="ngl"><span>PM</span></div>
         <span class="nlt">PromptMatrix</span>
       </a>
-      <p class="fabout">Prompt governance for AI builders. Every hardcoded prompt is a liability — PromptMatrix pulls them into a governed registry. Browser, SQLite, or self-hosted. Free. Open source. MIT.</p>
-      <div class="fstatus"><span class="npip"></span>OPEN SOURCE · MIT · FREE</div>
+      <p class="fabout">Prompt governance for AI builders. Every hardcoded prompt is a liability — PromptMatrix pulls them into a governed registry. Browser, SQLite, self-hosted, or cloud. Free. Open source. MIT.</p>
+      <div class="fstatus"><span class="npip"></span>OPEN SOURCE · MIT · FREE TO SELF-HOST</div>
     </div>
     <div>
       <div class="fcolh">PRODUCT</div>
       <ul class="flinks">
         <li><a href="#how-it-works">The Protocol</a></li>
         <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
         <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
@@ -1866,7 +1948,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
         <li><a href="#features">Approval Workflow</a></li>
         <li><a href="#features">Audit Trail</a></li>
         <li><a href="#features">Version History</a></li>
-        <li><a href="#pricing">Enterprise Controls</a></li>
+        <li><a href="#pricing">Local Persistence</a></li>
         <li><a href="#features">Diff Review</a></li>
       </ul>
     </div>
@@ -2087,6 +2169,98 @@ function closeMobNav(){
 /* TOAST */
 function showToast(msg){const t=document.getElementById('toast');t.innerHTML='<span style="color:var(--g)">✓</span> '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
 
+/* SPOTS COUNTER — shared state */
+var _spotsLeft=5;
+/* ── RAZORPAY PAYMENT LINK — replace this URL with your live Razorpay link ──
+   Create at: razorpay.com/payment-links → set max uses = 5, amount = 14900 (₹149 * 100 paise)
+   OR use USD via Lemon Squeezy / Gumroad and paste the link here              */
+var RAZORPAY_LINK='https://razorpay.me/@promptmatrix'; /* ← REPLACE BEFORE LAUNCH */
+
+function _updateSpotsBadges(){
+  const gone=_spotsLeft<=0;
+  const label=gone?'SOLD OUT':''+_spotsLeft+' OF 5 LEFT';
+  ['hero-spots-count','pro-spots-badge'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=label;
+  });
+  const cb=document.getElementById('claim-btn');
+  if(cb&&gone){cb.textContent='SOLD OUT — JOIN PRO WAITLIST';cb.disabled=true;cb.style.opacity='.45';}
+}
+_updateSpotsBadges();
+
+/* CLAIM SPOT (founding seat) */
+function claimSpot(btn){
+  if(_spotsLeft<=0){
+    showToast('All 5 founding seats taken — join the Pro waitlist instead.');
+    submitEmail(null,'waitlist');
+    return;
+  }
+  _spotsLeft=Math.max(0,_spotsLeft-1);
+  _updateSpotsBadges();
+  /* Opens payment link — Razorpay/Gumroad/LemonSqueezy depending on your setup */
+  window.open(RAZORPAY_LINK,'_blank');
+  showToast("Opening payment — $149 one-time, price locked forever.");
+  if(btn){
+    const orig=btn.textContent;
+    btn.textContent='OPENING PAYMENT ✓';
+    btn.style.color='var(--am)';
+    btn.disabled=true;
+    setTimeout(()=>{btn.textContent=orig;btn.style.color='';btn.disabled=false;},4000);
+  }
+}
+
+/* HERO WAITLIST — reads hero-email input, validates, opens Beehiiv */
+function heroJoinWaitlist(){
+  const input=document.getElementById('hero-email');
+  const btn=document.getElementById('hero-waitlist-btn');
+  if(!input)return;
+  const email=input.value.trim();
+  if(!email||!email.includes('@')){
+    input.style.outline='1px solid rgba(255,82,82,.55)';
+    input.focus();
+    setTimeout(()=>input.style.outline='',2200);
+    return;
+  }
+  if(btn){btn.textContent='...';btn.disabled=true;}
+  const base='https://ainewsindia.beehiiv.com/subscribe';
+  const params=new URLSearchParams({email,utm_source:'hero',utm_medium:'landing_page',utm_campaign:'cloud_waitlist'});
+  window.open(`${base}?${params}`,'_blank');
+  showToast("You're on the waitlist — I'll email when cloud ships.");
+  input.value='';
+  if(btn){setTimeout(()=>{btn.textContent='JOINED ✓';btn.style.color='var(--g)';btn.style.background='rgba(0,230,118,.22)';setTimeout(()=>{btn.textContent='JOIN WAITLIST →';btn.style.color='';btn.style.background='rgba(0,230,118,.16)';btn.disabled=false;},4200);},100);}
+}
+
+/* EMAIL — generic (pricing section forms) */
+async function submitEmail(id,plan){
+  const input=id?document.getElementById(id):null;
+  const email=input?input.value.trim():'';
+  if(id&&(!email||!email.includes('@'))){
+    if(input){input.style.outline='1px solid rgba(255,82,82,.55)';setTimeout(()=>input.style.outline='',2000)}
+    return;
+  }
+  const btn=input?input.nextElementSibling:(event&&event.target instanceof HTMLButtonElement?event.target:null);
+  const orig=btn?btn.textContent:'';
+  if(btn){btn.textContent='...';btn.disabled=true;}
+  if(plan==='founding'||plan==='pro'){
+    claimSpot(btn);return;
+  } else if(plan==='enterprise'||plan==='team'){
+    window.open('mailto:jachinchsaikiasonowal@gmail.com?subject=Enterprise%20Waitlist%20%E2%80%94%20PromptMatrix&body=Hi%2C%0A%0AI%27d%20like%20to%20join%20the%20Enterprise%20waitlist.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0AUse%20case%3A%20%0A%0AThanks','_blank');
+    showToast("Waitlist confirmed — we'll reach out within 48h.");
+  } else if(plan==='waitlist'||plan==='subscription'){
+    const base='https://ainewsindia.beehiiv.com/subscribe';
+    const params=new URLSearchParams({utm_source:'pro_waitlist',utm_medium:'landing_page',utm_campaign:'pro_launch'});
+    if(email)params.set('email',email);
+    window.open(`${base}?${params}`,'_blank');
+    showToast("You're on the Pro waitlist — email when Pro launches Q2 2026.");
+  } else {
+    const base='https://ainewsindia.beehiiv.com/subscribe';
+    const params=new URLSearchParams({utm_source:'general',utm_medium:'landing_page',utm_campaign:'cloud_waitlist'});
+    if(email)params.set('email',email);
+    window.open(`${base}?${params}`,'_blank');
+    showToast("Subscribed — we'll be in touch.");
+  }
+  if(input)input.value='';
+  if(btn){btn.textContent='NOTED ✓';btn.style.color='var(--g)';setTimeout(()=>{btn.textContent=orig;btn.style.color='';btn.disabled=false;},4000);}
+}
 
 /* APPROVE DEMO */
 function handleApprove(btn){
