@@ -281,7 +281,7 @@ async def submit_for_review(
                 version_num=v.version_num,
                 env_name="production",
                 note=body.note,
-                dashboard_url=settings.frontend_url
+                dashboard_url=settings.app_url
             )
     except Exception:
         pass
@@ -385,7 +385,7 @@ async def reject_version(
                     prompt_key=prompt.key if prompt else "",
                     version_num=v.version_num,
                     reason=body.reason,
-                    dashboard_url=settings.frontend_url
+                    dashboard_url=settings.app_url
                 )
     except Exception:
         pass
