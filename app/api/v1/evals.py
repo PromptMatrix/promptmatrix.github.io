@@ -127,8 +127,16 @@ async def run_eval(
         result = _rule_based_eval(v.content)
     else:
         if not body.api_key or body.api_key == "none":
-            raise HTTPException(status_code=400, detail="Key required")
-        result = await _llm_eval(v.content, body.test_input, body.provider, body.model, body.api_key)
+            k = db.query(EvalKey).filter(
+                EvalKey.org_id == member.org_id, 
+                EvalKey.provider == body.provider
+            ).first()
+            if not k:
+                raise HTTPException(status_code=400, detail=f"No saved evaluation API key found for provider '{body.provider}'")
+            api_key_to_use = decrypt_api_key(k.encrypted_key)
+        else:
+            api_key_to_use = body.api_key
+        result = await _llm_eval(v.content, body.test_input, body.provider, body.model, api_key_to_use)
     v.last_eval_score = result["overall_score"]
     v.last_eval_passed = result["passed"]
     v.last_eval_at = datetime.utcnow()
