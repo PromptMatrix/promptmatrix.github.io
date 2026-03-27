@@ -645,7 +645,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 .pbtn.am:hover{background:rgba(255,204,2,.22);box-shadow:0 0 28px rgba(255,204,2,.14)}
 
 /* Pricing grid layouts */
-.pricing-row1{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.pricing-row1{max-width:600px;margin:0 auto 34px}
 .pricing-row2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:34px}
 
 @media(max-width:1060px){
@@ -744,23 +744,26 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <span>No server needed to start — runs entirely in your browser. Move storage when you're ready.</span>
     </div>
 
-    <!-- FREE OSS CTAs -->
+    <!-- SAAS & OSS CTAs -->
     <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;animation:rise .7s .26s var(--ease) both">
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener"
+        <a href="#pricing"
           style="flex:1;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;padding:14px 28px;background:rgba(0,230,118,.15);color:var(--g);border:1px solid rgba(0,230,118,.35);border-radius:3px;cursor:pointer;transition:all .18s;text-align:center;text-decoration:none;text-shadow:0 0 12px rgba(0,230,118,.5);box-shadow:0 0 28px rgba(0,230,118,.08)"
           onmouseover="this.style.background='rgba(0,230,118,.25)';this.style.boxShadow='0 0 40px rgba(0,230,118,.2)'"
           onmouseout="this.style.background='rgba(0,230,118,.15)';this.style.boxShadow='0 0 28px rgba(0,230,118,.08)'">
-          DOWNLOAD OPEN SOURCE →
+          VIEW CLOUD PRICING →
         </a>
-        <a href="#quickstart"
+        <a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener"
           style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;padding:14px 28px;background:transparent;color:var(--txt3);border:1px solid var(--b2);border-radius:3px;cursor:pointer;transition:all .16s;text-decoration:none;white-space:nowrap"
           onmouseover="this.style.background='rgba(0,230,118,.05)';this.style.color='var(--txt2)';this.style.borderColor='var(--b3)'"
           onmouseout="this.style.background='transparent';this.style.color='var(--txt3)';this.style.borderColor='var(--b2)'">
-          GET STARTED
+          FREE OPEN SOURCE
         </a>
       </div>
-      <p style="font-family:var(--mono);font-size:8px;color:var(--txt4);letter-spacing:.06em;text-align:center">MIT Licensed · Free to Self-Host · Total Sovereignty</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mono);font-size:8px;color:var(--am);letter-spacing:.06em;text-align:center;border:1px solid rgba(255,204,2,.2);background:rgba(255,204,2,.05);padding:6px;border-radius:3px">
+        <span class="spot-pip"></span>
+        100 Founder Seats Available. Secure lifetime access now.
+      </div>
     </div>
 
     <!-- GITHUB GHOST LINK -->
@@ -1878,51 +1881,85 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   </div>
 </section>
 
-<!-- DEPLOYMENT FREEDOM -->
+<!-- PRICING SAAS -->
 <section class="pricing" id="pricing">
   <div class="prinr">
     <div class="prih rv">
-      <div class="slabel" style="text-align:center">// DEPLOYMENT_MODES</div>
-      <h2 class="stitle" style="text-align:center">100% Free.<br><span class="em si">100% Open Source.</span></h2>
-      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:500px">PromptMatrix is licensed under MIT. No tiers. No "Pro" restrictions. No card required. You own the data, the engine, and the governance.</p>
+      <div class="slabel" style="text-align:center">// SAAS_PRICING</div>
+      <h2 class="stitle" style="text-align:center">Scale your governance.<br><span class="em si">Or host it free.</span></h2>
+      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:500px">Start free with the OSS core. Upgrade to managed cloud when you need role-based access, instant deployments, and SLAs.</p>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:34px">
-      <!-- MODE: LOCAL -->
-      <div class="plan rv" style="background:rgba(0,230,118,.02);border-color:var(--b2)">
-        <div class="pname">// LOCAL-FIRST · SINGLE OPERATOR</div>
-        <div class="pprice" style="font-size:34px">Free</div>
-        <div class="pperiod">BROWSER · SQLITE · ZERO INFRA</div>
-        <p class="pdesc">Best for solo developers. Run it in your browser with zero setup. Everything persists in localStorage or a local SQLite file. Perfect for personal projects and indie agents.</p>
+    <div class="pricing-row1">
+      <!-- FOUNDING TIER -->
+      <div class="plan founder rv">
+        <div class="phot">🔥 100 SEATS AVAILABLE</div>
+        <div class="pname">// FOUNDING MEMBER</div>
+        <div class="pprice"><sup>$</sup>149</div>
+        <div class="pperiod">LIFETIME ACCESS</div>
+        <p class="pdesc">Lock in unlimited seats and unlimited governed prompts for a one-time fee before we shift to recurring billing. Includes priority support directly from the architect.</p>
         <ul class="pitems">
-          <li>Unlimited prompts + agent keys</li>
-          <li>Full version history + diff view</li>
-          <li>1-click rollback functionality</li>
-          <li>JSON export + import for portability</li>
-          <li>Instant serve endpoint via localhost</li>
-          <li>Browser-only mode (No server needed)</li>
+          <li>Unlimited Governed Prompts</li>
+          <li>Unlimited Team Members</li>
+          <li>Unlimited API Requests</li>
+          <li>White-glove onboarding</li>
+          <li><span style="color:var(--am)">Priority feature requests</span></li>
         </ul>
-        <a class="pbtn p" style="text-align:center;text-decoration:none" href="https://github.com/PromptMatrix/PromptMatrix">GET STARTED FREE →</a>
-      </div>
-
-      <!-- MODE: SELF-HOSTED -->
-      <div class="plan rv" style="background:rgba(0,8,0,.95);border-color:var(--b3)">
-        <div class="pname">// SELF-HOSTED · TEAM ENGINE</div>
-        <div class="pprice" style="font-size:34px">Free</div>
-        <div class="pperiod">POSTGRES · DOCKER · YOUR INFRA</div>
-        <p class="pdesc">For engineering teams who need governance scale. Deploy to your own VPC. Own your data. Full multi-tenant schema included in the open source core.</p>
-        <ul class="pitems">
-          <li>Everything in Local mode</li>
-          <li>PostgreSQL / MySQL support</li>
-          <li>Immutable Audit Logs</li>
-          <li>Team approval workflows</li>
-          <li>Full API coverage for CI/CD</li>
-        </ul>
-        <a class="pbtn g" style="text-align:center;text-decoration:none" href="https://github.com/PromptMatrix/PromptMatrix#docs">VIEW DEPLOY GUIDE →</a>
+        <a class="pbtn am" style="text-align:center;text-decoration:none" href="https://rzp.io/l/promptmatrix">SECURE FOUNDING SEAT →</a>
       </div>
     </div>
 
-    <p class="rv" style="transition-delay:.28s;text-align:center;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.07em">MIT Licensed · Open Source · hello@promptmatrix.io</p>
+    <div class="pricing-row2">
+      <!-- SOLO TIER -->
+      <div class="plan rv" style="background:rgba(0,4,0,.95)">
+        <div class="pname">// SOLO BUILDER</div>
+        <div class="pprice"><sup>$</sup>18<sub>/mo</sub></div>
+        <div class="pperiod">UP TO 10 PROMPTS</div>
+        <p class="pdesc">Perfect for independent developers and single-agent systems. Manage up to 10 active prompts with 1,000 Serve API req/min.</p>
+        <ul class="pitems">
+          <li>1 Seat</li>
+          <li>10 Governed Prompts</li>
+          <li>1,000 API req/min</li>
+          <li>Version History & Diff</li>
+        </ul>
+        <a class="pbtn g" style="text-align:center;text-decoration:none" href="https://rzp.io/l/promptmatrix-solo">START FREE TRIAL</a>
+      </div>
+
+      <!-- TEAM TIER -->
+      <div class="plan hot rv">
+        <div class="phot" style="border-color:rgba(0,230,118,.35)">RECOMMENDED</div>
+        <div class="pname">// TEAM ENGINE</div>
+        <div class="pprice"><sup>$</sup>79<sub>/mo</sub></div>
+        <div class="pperiod">UP TO 5 MEMBERS</div>
+        <p class="pdesc">For engineering teams building multi-agent systems. Approval workflows, role-based access, and unlimited scale.</p>
+        <ul class="pitems">
+          <li>5 Team Members</li>
+          <li>50 Governed Prompts</li>
+          <li>5,000 API req/min</li>
+          <li>Approval Workflows</li>
+          <li>Immutable Audit Log</li>
+        </ul>
+        <a class="pbtn p" style="text-align:center;text-decoration:none" href="#">UPGRADE TO TEAM →</a>
+      </div>
+
+      <!-- ENTERPRISE TIER -->
+      <div class="plan rv" style="background:rgba(0,4,0,.95)">
+        <div class="pname">// ENTERPRISE</div>
+        <div class="pprice" style="font-size:32px">Custom</div>
+        <div class="pperiod">FOR TEAMS > 5</div>
+        <p class="pdesc">Dedicated infrastructure, SSO, and custom SLAs. Unlimited scale for enterprise AI operations.</p>
+        <ul class="pitems">
+          <li>Unlimited Prompts</li>
+          <li>Unlimited API req</li>
+          <li>Enterprise SSO & SAML</li>
+          <li>Self-Hosted Option</li>
+          <li class="off">Dedicated Support SLA</li>
+        </ul>
+        <a class="pbtn g" style="text-align:center;text-decoration:none" href="mailto:hello@promptmatrix.io">CONTACT SALES</a>
+      </div>
+    </div>
+
+    <p class="rv" style="transition-delay:.28s;text-align:center;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.07em">Looking to self-host for free? <a href="https://github.com/PromptMatrix/PromptMatrix" style="color:var(--g);text-decoration:none">Download the Open Source Core on GitHub.</a></p>
   </div>
 </section>
 
@@ -2044,19 +2081,19 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
 <section class="cta rv" id="cta">
   <div class="slabel" style="text-align:center;margin-bottom:12px">// GET STARTED NOW</div>
   <h2 class="ctah">Your prompts don't<br>belong in <span class="em"><span class="si">your code.</span></span></h2>
-  <p class="ctab">Start in your browser right now — no install, no account, no card. Every hardcoded prompt is one registration away from being versioned, governed, and instantly updatable.</p>
+  <p class="ctab">Start governing your prompts today. Upgrade to managed cloud for team approvals, or self-host the open source core entirely for free.</p>
   <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin-bottom:13px">
-    <a href="https://github.com/PromptMatrix/PromptMatrix"
+    <a href="#pricing"
       style="font-family:var(--mono);text-decoration:none;font-size:10px;font-weight:700;letter-spacing:.08em;padding:13px 28px;background:rgba(0,230,118,.12);color:var(--g);border:1px solid rgba(0,230,118,.35);border-radius:3px;cursor:pointer;transition:all .18s;text-shadow:0 0 10px rgba(0,230,118,.4);box-shadow:0 0 24px rgba(0,230,118,.06);white-space:nowrap"
       onmouseover="this.style.background='rgba(0,230,118,.2)';this.style.boxShadow='0 0 40px rgba(0,230,118,.15)';this.style.transform='translateY(-1px)'"
       onmouseout="this.style.background='rgba(0,230,118,.12)';this.style.boxShadow='0 0 24px rgba(0,230,118,.06)';this.style.transform=''">
-      DOWNLOAD OPEN SOURCE · FREE FOREVER →
+      START FOR FREE →
     </a>
   </div>
   <div class="ctafine">
-    <span>Browser · SQLite · self-hosted</span>
-    <span>No card · No login required</span>
-    <span>MIT Licensed · Open Source</span>
+    <span>Free Open Source Tier</span>
+    <span>No card required for OSS</span>
+    <a href="https://github.com/PromptMatrix/PromptMatrix" style="color:var(--g);text-decoration:none">Download on GitHub</a>
   </div>
 </section>
 
