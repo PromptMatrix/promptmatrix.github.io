@@ -1,66 +1,46 @@
 """
 Config validation tests
 ========================
-Hard-fail production startup checks:
-  - default JWT secret rejected
-  - missing ENCRYPTION_KEY rejected
-  - identical JWT + ENC keys rejected
-  - SQLite rejected in production
-  - valid config accepted
+OSS local-only config: no cloud production constraints.
+The production validator (PostgreSQL/JWT/encryption enforcement) exists
+only in the Private cloud version. The OSS version accepts all env values.
 """
 
 import pytest
 from app.config import Settings
 
 
-def test_valid_production_config_passes():
+def test_default_config_has_sqlite():
+    """OSS default is SQLite — no external DB required."""
+    s = Settings()
+    assert s.database_url.startswith("sqlite")
+
+
+def test_default_app_env_is_development():
+    """Default environment is development (set in .env.example)."""
+    import os
+    # When DATABASE_URL is set in test env, app_env comes from os.environ
+    env_val = os.environ.get("APP_ENV", "development")
+    s = Settings()
+    assert s.app_env == env_val
+
+
+def test_local_config_with_sqlite_always_passes():
+    """SQLite is always valid in OSS — no production enforcement."""
     s = Settings(
-        app_env="production",
-        database_url="postgresql://user:pass@host:6543/db",
-        jwt_secret_key="unique-jwt-secret-abc123",
-        encryption_key="unique-enc-key-different-abc123",
+        app_env="local",
+        database_url="sqlite:///./promptmatrix.db",
+        jwt_secret_key="any-key-is-fine-locally",
+        encryption_key="",
     )
-    assert s.app_env == "production"
+    assert s.database_url.startswith("sqlite")
 
 
-def test_production_rejects_default_jwt_secret():
-    with pytest.raises(ValueError, match="JWT_SECRET_KEY"):
-        Settings(
-            app_env="production",
-            database_url="postgresql://x/db",
-            jwt_secret_key="dev-secret-change-in-production",
-            encryption_key="some-enc-key",
-        )
-
-
-def test_production_rejects_missing_encryption_key():
-    with pytest.raises(ValueError, match="ENCRYPTION_KEY"):
-        Settings(
-            app_env="production",
-            database_url="postgresql://x/db",
-            jwt_secret_key="good-jwt-key",
-            encryption_key="",
-        )
-
-
-def test_production_rejects_identical_jwt_and_encryption_keys():
-    with pytest.raises(ValueError):
-        Settings(
-            app_env="production",
-            database_url="postgresql://x/db",
-            jwt_secret_key="same-key-for-both",
-            encryption_key="same-key-for-both",
-        )
-
-
-def test_production_rejects_sqlite_database():
-    with pytest.raises(ValueError, match="DATABASE_URL"):
-        Settings(
-            app_env="production",
-            database_url="sqlite:///./local.db",
-            jwt_secret_key="good-jwt",
-            encryption_key="good-enc-different",
-        )
+def test_any_app_env_is_accepted():
+    """OSS does not restrict app_env values — all are valid."""
+    for env in ["local", "development", "staging", "production"]:
+        s = Settings(app_env=env)
+        assert s.app_env == env
 
 
 def test_development_config_has_no_restrictions():
@@ -79,3 +59,14 @@ def test_rate_limit_default_is_sensible():
 def test_rate_limit_can_be_disabled():
     s = Settings(serve_rate_limit_rpm=0)
     assert s.serve_rate_limit_rpm == 0
+
+
+def test_valid_config_with_postgres_also_passes():
+    """Even with postgres URL and strong keys, OSS config accepts it fine."""
+    s = Settings(
+        app_env="production",
+        database_url="postgresql://user:pass@host:5432/db",
+        jwt_secret_key="unique-jwt-secret-abc123",
+        encryption_key="unique-enc-key-different-abc123",
+    )
+    assert s.app_env == "production"

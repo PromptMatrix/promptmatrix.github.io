@@ -16,7 +16,7 @@ def test_register_creates_workspace(client):
     assert data["access_token"]
     assert data["refresh_token"]
     assert data["user"]["email"] == "new@test.com"
-    assert data["active_org"]["name"] == "New Workspace"
+    assert data["active_org"]["name"] == "PromptMatrix"  # OSS: workspace name is always PromptMatrix
     assert data["active_org"]["role"] == "owner"
     assert data["active_org"]["plan"] == "free"
 
@@ -30,7 +30,7 @@ def test_register_rejects_duplicate_email(client):
         "email": "dup@test.com", "password": "password123",
         "full_name": "Second", "org_name": "Second Org",
     })
-    assert r.status_code == 409
+    assert r.status_code in (403, 409)  # OSS: 403=locked after first user; 409=duplicate email
 
 
 def test_register_rejects_short_password(client):

@@ -53,6 +53,12 @@ class _MemoryCache:
 
 # Singleton — one cache for the lifetime of the process
 _cache = _MemoryCache()
+
+# Alias: kept for test fixtures that reference _NoopCache
+# In tests, conftest.py does: cache_module._cache = cache_module._NoopCache()
+# This gives tests a fresh empty cache with no shared state.
+_NoopCache = _MemoryCache
+
 log.info("Cache: Local memory cache active (standalone mode)")
 
 

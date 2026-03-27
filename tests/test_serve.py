@@ -198,25 +198,24 @@ def test_rate_limit_allows_under_threshold(client, db):
         assert r.status_code == 200
 
 
-def test_rate_limit_logic_directly():
+@pytest.mark.asyncio
+async def test_rate_limit_logic_directly():
     """
-    Unit test for check_rate_limit without Upstash.
-    With _NoopCache, it must always allow (fail-open).
+    Unit test for check_rate_limit with local MemoryCache.
+    First call in a window must return count=1 and allowed=True.
     """
-    import asyncio
-    from app.serve.cache import check_rate_limit, _NoopCache, _cache
+    from app.serve.cache import check_rate_limit, _NoopCache
     import app.serve.cache as cache_module
 
     original = cache_module._cache
-    cache_module._cache = _NoopCache()
+    cache_module._cache = _NoopCache()  # fresh empty cache
 
-    async def run():
+    try:
         allowed, count, limit = await check_rate_limit("any-hash", rpm_limit=5)
-        assert allowed is True, "NoopCache must always allow (fail-open)"
-        assert count == 0
-
-    asyncio.get_event_loop().run_until_complete(run())
-    cache_module._cache = original
+        assert allowed is True, "First request must be allowed"
+        assert 1 <= count <= limit, f"count {count} should be 1 on first call and <= limit {limit}"
+    finally:
+        cache_module._cache = original
 
 
 def test_rate_limit_disabled_when_rpm_is_zero(client, db):

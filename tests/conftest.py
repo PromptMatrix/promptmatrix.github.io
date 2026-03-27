@@ -55,7 +55,10 @@ def _create_tables():
     Base.metadata.drop_all(bind=test_engine)
     import os
     if os.path.exists("test_pm.db"):
-        os.remove("test_pm.db")
+        try:
+            os.remove("test_pm.db")
+        except PermissionError:
+            pass  # Windows: SQLite may hold the file briefly; non-fatal
 
 
 @pytest.fixture(autouse=True)
