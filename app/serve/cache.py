@@ -14,6 +14,7 @@ log = logging.getLogger(__name__)
 
 class _MemoryCache:
     """Pure Python in-process TTL cache. Zero external deps."""
+    MAX_ENTRIES = 2000  # prevent unbounded memory growth on long-running servers
 
     def __init__(self):
         self._data: dict = {}  # key -> (value: str, expiry_ts: float)
@@ -32,6 +33,10 @@ class _MemoryCache:
         return val
 
     async def set(self, key: str, value: str, ttl_seconds: int):
+        if len(self._data) >= self.MAX_ENTRIES:
+            # FIFO eviction: remove oldest entry
+            oldest = next(iter(self._data))
+            del self._data[oldest]
         expiry = self._now() + ttl_seconds if ttl_seconds > 0 else 0
         self._data[key] = (value, expiry)
 

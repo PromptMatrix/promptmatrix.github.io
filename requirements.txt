@@ -1,14 +1,24 @@
+# ── Core ──────────────────────────────────────────────────────────
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
 sqlalchemy==2.0.36
 alembic==1.14.0
 pydantic>=2.10.3
 pydantic-settings>=2.6.1
+
+# ── Auth & Security ──────────────────────────────────────────────
 python-jose[cryptography]==3.4.0
-passlib==1.7.4
+passlib[bcrypt]==1.7.4
 bcrypt==4.2.1
+cryptography>=46.0.0
+
+# ── HTTP & Middleware ────────────────────────────────────────────
 httpx==0.28.0
-cryptography==46.0.5
 python-multipart==0.0.22
+
+# ── Database Drivers (uncomment for PostgreSQL deployment) ───────
+# psycopg2-binary==2.9.10
+
+# ── Testing ──────────────────────────────────────────────────────
 pytest==8.3.3
 pytest-asyncio==0.24.0

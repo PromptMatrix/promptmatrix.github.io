@@ -1,17 +1,22 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import (
     Column, String, Text, Boolean, DateTime, Integer, Float,
-    ForeignKey, JSON, UniqueConstraint, Index
+    ForeignKey, JSON, UniqueConstraint, Index, CheckConstraint
 )
 from sqlalchemy.orm import relationship
 from app.database import Base
 
+
 def _uuid():
     return str(uuid.uuid4())
 
+
 def _now():
-    return datetime.utcnow()
+    return datetime.now(timezone.utc)
+
+
+# ── Org / Auth ────────────────────────────────────────────────────
 
 class Organisation(Base):
     __tablename__ = "organisations"
@@ -22,6 +27,7 @@ class Organisation(Base):
     created_at = Column(DateTime, default=_now)
     members = relationship("OrgMember", back_populates="org", cascade="all, delete-orphan")
     projects = relationship("Project", back_populates="org", cascade="all, delete-orphan")
+
 
 class User(Base):
     __tablename__ = "users"
@@ -34,6 +40,7 @@ class User(Base):
     created_at = Column(DateTime, default=_now)
     memberships = relationship("OrgMember", back_populates="user")
 
+
 class OrgMember(Base):
     __tablename__ = "org_members"
     id = Column(String, primary_key=True, default=_uuid)
@@ -45,6 +52,9 @@ class OrgMember(Base):
     user = relationship("User", back_populates="memberships")
     __table_args__ = (UniqueConstraint("org_id", "user_id"),)
 
+
+# ── Project / Environment ─────────────────────────────────────────
+
 class Project(Base):
     __tablename__ = "projects"
     id = Column(String, primary_key=True, default=_uuid)
@@ -53,6 +63,7 @@ class Project(Base):
     created_at = Column(DateTime, default=_now)
     org = relationship("Organisation", back_populates="projects")
     environments = relationship("Environment", back_populates="project", cascade="all, delete-orphan")
+
 
 class Environment(Base):
     __tablename__ = "environments"
@@ -69,6 +80,9 @@ class Environment(Base):
     prompts = relationship("Prompt", back_populates="environment", cascade="all, delete-orphan")
     api_keys = relationship("ApiKey", back_populates="environment", cascade="all, delete-orphan")
     __table_args__ = (UniqueConstraint("project_id", "name"),)
+
+
+# ── Prompt / Version ──────────────────────────────────────────────
 
 class Prompt(Base):
     __tablename__ = "prompts"
@@ -99,6 +113,7 @@ class Prompt(Base):
     )
     __table_args__ = (UniqueConstraint("environment_id", "key"),)
 
+
 class PromptVersion(Base):
     __tablename__ = "prompt_versions"
     id = Column(String, primary_key=True, default=_uuid)
@@ -108,6 +123,7 @@ class PromptVersion(Base):
     commit_message = Column(String(500), default="")
     variables = Column(JSON, default=dict)
     status = Column(String(30), default="draft")
+    # Valid statuses: draft | pending_review | approved | rejected | archived
     proposed_by_id = Column(String, ForeignKey("users.id"), nullable=True)
     approved_by_id = Column(String, ForeignKey("users.id"), nullable=True)
     rejected_by_id = Column(String, ForeignKey("users.id"), nullable=True)
@@ -126,7 +142,14 @@ class PromptVersion(Base):
     __table_args__ = (
         UniqueConstraint("prompt_id", "version_num"),
         Index("ix_pv_prompt_status", "prompt_id", "status"),
+        CheckConstraint(
+            "status IN ('draft', 'pending_review', 'approved', 'rejected', 'archived')",
+            name="ck_version_status"
+        ),
     )
+
+
+# ── API Keys ──────────────────────────────────────────────────────
 
 class ApiKey(Base):
     __tablename__ = "api_keys"
@@ -143,6 +166,9 @@ class ApiKey(Base):
     environment = relationship("Environment", back_populates="api_keys")
     created_by = relationship("User", foreign_keys=[created_by_id])
 
+
+# ── Eval Team Keys ────────────────────────────────────────────────
+
 class EvalKey(Base):
     __tablename__ = "eval_keys"
     id = Column(String, primary_key=True, default=_uuid)
@@ -154,6 +180,9 @@ class EvalKey(Base):
     created_by_id = Column(String, ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime, default=_now)
 
+
+# ── Audit Log ─────────────────────────────────────────────────────
+
 class AuditLog(Base):
     __tablename__ = "audit_logs"
     id = Column(String, primary_key=True, default=_uuid)
@@ -163,8 +192,8 @@ class AuditLog(Base):
     action = Column(String(80), nullable=False)
     resource_type = Column(String(40), default="")
     resource_id = Column(String, nullable=True)
-    extra = Column(JSON, default=dict)
-    integrity_hash = Column(String(64), nullable=True) # SHA-256 hash of (action + resource_id + created_at)
+    extra = Column(JSON, default=dict)           # 'metadata' is reserved in SQLAlchemy
+    integrity_hash = Column(String(64), nullable=True)
     created_at = Column(DateTime, default=_now)
     __table_args__ = (
         Index("ix_audit_org_created", "org_id", "created_at"),

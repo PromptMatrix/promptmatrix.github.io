@@ -5,7 +5,7 @@ All tests share a SQLite in-memory database that is created fresh per test.
 No mocking of business logic — tests run against real SQLAlchemy models.
 
 Email sending is patched at the httpx level so no real network calls happen.
-Upstash Redis is replaced with a _NoopCache so tests run without credentials.
+Cache is replaced with a fresh _NoopCache so tests run without external deps.
 """
 
 import os
@@ -13,7 +13,7 @@ import pytest
 import pytest_asyncio
 
 # Set test env before any app imports
-os.environ.setdefault("DATABASE_URL", "sqlite:///./test_pm.db")
+os.environ.setdefault("DATABASE_URL", "sqlite://")
 os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret-key-not-for-prod")
 os.environ.setdefault("ENCRYPTION_KEY", "test-enc-key-not-for-prod-xxxxxx")
 os.environ.setdefault("APP_ENV", "development")
@@ -21,6 +21,7 @@ os.environ.setdefault("APP_ENV", "development")
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -32,10 +33,14 @@ from app.models import (
 )
 from app.core.auth import hash_password, generate_api_key
 
-# ── Test database — fresh SQLite per session ──────────────────────
+# ── Test database — fresh in-memory SQLite ────────────────────────
 
-TEST_DB_URL = "sqlite:///./test_pm.db"
-test_engine = create_engine(TEST_DB_URL, connect_args={"check_same_thread": False})
+TEST_DB_URL = "sqlite://"
+test_engine = create_engine(
+    TEST_DB_URL, 
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool
+)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
 
@@ -53,12 +58,6 @@ def _create_tables():
     Base.metadata.create_all(bind=test_engine)
     yield
     Base.metadata.drop_all(bind=test_engine)
-    import os
-    if os.path.exists("test_pm.db"):
-        try:
-            os.remove("test_pm.db")
-        except PermissionError:
-            pass  # Windows: SQLite may hold the file briefly; non-fatal
 
 
 @pytest.fixture(autouse=True)
@@ -85,9 +84,13 @@ def client():
     import main
     from app.serve import cache as cache_module
 
-    # Replace Upstash cache with no-op so tests don't need Redis credentials
+    # Replace cache with a fresh instance so tests don't share state
     original_cache = cache_module._cache
     cache_module._cache = cache_module._NoopCache()
+
+    import app.database
+    original_session_local = app.database.SessionLocal
+    app.database.SessionLocal = TestSessionLocal
 
     main.app.dependency_overrides[get_db] = override_get_db
     with TestClient(main.app, raise_server_exceptions=True) as c:
@@ -95,6 +98,7 @@ def client():
 
     main.app.dependency_overrides.clear()
     cache_module._cache = original_cache
+    app.database.SessionLocal = original_session_local
 
 
 @pytest.fixture
@@ -109,8 +113,8 @@ def db():
 
 # ── Seed helpers ──────────────────────────────────────────────────
 
-def seed_org_user(db, email="owner@test.com", role="owner", plan="free"):
-    """Create org + user + membership. Returns (org, user, member)."""
+def seed_org_user(db, email="owner@test.com", role="owner", plan="local"):
+    """Create org + user + membership. Returns (org, user, member, project, env)."""
     import re, secrets
     slug_base = re.sub(r"[^a-z0-9]", "-", email.split("@")[0])
     slug = slug_base

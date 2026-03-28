@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings
-from pydantic import model_validator
 from functools import lru_cache
 
 
@@ -11,8 +10,9 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60
     refresh_token_expire_days: int = 30
     encryption_key: str = ""
-    app_env: str = "local"
+    app_env: str = "development"
     app_url: str = "http://localhost:8000"
+    frontend_url: str = "http://localhost:8000"
     debug: bool = False
 
     # ── Local Performance ────────────────────────────────────────────────

@@ -2,9 +2,15 @@ __pycache__/
 *.pyc
 *.pyo
 .env
+
+# Database files — never commit these
 *.db
 *.sqlite
+
+# Vercel
 .vercel/
+
+# Python environments
 venv/
 .venv/
 dist/
@@ -16,6 +22,9 @@ jachin_os_master_blueprint_v2.html
 *_master_*.html
 *_private*.html
 *_os_*.html
+
+# Standalone HTML file (local-only artifact, not part of the OSS release)
+standalone.html
 
 # OS junk
 .DS_Store

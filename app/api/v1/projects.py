@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Project, Environment, Organisation, OrgMember, Prompt, PromptVersion
 from app.core.auth import get_current_user_and_org
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter(prefix="/api/v1/projects", tags=["projects"])
 
@@ -57,7 +57,7 @@ async def export_workspace(
     
     export_data = {
         "version": "1.0",
-        "exported_at": datetime.utcnow().isoformat(),
+        "exported_at": datetime.now(timezone.utc).isoformat(),
         "organisation": {
             "name": member.org.name,
             "slug": member.org.slug,
@@ -114,6 +114,8 @@ async def import_workspace(
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org context")
+    from app.core.auth import require_role
+    require_role(member, "admin")
 
     # Basic validation
     if "projects" not in body:
@@ -188,5 +190,13 @@ async def import_workspace(
                             prompt.live_version_id = new_v.id
                         import_count += 1
 
+    db.commit()
+    from app.models import AuditLog
+    from datetime import datetime, timezone
+    db.add(AuditLog(
+        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
+        action="workspace.imported", resource_type="workspace", resource_id=member.org_id,
+        extra={"imported_versions": import_count}
+    ))
     db.commit()
     return {"message": f"Imported {import_count} versions successfully"}
