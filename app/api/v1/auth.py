@@ -91,7 +91,7 @@ async def register(body: RegisterIn, db: Session = Depends(get_db)):
     db.flush()
     # Auto-generate the primary workspace (aligned with Organization ID)
     org_name = "PromptMatrix"
-    org = Organisation(name=org_name, slug=_unique_slug("promptmatrix", db), plan="free")
+    org = Organisation(name=org_name, slug=_unique_slug("promptmatrix", db), plan="local")
     db.add(org)
     db.flush()
     member = OrgMember(org_id=org.id, user_id=user.id, role="owner")

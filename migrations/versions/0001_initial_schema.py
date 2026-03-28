@@ -33,7 +33,7 @@ def upgrade() -> None:
         sa.Column("id", sa.String(), primary_key=True),
         sa.Column("name", sa.String(120), nullable=False),
         sa.Column("slug", sa.String(80), unique=True, nullable=False),
-        sa.Column("plan", sa.String(20), server_default="free"),
+        sa.Column("plan", sa.String(20), server_default="local"),
         sa.Column("created_at", sa.DateTime(), nullable=True),
     )
 
