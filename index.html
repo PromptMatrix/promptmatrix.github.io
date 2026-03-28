@@ -538,9 +538,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 }
 @media(max-width:900px){.pt-grid{grid-template-columns:repeat(2,1fr)}}
 
-.pricing-row1{display:grid;grid-template-columns:repeat(1,1fr);gap:11px;margin-bottom:11px}
-.pricing-row2{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
-@media(max-width:900px){.pricing-row2{grid-template-columns:1fr}}
+/* (Grid logic consolidated in main pricing section) */
 
 .pitems li::before{flex-shrink:0;margin-top:2px}
 
@@ -639,12 +637,14 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 .pbtn.am:hover{background:rgba(255,204,2,.22);box-shadow:0 0 28px rgba(255,204,2,.14)}
 
 /* Pricing grid layouts */
-.pricing-row1{max-width:600px;margin:0 auto 34px}
-.pricing-row2{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:34px}
+.pricing-row1{display:grid;grid-template-columns:1fr;gap:13px;max-width:600px;margin:0 auto 21px}
+.pricing-row2{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:34px}
 
 @media(max-width:1060px){
-  .pricing-row1{grid-template-columns:1fr}
-  .pricing-row2{grid-template-columns:1fr 1fr}
+  .pricing-row2{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:680px){
+  .pricing-row1,.pricing-row2{grid-template-columns:1fr}
 }
 @media(max-width:680px){
   .pricing-row1,.pricing-row2{grid-template-columns:1fr}
@@ -1925,20 +1925,36 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       <div class="plan rv" style="transition-delay:.05s">
         <div class="pname">// SOLO</div>
         <div class="pprice"><sup>$</sup>19<sub>/mo</sub></div>
-        <div class="pperiod">1 SEAT · MANAGED CLOUD</div>
-        <p class="pdesc">Everything in Browser Mode, hosted and synced. Zero ops — login, edit, serve. Your prompts available from any device.</p>
+        <div class="pperiod">1 SEAT · 14-DAY FREE TRIAL</div>
+        <p class="pdesc">Everything in Browser Mode, fully synced. Zero ops — login, edit, serve. Start with a 14-day trial to see the managed power.</p>
         <ul class="pitems">
           <li>Browser + Local Mode</li>
           <li>Managed cloud backend</li>
-          <li>Cross-device access</li>
           <li>1 workspace seat</li>
           <li>Automatic updates</li>
           <li>99.9% uptime SLA</li>
-          <li class="off">Team seats</li>
+          <li class="off">Team collab seats</li>
           <li class="off">Role-based access</li>
-          <li class="off">Slack notifications</li>
         </ul>
-        <button class="pbtn g" onclick="openWaitlist('solo')">JOIN WAITLIST →</button>
+        <button class="pbtn g" onclick="openWaitlist('solo')">START 14-DAY TRIAL →</button>
+      </div>
+
+      <!-- NEW: STUDIO — bridges the gap -->
+      <div class="plan rv" style="transition-delay:.08s;border-color:rgba(128,222,234,.2);background:rgba(0,4,4,.95)">
+        <div class="pname" style="color:var(--cy)">// STUDIO</div>
+        <div class="pprice"><sup>$</sup>39<sub>/mo</sub></div>
+        <div class="pperiod">UP TO 5 SEATS · CLOUD</div>
+        <p class="pdesc">Perfect for small agencies and startup pods. Full governance for a lean team without enterprise overhead.</p>
+        <ul class="pitems">
+          <li>Everything in Solo</li>
+          <li>Up to 5 team seats</li>
+          <li>Role-based access (3 levels)</li>
+          <li>Email notifications</li>
+          <li>Priority support</li>
+          <li class="off">Slack notifications</li>
+          <li class="off">LLM-as-judge evals</li>
+        </ul>
+        <button class="pbtn g" style="color:var(--cy);border-color:rgba(128,222,234,.3)" onclick="openWaitlist('studio')">JOIN WAITLIST →</button>
       </div>
 
       <!-- TEAM — most popular -->
@@ -2501,16 +2517,7 @@ function toggleFaq(btn){
 }
 
 /* MOBILE NAV */
-function toggleMobNav(){
-  const nav=document.getElementById('mob-nav');
-  const btn=document.getElementById('nhbg');
-  nav.classList.toggle('open');
-  btn.classList.toggle('open');
-}
-function closeMobNav(){
-  document.getElementById('mob-nav').classList.remove('open');
-  document.getElementById('nhbg').classList.remove('open');
-}
+/* (Redundant definitions removed in Elite Polish) */
 
 /* HANDLE APPROVE (diff demo section) */
 function handleApprove(btn){
@@ -2535,16 +2542,14 @@ function handleApprove(btn){
 }
 
 /* NAV SCROLL */
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('ink',scrollY>28);
-});
+/* (Redundant scroll listeners moved to main loop) */
 
 </script>
 <script>
   // 🚀 Deployment Intelligence
   (function() {
-    const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('promptmatrix');
-    const isGithub = window.location.hostname.includes('github.io');
+    const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname === 'app.promptmatrix.io';
+    const isGithub = window.location.hostname.includes('github.io') || window.location.hostname === 'promptmatrix.github.io';
     const ctas = document.querySelectorAll('.pbtn, .auth-btn, .btn-primary, .mob-cta');
     const demoBtns = document.querySelectorAll('a[href*="vercel.app"]');
     
