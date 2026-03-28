@@ -1,9 +1,7 @@
 """
 Config validation tests
 ========================
-OSS local-only config: no cloud production constraints.
-The production validator (PostgreSQL/JWT/encryption enforcement) exists
-only in the Private cloud version. The OSS version accepts all env values.
+PromptMatrix local config accepts all environment values for ease of setup.
 """
 
 import pytest
