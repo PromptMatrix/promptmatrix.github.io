@@ -34,7 +34,8 @@ if %errorlevel% neq 0 (
 if not exist .env (
     echo [Setup] Creating .env from .env.example ...
     copy .env.example .env
-    echo [IMPORTANT] Open .env and set your JWT_SECRET_KEY and ENCRYPTION_KEY before using PromptMatrix.
+    python -c "import secrets; data=open('.env').read(); data=data.replace('JWT_SECRET_KEY=change-me-to-a-random-secret','JWT_SECRET_KEY='+secrets.token_hex(32)); data=data.replace('ENCRYPTION_KEY=','ENCRYPTION_KEY='+secrets.token_hex(32)); open('.env','w').write(data)"
+    echo [IMPORTANT] Secure keys generated automatically in .env.
 )
 
 :: Run database migrations

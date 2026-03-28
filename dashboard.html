@@ -497,7 +497,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
                 <option value="anthropic">Anthropic (Claude)</option>
                 <option value="openai">OpenAI (GPT)</option>
                 <option value="google">Google (Gemini)</option>
-                <option value="groq">Groq (Llama — free tier)</option>
+                <option value="groq">Groq (Llama)</option>
                 <option value="mistral">Mistral</option>
               </select>
             </div>
@@ -840,7 +840,7 @@ async function doRegister(){
 async function api(method, path, body=null, rawToken=null){
   const token = rawToken === '__no_token__' ? null : (rawToken || S.token);
   const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  if(token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if(token && token !== 'dev_bypass_token') opts.headers['Authorization'] = 'Bearer ' + token;
   if(body) opts.body = JSON.stringify(body);
   try {
     const r = await fetch(API + path, opts);
@@ -888,6 +888,18 @@ async function tryRestoreSession(){
     initApp();
     return true;
   }
+
+  // Auto-login bypass for development environment
+  const devMe = await api('GET', '/api/v1/auth/me', null, '__no_token__');
+  if(devMe && devMe.user && devMe.active_org){
+    onAuthSuccess({
+      access_token: 'dev_bypass_token',
+      user: devMe.user,
+      active_org: devMe.active_org
+    });
+    return true;
+  }
+
   return false;
 }
 
@@ -915,17 +927,17 @@ function updateSidebar(){
   const oi = document.getElementById('sb-org');
   if(av) av.textContent = (S.user.full_name||S.user.email||'?')[0].toUpperCase();
   if(nm) nm.textContent = S.user.full_name || S.user.email;
-  if(pl) pl.textContent = '● ' + (S.org.plan||'free').toUpperCase();
+  if(pl) pl.textContent = '● ' + (S.org.plan||'local').toUpperCase();
   if(oi) oi.textContent = S.org.name || 'workspace';
   document.getElementById('set-org-name').textContent = S.org.name || '—';
-  document.getElementById('set-plan').textContent = (S.org.plan||'free').toUpperCase();
+  document.getElementById('set-plan').textContent = (S.org.plan||'local').toUpperCase();
   document.getElementById('set-slug').textContent = S.org.slug || '—';
   document.getElementById('set-user-info').innerHTML = `
     <div>Email: <span style="color:var(--t)">${S.user.email}</span></div>
     <div>Name: <span style="color:var(--t)">${S.user.full_name||'—'}</span></div>
     <div>Role: <span style="color:var(--g)">${S.org.role||'member'}</span></div>`;
   document.getElementById('dash-org-line').textContent =
-    `${S.org.name} · ${(S.org.role||'member').toUpperCase()} · ${(S.org.plan||'free').toUpperCase()}`;
+    `${S.org.name} · ${(S.org.role||'member').toUpperCase()} · ${(S.org.plan||'local').toUpperCase()}`;
   const serveEl = document.getElementById('settings-serve-url');
   if(serveEl) serveEl.innerHTML = `${API}/pm/serve/<span style="color:var(--y)">{key}</span>`;
 }
