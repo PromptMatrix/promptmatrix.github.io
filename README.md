@@ -43,7 +43,7 @@ agent.run(system_prompt)
 
 ---
 
-## ✨ Enterprise-Grade Features (Free Local Version)
+## ✨ Enterprise-Grade Features (Local Open Source Version)
 
 *   **⏱️ Zero-Downtime Hot Swaps:** Update your LLM instructions in real time. Changes propagate in milliseconds.
 *   **⏪ Immutable Version History:** 1-click rollbacks for broken prompts. Never lose a historical state.
