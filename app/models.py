@@ -18,7 +18,7 @@ class Organisation(Base):
     id = Column(String, primary_key=True, default=_uuid)
     name = Column(String(120), nullable=False)
     slug = Column(String(80), unique=True, nullable=False)
-    plan = Column(String(20), default="free")
+    plan = Column(String(20), default="local")
     created_at = Column(DateTime, default=_now)
     members = relationship("OrgMember", back_populates="org", cascade="all, delete-orphan")
     projects = relationship("Project", back_populates="org", cascade="all, delete-orphan")
