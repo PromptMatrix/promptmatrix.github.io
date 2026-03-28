@@ -2,7 +2,7 @@ import secrets
 import hashlib
 import base64
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -22,22 +22,24 @@ def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
 def create_access_token(user_id: str, org_id: Optional[str] = None) -> str:
+    now = datetime.now(timezone.utc)
     payload = {
         "sub": user_id,
         "org": org_id,
         "type": "access",
-        "exp": datetime.utcnow() + timedelta(minutes=settings.access_token_expire_minutes),
-        "iat": datetime.utcnow(),
+        "exp": now + timedelta(minutes=settings.access_token_expire_minutes),
+        "iat": now,
     }
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
 def create_refresh_token(user_id: str, org_id: Optional[str] = None) -> str:
+    now = datetime.now(timezone.utc)
     payload = {
         "sub": user_id,
         "org": org_id,
         "type": "refresh",
-        "exp": datetime.utcnow() + timedelta(days=settings.refresh_token_expire_days),
-        "iat": datetime.utcnow(),
+        "exp": now + timedelta(days=settings.refresh_token_expire_days),
+        "iat": now,
     }
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 

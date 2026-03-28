@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
@@ -147,7 +147,7 @@ async def create_prompt(
     db.add(v)
     db.flush()
     
-    ts = datetime.utcnow()
+    ts = datetime.now(timezone.utc)
     db.add(AuditLog(
         org_id=member.org_id, actor_id=user.id, actor_email=user.email,
         action="prompt.created", resource_type="prompt", resource_id=prompt.id,
@@ -210,15 +210,20 @@ async def create_version(
     for attempt in range(3):
         try:
             vnum = _next_version_num(prompt_id, db)
+            # Security Policy: Redact secrets in new version content
+            from app.core.policy import redact_identified_secrets, analyze_prompt_safety
+            content_safe = redact_identified_secrets(body.content)
+            risks = analyze_prompt_safety(body.content)
             v = PromptVersion(
                 prompt_id=prompt_id,
                 version_num=vnum,
-                content=body.content,
+                content=content_safe,
                 commit_message=body.commit_message or f"Version {vnum}",
-                variables=_detect_variables(body.content),
+                variables=_detect_variables(content_safe),
                 status="draft",
                 proposed_by_id=user.id,
                 parent_content=parent_content,
+                approval_note=f"Policy Check: {len(risks)} risks detected." if risks else "Policy Check: Pass.",
             )
             db.add(v)
             db.flush()
@@ -255,7 +260,7 @@ async def submit_for_review(
     if not v:
         raise HTTPException(status_code=404, detail="Not found")
     if v.status != "draft":
-        raise HTTPException(status_code=400, detail="Not draft")
+        raise HTTPException(status_code=400, detail="Version must be in draft status to submit for review")
     v.status = "pending_review"
     v.approval_note = body.note
     prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
@@ -269,6 +274,9 @@ async def submit_for_review(
         from app.core.email import send_approval_needed
         from app.config import get_settings
         settings = get_settings()
+        # Resolve actual environment name
+        _env = db.query(Environment).filter(Environment.id == prompt.environment_id).first() if prompt else None
+        _env_name = _env.name if _env else "unknown"
         engineers = db.query(User).join(OrgMember).filter(
             OrgMember.org_id == member.org_id,
             OrgMember.role.in_(["engineer", "admin", "owner"])
@@ -279,7 +287,7 @@ async def submit_for_review(
                 requester_name=user.full_name or user.email,
                 prompt_key=prompt.key if prompt else version_id,
                 version_num=v.version_num,
-                env_name="production",
+                env_name=_env_name,
                 note=body.note,
                 dashboard_url=settings.app_url
             )
@@ -305,8 +313,8 @@ async def approve_version(
     ).first()
     if not v:
         raise HTTPException(status_code=404, detail="Not found")
-    if v.status not in ("pending_review", "draft"):
-        raise HTTPException(status_code=400, detail="Cannot approve")
+    if v.status != "pending_review":
+        raise HTTPException(status_code=400, detail="Version must be in pending_review status to approve. Submit it for review first.")
     prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
     if prompt and prompt.live_version_id and prompt.live_version_id != version_id:
         old = db.query(PromptVersion).filter(PromptVersion.id == prompt.live_version_id).first()
@@ -314,7 +322,7 @@ async def approve_version(
             old.status = "archived"
     v.status = "approved"
     v.approved_by_id = user.id
-    v.approved_at = datetime.utcnow()
+    v.approved_at = datetime.now(timezone.utc)
     v.approval_note = body.note
     if prompt:
         prompt.live_version_id = v.id
@@ -332,13 +340,14 @@ async def approve_version(
         from app.core.email import send_version_approved
         if v.proposed_by_id:
             requester = db.query(User).filter(User.id == v.proposed_by_id).first()
+            _env_name_approve = env.name if env else "unknown"
             if requester:
                 await send_version_approved(
                     requester_email=requester.email,
                     approver_name=user.full_name or user.email,
                     prompt_key=prompt.key if prompt else "",
                     version_num=v.version_num,
-                    env_name="production"
+                    env_name=_env_name_approve
                 )
     except Exception:
         pass
@@ -424,7 +433,7 @@ async def rollback_to_version(
                 status="approved",
                 proposed_by_id=user.id,
                 approved_by_id=user.id,
-                approved_at=datetime.utcnow(),
+                approved_at=datetime.now(timezone.utc),
                 parent_content=prompt.live_version.content if prompt.live_version else None,
             )
             db.add(rollback_v)

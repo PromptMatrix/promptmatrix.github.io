@@ -76,29 +76,29 @@ def test_rotate_key_old_key_blocked_new_works(client, db):
 
 
 def test_viewer_cannot_create_key(client, db):
-    """Only engineer+ can create API keys."""
-    # Register a second user who will be a viewer
-    client.post("/api/v1/auth/register", json={
-        "email": "viewer@test.com", "password": "password123",
-        "full_name": "Viewer", "org_name": "Viewer Workspace",
-    })
+    """Only engineer+ can create API keys — viewer must get 403."""
     _, _, _, _, env = seed_org_user(db)
-    hdrs = auth_headers(client, email="owner@test.com")
+    hdrs = auth_headers(client)  # owner (logged in via seed)
 
-    # Add viewer to the owner's org — done via DB directly for test isolation
+    # Create a second user as viewer in the SAME org
     from app.models import User, OrgMember, Organisation
-    viewer = db.query(User).filter(User.email == "viewer@test.com").first()
     owner = db.query(User).filter(User.email == "owner@test.com").first()
-    if viewer and owner:
-        owner_member = db.query(OrgMember).filter(OrgMember.user_id == owner.id).first()
-        if owner_member:
-            existing = db.query(OrgMember).filter(
-                OrgMember.user_id == viewer.id,
-                OrgMember.org_id == owner_member.org_id
-            ).first()
-            if not existing:
-                db.add(OrgMember(org_id=owner_member.org_id, user_id=viewer.id, role="viewer"))
-                db.commit()
+    owner_member = db.query(OrgMember).filter(OrgMember.user_id == owner.id).first()
+    from app.core.auth import hash_password
+    viewer = User(email="viewer@test.com", hashed_pw=hash_password("password123"), full_name="Viewer")
+    db.add(viewer); db.flush()
+    db.add(OrgMember(org_id=owner_member.org_id, user_id=viewer.id, role="viewer"))
+    db.commit()
+
+    # Log in as viewer
+    r = client.post("/api/v1/auth/login", json={"email": "viewer@test.com", "password": "password123"})
+    assert r.status_code == 200
+    viewer_token = r.json()["access_token"]
+    viewer_hdrs = {"Authorization": f"Bearer {viewer_token}"}
+
+    # Viewer must be rejected when trying to create a key
+    r = client.post("/api/v1/keys", json={"environment_id": env.id, "name": "test-key"}, headers=viewer_hdrs)
+    assert r.status_code == 403, f"Expected 403 for viewer creating key, got {r.status_code}"
 
 
 def test_key_prefix_format(client, db):

@@ -18,7 +18,7 @@ def test_register_creates_workspace(client):
     assert data["user"]["email"] == "new@test.com"
     assert data["active_org"]["name"] == "PromptMatrix"  # OSS: workspace name is always PromptMatrix
     assert data["active_org"]["role"] == "owner"
-    assert data["active_org"]["plan"] == "free"
+    assert data["active_org"]["plan"] == "local"
 
 
 def test_register_rejects_duplicate_email(client):

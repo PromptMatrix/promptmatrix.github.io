@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -117,12 +117,16 @@ async def run_eval(
         raise HTTPException(status_code=403, detail="No org")
     v = db.query(PromptVersion).filter(PromptVersion.id == body.version_id).first()
     if not v:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=404, detail="Version not found")
     prompt = db.query(Prompt).filter(Prompt.id == v.prompt_id).first()
+    if not prompt:
+        raise HTTPException(status_code=404, detail="Prompt not found")
     env = db.query(Environment).filter(Environment.id == prompt.environment_id).first()
+    if not env:
+        raise HTTPException(status_code=404, detail="Environment not found")
     project = db.query(Project).filter(Project.id == env.project_id).first()
     if not project or project.org_id != member.org_id:
-        raise HTTPException(status_code=403, detail="Denied")
+        raise HTTPException(status_code=403, detail="Access denied")
     if body.eval_type == "rule_based" or body.provider == "rule_based":
         result = _rule_based_eval(v.content)
     else:
@@ -139,7 +143,7 @@ async def run_eval(
         result = await _llm_eval(v.content, body.test_input, body.provider, body.model, api_key_to_use)
     v.last_eval_score = result["overall_score"]
     v.last_eval_passed = result["passed"]
-    v.last_eval_at = datetime.utcnow()
+    v.last_eval_at = datetime.now(timezone.utc)
     db.add(AuditLog(
         org_id=member.org_id, actor_id=user.id, actor_email=user.email,
         action="eval.run", resource_type="version", resource_id=v.id,
