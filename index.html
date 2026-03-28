@@ -8,16 +8,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23000'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='14' font-weight='700' fill='%2300e676' text-anchor='middle'%3EPM%3C/text%3E%3C/svg%3E">
-<link rel="canonical" href="https://promptmatrix.github.io/">
+<link rel="canonical" href="https://github.com/PromptMatrix/PromptMatrix">
 <meta property="og:title" content="PromptMatrix — Every Prompt. One Governed Registry.">
 <meta property="og:description" content="Hardcoded prompts are ungoverned. PromptMatrix fixes that — version control, approval workflow, and a serve endpoint. Browser localStorage to start. SQLite, self-hosted DB. Free & Open Source.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://promptmatrix.github.io/">
+<meta property="og:url" content="https://github.com/PromptMatrix/PromptMatrix">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PromptMatrix — Every Prompt. One Governed Registry.">
 <meta name="twitter:description" content="Hardcoded prompts are ungoverned. PromptMatrix governs them — version control, approval workflow, audit trail. Open source. MIT.">
-<meta name="twitter:image" content="https://promptmatrix.github.io/og-image.png">
-<meta property="og:image" content="https://promptmatrix.github.io/og-image.png">
+<meta name="twitter:image" content="https://github.com/PromptMatrix/PromptMatrix/og-image.png">
+<meta property="og:image" content="https://github.com/PromptMatrix/PromptMatrix/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="theme-color" content="#000301">
@@ -506,8 +506,6 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 @keyframes dpulse{0%,100%{opacity:1}50%{opacity:.3}}
 .dash-frame-note{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(0,230,118,.25);text-align:center;padding:14px;letter-spacing:.08em;border-top:1px solid rgba(0,230,118,.06)}
 
-@media(max-width:1200px){.plans[style*="grid-template-columns:repeat(5"]{grid-template-columns:repeat(3,1fr)!important}}
-@media(max-width:768px){.plans[style*="grid-template-columns:repeat(5"]{grid-template-columns:1fr!important}}
 @media(max-width:1060px){
   .hero{grid-template-columns:1fr}.hero::after{display:none}
   .hr{border-top:1px solid var(--b2)}
@@ -524,7 +522,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
   .hl,.hr{padding:44px 20px}
   .wrap{padding:0 20px}
   .prob,.cmp,.feats,.diff-sect,.testi,.rmap{padding-left:0;padding-right:0}
-  .pgrid,.testig,.rmapg,.plans,.steps{grid-template-columns:1fr}
+  .pgrid,.testig,.rmapg,.steps{grid-template-columns:1fr}
   .tc2-builder{grid-template-columns:auto 1fr !important;gap:16px !important;padding:20px !important}
   .fhead{grid-template-columns:1fr}
   .faq,
@@ -538,117 +536,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 }
 @media(max-width:900px){.pt-grid{grid-template-columns:repeat(2,1fr)}}
 
-/* (Grid logic consolidated in main pricing section) */
 
-.pitems li::before{flex-shrink:0;margin-top:2px}
-
-/* ══ PRICING ════════════════════════════════════════════════════════ */
-.pricing{position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,3,0,.4);padding:89px 34px}
-.prinr{max-width:1080px;margin:0 auto}
-.prih{text-align:center;margin-bottom:55px}
-
-/* Plan card — shared base */
-.plan{
-  background:rgba(0,4,0,.95);
-  border:1px solid var(--b2);
-  border-radius:5px;
-  padding:28px 24px;
-  position:relative;overflow:hidden;
-  transition:border-color .2s,transform .18s;
-  display:flex;flex-direction:column;
-}
-.plan::before{
-  content:'';position:absolute;top:0;inset-inline:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(0,230,118,.15),transparent);
-  opacity:0;transition:opacity .2s;
-}
-.plan:hover{border-color:var(--b3);transform:translateY(-2px)}
-.plan:hover::before{opacity:1}
-
-/* HOT plan — Team */
-.plan.hot{
-  border-color:rgba(0,230,118,.28);
-  background:rgba(0,7,0,.98);
-  box-shadow:0 0 44px rgba(0,230,118,.04);
-}
-.plan.hot::before{
-  background:linear-gradient(90deg,transparent,var(--g),transparent);
-  opacity:1;height:2px;
-}
-.plan.hot:hover{border-color:rgba(0,230,118,.45);transform:translateY(-2px)}
-
-/* FOUNDER plan */
-.plan.founder{
-  border-color:rgba(255,204,2,.3);
-  background:rgba(5,4,0,.99);
-}
-.plan.founder::before{
-  background:linear-gradient(90deg,transparent,var(--am) 40%,var(--am) 60%,transparent);
-  opacity:1;height:2px;
-}
-.plan.founder:hover{border-color:rgba(255,204,2,.5);transform:translateY(-2px)}
-
-/* Badge above card title */
-.phot{
-  font-family:var(--mono);font-size:7.5px;
-  background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);
-  color:var(--g);padding:3px 10px;border-radius:2px;
-  letter-spacing:.12em;display:inline-flex;
-  align-items:center;gap:5px;
-  margin-bottom:13px;width:fit-content;
-}
-
-/* Price display */
-.pname{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.2em;margin-bottom:10px}
-.pprice{
-  font-family:var(--mono);font-size:42px;font-weight:600;
-  color:var(--g);text-shadow:0 0 24px rgba(0,230,118,.25);
-  line-height:1;margin-bottom:5px;letter-spacing:-.02em;
-}
-.pprice sup{font-size:18px;vertical-align:super;margin-right:2px;font-weight:400}
-.pprice sub{font-size:11px;color:var(--txt3);font-weight:400;letter-spacing:.04em}
-.pperiod{font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.1em;margin-bottom:16px}
-.pdesc{font-size:13px;color:rgba(200,255,200,.42);line-height:1.75;margin-bottom:18px}
-
-/* Feature list */
-.pitems{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:21px;flex:1}
-.pitems li{
-  font-family:var(--mono);font-size:10.5px;
-  color:rgba(200,255,200,.52);
-  display:flex;align-items:flex-start;gap:8px;
-  line-height:1.5;
-}
-.pitems li::before{content:'→';color:var(--g3);flex-shrink:0;margin-top:1px}
-.pitems li.off{color:rgba(200,255,200,.2)}
-.pitems li.off::before{content:'—';color:var(--b3)}
-
-/* CTA button inside plan card */
-.pbtn{
-  width:100%;font-family:var(--mono);font-size:10px;font-weight:700;
-  letter-spacing:.08em;padding:11px 16px;border-radius:3px;
-  border:1px solid;cursor:pointer;transition:all .18s;
-  white-space:nowrap;
-}
-.pbtn.g{background:transparent;color:var(--txt3);border-color:var(--b2)}
-.pbtn.g:hover{color:var(--txt2);border-color:var(--b3);background:rgba(0,230,118,.03)}
-.pbtn.p{background:rgba(0,230,118,.1);color:var(--g);border-color:rgba(0,230,118,.3);text-shadow:0 0 8px rgba(0,230,118,.3)}
-.pbtn.p:hover{background:rgba(0,230,118,.2);box-shadow:0 0 24px rgba(0,230,118,.12)}
-.pbtn.am{background:rgba(255,204,2,.12);color:var(--am);border-color:rgba(255,204,2,.35);text-shadow:0 0 10px rgba(255,204,2,.3)}
-.pbtn.am:hover{background:rgba(255,204,2,.22);box-shadow:0 0 28px rgba(255,204,2,.14)}
-
-/* Pricing grid layouts */
-.pricing-row1{display:grid;grid-template-columns:1fr;gap:13px;max-width:600px;margin:0 auto 21px}
-.pricing-row2{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:34px}
-
-@media(max-width:1060px){
-  .pricing-row2{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:680px){
-  .pricing-row1,.pricing-row2{grid-template-columns:1fr}
-}
-@media(max-width:680px){
-  .pricing-row1,.pricing-row2{grid-template-columns:1fr}
-}
 
 /* Spot pip */
 .spot-pip{
@@ -681,12 +569,11 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="nl" href="#how-it-works">PROTOCOL</a>
     <a class="nl" href="#features">FEATURES</a>
     <a class="nl" href="#quickstart">INTEGRATION</a>
-    <a class="nl" href="#pricing">PRICING</a>
     <a class="nl" href="#faq">FAQ</a>
   </div>
   <div class="nact">
     <a class="btn btn-ghost" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="btn btn-primary" href="https://app.promptmatrix.io/login">LOGIN / ACCESS</a>
+    <a class="btn btn-primary" href="dashboard.html">GET STARTED</a>
   </div>
   <button class="nhbg" id="nhbg" onclick="toggleMobNav()" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
@@ -697,11 +584,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="#how-it-works" onclick="closeMobNav()">PROTOCOL</a>
     <a class="mob-nl" href="#features" onclick="closeMobNav()">FEATURES</a>
     <a class="mob-nl" href="#quickstart" onclick="closeMobNav()">INTEGRATION</a>
-    <a class="mob-nl" href="#pricing" onclick="closeMobNav()">PRICING</a>
     <a class="mob-nl" href="#faq" onclick="closeMobNav()">FAQ</a>
     <div class="mob-divider"></div>
     <a class="mob-nl" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="mob-nl mob-cta" href="https://app.promptmatrix.io/login">LOGIN / ACCESS</a>
+    <a class="mob-nl mob-cta" href="dashboard.html">GET STARTED</a>
   </div>
 </div>
 
@@ -729,7 +615,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <span class="role-arrow">→</span>
       <span class="role-pill rp-biz">◉ ANY TOOL — OpenClaw, LangChain, raw API</span>
       <span class="role-arrow">→</span>
-      <span class="role-pill rp-ok">✓ ANY STORAGE — browser · sqlite · cloud</span>
+      <span class="role-pill rp-ok">✓ ANY STORAGE — browser · sqlite · self-hosted</span>
     </div>
 
     <div style="font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.1em;margin-bottom:20px;padding:7px 12px;border:1px solid var(--b);border-radius:3px;display:inline-flex;align-items:center;gap:7px;background:rgba(0,230,118,.02)">
@@ -737,14 +623,13 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <span>No server needed to start — runs entirely in your browser. Move storage when you're ready.</span>
     </div>
 
-    <!-- SAAS & OSS CTAs -->
     <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;animation:rise .7s .26s var(--ease) both">
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a href="#pricing"
+        <a href="dashboard.html"
           style="flex:1;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;padding:14px 28px;background:rgba(0,230,118,.15);color:var(--g);border:1px solid rgba(0,230,118,.35);border-radius:3px;cursor:pointer;transition:all .18s;text-align:center;text-decoration:none;text-shadow:0 0 12px rgba(0,230,118,.5);box-shadow:0 0 28px rgba(0,230,118,.08)"
           onmouseover="this.style.background='rgba(0,230,118,.25)';this.style.boxShadow='0 0 40px rgba(0,230,118,.2)'"
           onmouseout="this.style.background='rgba(0,230,118,.15)';this.style.boxShadow='0 0 28px rgba(0,230,118,.08)'">
-          VIEW CLOUD PRICING →
+          OPEN DASHBOARD →
         </a>
         <a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener"
           style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;padding:14px 28px;background:transparent;color:var(--txt3);border:1px solid var(--b2);border-radius:3px;cursor:pointer;transition:all .16s;text-decoration:none;white-space:nowrap"
@@ -752,10 +637,6 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
           onmouseout="this.style.background='transparent';this.style.color='var(--txt3)';this.style.borderColor='var(--b2)'">
           VIEW ON GITHUB
         </a>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-family:var(--mono);font-size:8px;color:var(--am);letter-spacing:.06em;text-align:center;border:1px solid rgba(255,204,2,.2);background:rgba(255,204,2,.05);padding:6px;border-radius:3px">
-        <span class="spot-pip"></span>
-        100 Founder Seats Available. Secure lifetime access now.
       </div>
     </div>
 
@@ -1423,7 +1304,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   <span class="st">"key"</span>:          <span class="gr">"assistant.persona"</span>,
   <span class="st">"content"</span>:      <span class="gr">"I'm your AI assistant. Ask me anything — I'll give you a direct answer."</span>,
   <span class="st">"version"</span>:      <span class="dim">14</span>,
-  <span class="st">"approved_by"</span>:  <span class="dim">"hello@promptmatrix.io"</span>,
+  <span class="st">"approved_by"</span>:  <span class="dim">"admin@local"</span>,
   <span class="st">"approved_at"</span>:  <span class="dim">"2026-03-12T09:41:02Z"</span>,
   <span class="st">"latency_ms"</span>:   <span class="dim">11</span>
 }</div>
@@ -1512,85 +1393,8 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   </div>
 </section>
 
-<!-- WHAT YOU CAN GOVERN -->
-<section class="pt-section" id="use-cases">
-  <div class="pt-inner">
-    <div class="rv">
-      <div class="slabel">// GOVERNANCE_SCOPE</div>
-      <h2 class="stitle">Any AI product.<br><span class="em si">Every prompt. Now.</span></h2>
-      <p class="sbody" style="margin-top:12px;max-width:540px">If your product sends a string to a language model, it belongs in PromptMatrix. Register any key in 30 seconds. These are the prompt categories teams are putting under governance today.</p>
-    </div>
-    <div class="pt-grid">
 
-      <div class="pt-card rv">
-        <div class="pt-icon">◉</div>
-        <div class="pt-title">Chatbots &amp; Assistants</div>
-        <div class="pt-desc">System prompt, persona, fallback responses, guardrails. Tune how your chatbot behaves in production — approved changes live without touching code.</div>
-        <div class="pt-keys">
-          <span class="pt-key">assistant.persona</span>
-          <span class="pt-key">assistant.guardrails</span>
-          <span class="pt-key">assistant.fallback</span>
-        </div>
-      </div>
-
-      <div class="pt-card rv" style="transition-delay:.05s;border-color:rgba(0,230,118,.12);background:rgba(0,230,118,.015)">
-        <div class="pt-icon">◈</div>
-        <div class="pt-title">AI Agents &amp; Agent Networks</div>
-        <div class="pt-desc">Control the briefing, operating rules, and persona of every agent. Edit any agent's instructions from the dashboard — no code change, no restart, no hunting through config files. Works with OpenClaw, LangChain, AutoGen, or any orchestrator.</div>
-        <div class="pt-keys">
-          <span class="pt-key">agent.briefing</span>
-          <span class="pt-key">agent.rules</span>
-          <span class="pt-key">agent.persona</span>
-        </div>
-      </div>
-
-      <div class="pt-card rv" style="transition-delay:.1s">
-        <div class="pt-icon">✉</div>
-        <div class="pt-title">Email &amp; Outreach Writers</div>
-        <div class="pt-desc">Version-control the prompts behind your email sequences, cold outreach, and follow-ups. Propose, review, and approve before any change reaches a live send.</div>
-        <div class="pt-keys">
-          <span class="pt-key">email.composer</span>
-          <span class="pt-key">email.subject</span>
-          <span class="pt-key">outreach.cold</span>
-        </div>
-      </div>
-
-      <div class="pt-card rv" style="transition-delay:.07s">
-        <div class="pt-icon">◧</div>
-        <div class="pt-title">Classifiers &amp; Routing Logic</div>
-        <div class="pt-desc">Update classification rules and intent routing without a code change. Full diff review before any rule change touches live traffic.</div>
-        <div class="pt-keys">
-          <span class="pt-key">classifier.rules</span>
-          <span class="pt-key">router.intent</span>
-          <span class="pt-key">triage.priority</span>
-        </div>
-      </div>
-
-      <div class="pt-card rv" style="transition-delay:.12s">
-        <div class="pt-icon">✍</div>
-        <div class="pt-title">Content &amp; Writing Pipelines</div>
-        <div class="pt-desc">Manage tone, format, and style rules for every content workflow. Marketing proposes, engineer approves — no more "can you just fix the prompt" Slack messages.</div>
-        <div class="pt-keys">
-          <span class="pt-key">content.tone</span>
-          <span class="pt-key">content.format</span>
-          <span class="pt-key">newsletter.voice</span>
-        </div>
-      </div>
-
-      <div class="pt-card rv" style="transition-delay:.15s;border-color:rgba(0,230,118,.12);background:rgba(0,230,118,.015)">
-        <div class="pt-icon">⑂</div>
-        <div class="pt-title">Anything with a Hardcoded Prompt</div>
-        <div class="pt-desc">If a string in your code gets sent to a language model, it belongs under governance. Works with OpenAI, Anthropic, Gemini, Mistral — any API, any model, any team.</div>
-        <div class="pt-keys">
-          <span class="pt-key">any.key</span>
-          <span class="pt-key">any.model</span>
-          <span class="pt-key">any.team</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
+<!-- THE REST OF THE FEATURES -->
 
 <!-- WHY THIS EXISTS -->
 <section id="why-this-exists" style="position:relative;z-index:2">
@@ -1915,14 +1719,13 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
         <div class="rcard rv" style="transition-delay:.18s">
           <div class="rcbar" style="background:linear-gradient(90deg,#475569,#94a3b8)"></div>
           <div class="rcst" style="color:var(--txt3)"><span>◦</span> PLANNED · Q3–Q4 2026</div>
-          <h3 class="rct">Enterprise Controls</h3>
+          <h3 class="rct">Extended Governance</h3>
           <ul class="rcl">
-            <li><span style="color:var(--txt3)">◦</span> Enterprise SSO / SAML</li>
+            <li><span style="color:var(--txt3)">◦</span> Multi-org / Multi-team support</li>
             <li><span style="color:var(--g)">✓</span> Audit log export (JSON, CSV, API)</li>
-            <li><span style="color:var(--txt3)">◦</span> On-premise deployment option</li>
-            <li><span style="color:var(--txt3)">◦</span> SOC 2 Type II certification</li>
-            <li><span style="color:var(--txt3)">◦</span> Multi-region data storage</li>
-            <li><span style="color:var(--txt3)">◦</span> Custom approval workflow configuration</li>
+            <li><span style="color:var(--txt3)">◦</span> Granular role-based permissions</li>
+            <li><span style="color:var(--txt3)">◦</span> Custom approval workflow engine</li>
+            <li><span style="color:var(--txt3)">◦</span> Advanced LLM-as-judge benchmarks</li>
           </ul>
         </div>
       </div>
@@ -1936,8 +1739,8 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
     <div class="faqh rv">
       <div class="slabel">// FAQ</div>
       <h2 class="stitle">Questions<br>engineers ask.</h2>
-      <p class="sbody" style="margin-top:10px">Can't find your answer here? Reach out directly.</p>
-      <a class="faqlink" href="mailto:hello@promptmatrix.io">hello@promptmatrix.io →</a>
+      <p class="sbody" style="margin-top:10px">Can't find your answer? Open an issue on GitHub.</p>
+      <a class="faqlink" href="https://github.com/PromptMatrix/promptmatrix.github.io/issues">Open GitHub Issues →</a>
     </div>
     <div class="faqlist rv" style="transition-delay:.1s">
       <div class="faqitem">
@@ -1992,19 +1795,19 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
 <section class="cta rv" id="cta">
   <div class="slabel" style="text-align:center;margin-bottom:12px">// GET STARTED NOW</div>
   <h2 class="ctah">Your prompts don't<br>belong in <span class="em"><span class="si">your code.</span></span></h2>
-  <p class="ctab">Start governing your prompts today. Upgrade to managed cloud for team approvals, or self-host the open source core entirely.</p>
+  <p class="ctab">Start governing your prompts today. Self-host the open source core entirely and reclaim your development speed.</p>
   <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin-bottom:13px">
-    <button
-      style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;padding:13px 28px;background:transparent;color:var(--txt3);border:1px solid var(--b2);border-radius:3px;cursor:pointer;transition:all .18s;white-space:nowrap"
+    <a href="dashboard.html" class="cta-btn" style="text-decoration:none">OPEN DASHBOARD →</a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener"
+      style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;padding:13px 28px;background:transparent;color:var(--txt3);border:1px solid var(--b2);border-radius:3px;cursor:pointer;transition:all .18s;white-space:nowrap;text-decoration:none;display:flex;align-items:center"
       onmouseover="this.style.color='var(--txt2)';this.style.borderColor='var(--b3)';this.style.background='rgba(0,230,118,.03)'"
-      onmouseout="this.style.color='var(--txt3)';this.style.borderColor='var(--b2)';this.style.background='transparent'"
-      onclick="window.open('https://github.com/PromptMatrix/PromptMatrix','_blank')">
+      onmouseout="this.style.color='var(--txt3)';this.style.borderColor='var(--b2)';this.style.background='transparent'">
       VIEW ON GITHUB →
-    </button>
+    </a>
   </div>
   <div class="ctafine">
-    <span>Browser · SQLite · self-hosted</span>
-    <span>Self-host on your infra</span>
+    <span>Self-hosted · SQLite · OSS</span>
+    <span>100% Data Sovereignty</span>
     <span>No subscriptions. Free & Open Source.</span>
   </div>
 </section>
@@ -2042,17 +1845,15 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
     <div>
       <div class="fcolh">PROJECT</div>
       <ul class="flinks">
-        <li><a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GitHub</a></li>
-        <li><a href="https://github.com/PromptMatrix/PromptMatrix#readme" target="_blank" rel="noopener">Documentation</a></li>
-        <li><a href="mailto:hello@promptmatrix.io">hello@promptmatrix.io</a></li>
-        <li><a href="mailto:hello@promptmatrix.io?subject=Privacy%20Policy">Privacy Policy</a></li>
-        <li><a href="mailto:hello@promptmatrix.io?subject=Terms%20of%20Service">Terms of Service</a></li>
+        <li><a href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="https://github.com/PromptMatrix/promptmatrix.github.io#readme" target="_blank" rel="noopener">Documentation</a></li>
+        <li><a href="https://github.com/PromptMatrix/promptmatrix.github.io/issues" target="_blank" rel="noopener">Support</a></li>
       </ul>
     </div>
   </div>
   <div class="fbot">
     <p>© 2026 PromptMatrix · Open Source · MIT License</p>
-    <p>v0.1.0 BETA · hello@promptmatrix.io</p>
+    <p>v0.1.0 BETA · github.com/PromptMatrix/PromptMatrix</p>
   </div>
 </footer>
 
@@ -2269,78 +2070,6 @@ function _updateSpotsBadges(){
 }
 _updateSpotsBadges();
 
-/* CLAIM SPOT (early seat) */
-function claimSpot(btn){
-  // Razorpay payment link — $149 founding seat
-  if(btn){btn.textContent='OPENING...';btn.disabled=true;}
-  window.open('RAZORPAY_PAYMENT_LINK_HERE','_blank');
-  if(btn){setTimeout(()=>{btn.textContent='★ GET STARTED — $149 FOUNDING';btn.disabled=false;},2000);}
-}
-
-/* HERO WAITLIST — reads hero-email input, validates, opens Beehiiv */
-function heroJoinWaitlist(){
-  const input=document.getElementById('hero-email');
-  const btn=document.getElementById('hero-waitlist-btn');
-  if(!input)return;
-  const email=input.value.trim();
-  if(!email||!email.includes('@')){
-    input.style.outline='1px solid rgba(255,82,82,.55)';
-    input.focus();
-    setTimeout(()=>input.style.outline='',2200);
-    return;
-  }
-  if(btn){btn.textContent='...';btn.disabled=true;}
-  const base='https://ainewsindia.beehiiv.com/subscribe';
-  const params=new URLSearchParams({email,utm_source:'hero',utm_medium:'landing_page',utm_campaign:'cloud_waitlist'});
-  window.open(`${base}?${params}`,'_blank');
-  showToast("You're on the waitlist — we'll email you when cloud launches.");
-  input.value='';
-  if(btn){setTimeout(()=>{btn.textContent='JOINED ✓';btn.style.color='var(--g)';btn.style.background='rgba(0,230,118,.22)';setTimeout(()=>{btn.textContent='JOIN WAITLIST →';btn.style.color='';btn.style.background='rgba(0,230,118,.16)';btn.disabled=false;},4200);},100);}
-}
-
-/* OPEN WAITLIST */
-function openWaitlist(plan){
-  const base='https://ainewsindia.beehiiv.com/subscribe';
-  const params=new URLSearchParams({utm_source:plan,utm_medium:'pricing',utm_campaign:'waitlist'});
-  window.open(`${base}?${params}`,'_blank');
-  showToast("You're on the waitlist — we'll notify you.");
-}
-
-/* EMAIL — generic (pricing section forms) */
-async function submitEmail(id,plan){
-  const input=id?document.getElementById(id):null;
-  const email=input?input.value.trim():'';
-  if(id&&(!email||!email.includes('@'))){
-    if(input){input.style.outline='1px solid rgba(255,82,82,.55)';setTimeout(()=>input.style.outline='',2000)}
-    return;
-  }
-  const btn=input?input.nextElementSibling:(event&&event.target instanceof HTMLButtonElement?event.target:null);
-  const orig=btn?btn.textContent:'';
-  if(btn){btn.textContent='...';btn.disabled=true;}
-  if(plan==='founding'||plan==='pro'){
-    // Razorpay payment link
-    window.open('RAZORPAY_PAYMENT_LINK_HERE','_blank');
-    if(btn){btn.textContent='OPENING...';setTimeout(()=>{btn.textContent=orig;btn.disabled=false;},2000);}
-    return;
-  } else if(plan==='enterprise'||plan==='team'){
-    window.open('mailto:hello@promptmatrix.io?subject=Enterprise%20%E2%80%94%20PromptMatrix&body=Hi%2C%0A%0AInterested%20in%20PromptMatrix%20for%20our%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0AUse%20case%3A%20%0A%0AThanks','_blank');
-    showToast("We'll reach out within 48h.");
-  } else if(plan==='waitlist'){
-    const base='https://ainewsindia.beehiiv.com/subscribe';
-    const params=new URLSearchParams({utm_source:'general',utm_medium:'landing_page',utm_campaign:'waitlist'});
-    if(email)params.set('email',email);
-    window.open(`${base}?${params}`,'_blank');
-    showToast("Subscribed — we'll be in touch.");
-  } else {
-    const base='https://ainewsindia.beehiiv.com/subscribe';
-    const params=new URLSearchParams({utm_source:'cta',utm_medium:'landing_page',utm_campaign:'waitlist'});
-    if(email)params.set('email',email);
-    window.open(`${base}?${params}`,'_blank');
-    showToast("You're on the list — we'll be in touch.");
-  }
-  if(input)input.value='';
-  if(btn){btn.textContent='NOTED ✓';btn.style.color='var(--g)';setTimeout(()=>{btn.textContent=orig;btn.style.color='';btn.disabled=false;},4000);}
-}
 
 /* FAQ */
 function toggleFaq(btn){
@@ -2386,36 +2115,6 @@ function handleApprove(btn){
 /* NAV SCROLL */
 /* (Redundant scroll listeners moved to main loop) */
 
-</script>
-<script>
-  // 🚀 Deployment Intelligence
-  (function() {
-    const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname === 'app.promptmatrix.io';
-    const isGithub = window.location.hostname.includes('github.io') || window.location.hostname === 'promptmatrix.github.io';
-    const ctas = document.querySelectorAll('.pbtn, .auth-btn, .btn-primary, .mob-cta');
-    const demoBtns = document.querySelectorAll('a[href*="vercel.app"]');
-    
-    if (isVercel) {
-      // 🖥️ Local Mode: Direct to Login
-      ctas.forEach(btn => {
-        if (!btn.href.includes('github.com')) {
-          btn.textContent = "LOGIN / ACCESS";
-          btn.href = "/dashboard";
-        }
-      });
-      demoBtns.forEach(btn => {
-        if (!btn.classList.contains('pbtn')) btn.style.display = 'none';
-      });
-    } else if (isGithub) {
-      // 🛠 OSS Mode: Direct to GitHub Engine
-      ctas.forEach(btn => {
-        if (!btn.href.includes('github.com')) {
-          btn.textContent = "DOWNLOAD OSS";
-          btn.href = "https://github.com/PromptMatrix/PromptMatrix";
-        }
-      });
-    }
-  })();
 </script>
 </body>
 </html>

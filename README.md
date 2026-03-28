@@ -8,8 +8,8 @@
   </p>
 
   <p>
-    <a href="https://promptmatrix.github.io">Website</a> •
-    <a href="https://app.promptmatrix.io">Managed Cloud</a> •
+    <a href="https://github.com/PromptMatrix/PromptMatrix">Documentation</a> •
+    <a href="https://github.com/PromptMatrix/PromptMatrix">MIT Open Source</a> •
     <a href="#-quick-start">Quick Start</a>
   </p>
 </div>
@@ -18,7 +18,7 @@
 
 **PromptMatrix** is high-performance, open-source infrastructure for AI engineering teams. It centralizes your agent prompts into a version-controlled, auditable, and evaluated registry, enabling instant updates via sub-10ms APIs without ever redeploying your codebase.
 
-👉 **Looking for multi-player scaling?** While this repository provides the complete local-first engine, production teams using approval workflows and role-based access use [PromptMatrix Cloud](https://app.promptmatrix.io).
+👉 **Looking for multi-player scaling?** While this repository provides the complete local-first engine, production teams using approval workflows and role-based access can self-host the full stack.
 
 ---
 
@@ -90,17 +90,8 @@ python -m uvicorn main:app --reload --port 8000
 
 ---
 
-## ☁️ PromptMatrix Local vs. Cloud
 
-| Feature | Local Open Source | [PromptMatrix Cloud](https://app.promptmatrix.io) |
-| :--- | :--- | :--- |
-| **Seat Limit** | 1 (Single Admin) | Unlimited Teams |
-| **Database** | SQLite (Local) | Globally distributed PostgreSQL |
-| **Evals** | Included | Included |
-| **Role-Based Approvals** | ❌ | ✅ (Engineers review Editors) |
-| **SLAs & Enterprise SSO** | ❌ | ✅ |
-
-*Ready to scale? [Upgrade to the Managed Cloud](https://app.promptmatrix.io) today.*
+*PromptMatrix is designed to be fully self-contained. For team features such as Role-Based Access Control and multi-stage approval workflows, ensure you deploy with a production database like PostgreSQL.*
 
 ---
 

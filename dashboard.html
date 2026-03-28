@@ -903,10 +903,6 @@ async function tryRestoreSession(){
   return false;
 }
 
-// Handle ?plan=founding in URL (from landing page)
-function checkPlanParam(){
-  // Cloud parameters removed for local-only version
-}
 
 // ══════════════════════════════════════════════════════════════════════
 // APP INIT — runs after successful auth
@@ -927,17 +923,15 @@ function updateSidebar(){
   const oi = document.getElementById('sb-org');
   if(av) av.textContent = (S.user.full_name||S.user.email||'?')[0].toUpperCase();
   if(nm) nm.textContent = S.user.full_name || S.user.email;
-  if(pl) pl.textContent = '● ' + (S.org.plan||'local').toUpperCase();
   if(oi) oi.textContent = S.org.name || 'workspace';
   document.getElementById('set-org-name').textContent = S.org.name || '—';
-  document.getElementById('set-plan').textContent = (S.org.plan||'local').toUpperCase();
   document.getElementById('set-slug').textContent = S.org.slug || '—';
   document.getElementById('set-user-info').innerHTML = `
     <div>Email: <span style="color:var(--t)">${S.user.email}</span></div>
     <div>Name: <span style="color:var(--t)">${S.user.full_name||'—'}</span></div>
     <div>Role: <span style="color:var(--g)">${S.org.role||'member'}</span></div>`;
   document.getElementById('dash-org-line').textContent =
-    `${S.org.name} · ${(S.org.role||'member').toUpperCase()} · ${(S.org.plan||'local').toUpperCase()}`;
+    `${S.org.name} · ${(S.org.role||'member').toUpperCase()}`;
   const serveEl = document.getElementById('settings-serve-url');
   if(serveEl) serveEl.innerHTML = `${API}/pm/serve/<span style="color:var(--y)">{key}</span>`;
 }
@@ -1734,7 +1728,6 @@ document.getElementById('a-email')?.addEventListener('keydown',e=>{ if(e.key==='
 // ══════════════════════════════════════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════════════════════════════════════
-checkPlanParam();
 (async()=>{
   if(!await tryRestoreSession()){
     // Show auth overlay (already visible by default)
