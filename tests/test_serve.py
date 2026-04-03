@@ -63,7 +63,12 @@ def test_serve_variable_substitution(client, db):
     )
     full_key, _ = seed_api_key(db, env.id)
 
-    r = _serve(client, full_key, "assistant.system", vars="name=User,tone=direct")
+    # BUG-02 FIX: vars must be repeated query params, not comma-separated
+    r = client.get(
+        "/pm/serve/assistant.system",
+        headers={"Authorization": f"Bearer {full_key}"},
+        params=[("vars", "name=User"), ("vars", "tone=direct")]
+    )
     assert r.status_code == 200
     assert r.text == "Hello User. Your tone is direct."
 
