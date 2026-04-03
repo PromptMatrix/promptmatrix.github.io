@@ -31,6 +31,16 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
   flex-direction:column;gap:0;
 }
 #auth-overlay.hidden{display:none}
+/* Loading screen shown during session/auto-login check */
+#boot-loading{
+  position:fixed;inset:0;z-index:10000;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:12px;
+}
+#boot-loading.hidden{display:none}
+.boot-logo{font-size:14px;font-weight:600;letter-spacing:.1em;color:var(--g)}
+.boot-logo em{color:var(--t3);font-style:normal;font-size:10px;margin-left:4px}
+.boot-status{font-size:9px;color:var(--t3);letter-spacing:.1em}
 .auth-box{
   width:100%;max-width:420px;background:var(--bg2);
   border:1px solid var(--b2);padding:0;overflow:hidden;
@@ -247,8 +257,15 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 <canvas id="rain"></canvas>
 <div class="scanlines"></div>
 
-<!-- ══ AUTH OVERLAY ══ -->
-<div id="auth-overlay">
+<!-- ══ BOOT LOADING ══ -->
+<div id="boot-loading">
+  <div class="boot-logo">PROMPT<em>MATRIX</em></div>
+  <div class="spin"></div>
+  <div class="boot-status" id="boot-status">CONNECTING...</div>
+</div>
+
+<!-- ══ AUTH OVERLAY (shown only when auth is required — i.e. production mode) ══ -->
+<div id="auth-overlay" class="hidden">
   <div class="auth-box">
     <div class="auth-header">
       <div class="auth-logo">PROMPT<em>MATRIX</em> <span style="font-size:9px;color:var(--t3);margin-left:8px;letter-spacing:.04em">// PROMPT GOVERNANCE FOR AI APPLICATIONS</span></div>
@@ -271,11 +288,11 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
         <div class="auth-field"><label>EMAIL</label><input type="email" id="r-email" placeholder="you@company.com" autocomplete="email"></div>
         <div class="auth-field"><label>PASSWORD</label><input type="password" id="r-pass" placeholder="Min 8 characters" autocomplete="new-password"></div>
         <div class="auth-err" id="auth-err-reg"></div>
-        <button class="auth-btn" onclick="doRegister()" id="reg-btn">CREATE_LOCAL_ADMIN →</button>
+        <button class="auth-btn" onclick="doRegister()" id="reg-btn">CREATE_ACCOUNT →</button>
       </div>
     </div>
     <div class="auth-footer">
-      Self-host Local · MIT Open Source ·
+      <span style="color:var(--y)">⚠ Auth is active (APP_ENV=production)</span> ·
       <a href="https://github.com/PromptMatrix/PromptMatrix" style="color:var(--g);text-decoration:none">github.com/PromptMatrix/PromptMatrix</a>
     </div>
   </div>
@@ -1729,8 +1746,19 @@ document.getElementById('a-email')?.addEventListener('keydown',e=>{ if(e.key==='
 // BOOT
 // ══════════════════════════════════════════════════════════════════════
 (async()=>{
-  if(!await tryRestoreSession()){
-    // Show auth overlay (already visible by default)
+  // Show loading screen while we check session / dev-bypass
+  const bootEl = document.getElementById('boot-loading');
+  const bootStatus = document.getElementById('boot-status');
+  if(bootStatus) bootStatus.textContent = 'CONNECTING...';
+
+  const ok = await tryRestoreSession();
+
+  if(bootEl) bootEl.classList.add('hidden');
+
+  if(!ok){
+    // Local mode: server not yet ready or no user seeded yet
+    // Production mode: show login/register screen
+    document.getElementById('auth-overlay').classList.remove('hidden');
     checkServerHealth();
   }
 })();
