@@ -16,7 +16,9 @@ import pytest_asyncio
 os.environ.setdefault("DATABASE_URL", "sqlite://")
 os.environ.setdefault("JWT_SECRET_KEY", "test-jwt-secret-key-not-for-prod")
 os.environ.setdefault("ENCRYPTION_KEY", "test-enc-key-not-for-prod-xxxxxx")
-os.environ.setdefault("APP_ENV", "development")
+# Use 'testing' not 'development' so the dev-bypass auto-login does NOT fire in tests.
+# Protected routes must still require real JWT tokens.
+os.environ["APP_ENV"] = "testing"
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine

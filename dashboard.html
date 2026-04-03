@@ -370,7 +370,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <div class="lb-live"><span class="dot" id="top-dot"></span><span id="server-status">CONNECTING</span></div>
       <div class="top-r">
         <button class="top-btn" onclick="openNewPromptModal()">+ NEW PROMPT</button>
-        <button class="top-btn" onclick="doLogout()" style="color:var(--t3)">LOGOUT</button>
+        <button class="top-btn" id="btn-logout" onclick="doLogout()" style="color:var(--t3);display:none">LOGOUT</button>
       </div>
     </div>
     <div class="cnt" id="cnt">
@@ -629,9 +629,10 @@ system_prompt = r.text  <span class="cm"># returns the approved content</span></
 <span class="fn">def</span> <span class="va">get_prompt</span>(key, vars={}):
     url = <span class="st">f"http://localhost:8000/pm/serve/{key}"</span>
     <span class="kw">if</span> vars:
-        url += <span class="st">"?vars="</span> + <span class="st">","</span>.join(
-            <span class="st">f"{k}={v}"</span> <span class="kw">for</span> k,v <span class="kw">in</span> vars.items()
-        )
+        params = [(
+            <span class="st">'vars'</span>, <span class="st">f"{k}={v}"</span>
+        ) <span class="kw">for</span> k,v <span class="kw">in</span> vars.items()]
+        url += <span class="st">'?'</span> + <span class="st">'&amp;'</span>.join(<span class="st">f'vars={k}={v}'</span> <span class="kw">for</span> k,v <span class="kw">in</span> vars.items())
     r = requests.get(url, headers={
         <span class="st">"Authorization"</span>: <span class="st">"Bearer YOUR_KEY"</span>
     }, timeout=<span class="va">2</span>)
@@ -639,7 +640,7 @@ system_prompt = r.text  <span class="cm"># returns the approved content</span></
 
 <span class="cm"># Usage</span>
 system = get_prompt(<span class="st">"assistant.system"</span>)
-system = get_prompt(<span class="st">"email.writer"</span>, {<span class="st">"tone"</span>: <span class="st">"formal"</span>})</div>
+system = get_prompt(<span class="st">"email.writer"</span>, {<span class="st">"tone"</span>: <span class="st">"formal"</span>, <span class="st">"name"</span>: <span class="st">"Alex"</span>})</div>
           </div>
           <div class="card">
             <div class="card-title">n8n / MAKE / ZAPIER</div>
@@ -669,16 +670,15 @@ Headers:
           <div class="card">
             <div class="card-title">CURL</div>
             <div class="codeblk"><span class="cm"># Plain text response</span>
-curl http://localhost:8000 \
-  /pm/serve/assistant.system \
+curl http://localhost:8000/pm/serve/assistant.system \
   -H <span class="st">"Authorization: Bearer YOUR_KEY"</span>
 
 <span class="cm"># JSON response (with metadata)</span>
 curl <span class="st">"...?format=json"</span> \
   -H <span class="st">"Authorization: Bearer YOUR_KEY"</span>
 
-<span class="cm"># With variable substitution</span>
-curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
+<span class="cm"># With variable substitution (repeated params)</span>
+curl <span class="st">"...?vars=tone=formal&amp;vars=name=Alex Smith"</span> \
   -H <span class="st">"Authorization: Bearer YOUR_KEY"</span></div>
           </div>
         </div>
@@ -951,6 +951,12 @@ function updateSidebar(){
     `${S.org.name} · ${(S.org.role||'member').toUpperCase()}`;
   const serveEl = document.getElementById('settings-serve-url');
   if(serveEl) serveEl.innerHTML = `${API}/pm/serve/<span style="color:var(--y)">{key}</span>`;
+  // BUG-06 FIX: Only show logout button in production mode (not in dev/local bypass)
+  const logoutBtn = document.getElementById('btn-logout');
+  if(logoutBtn){
+    const isDevBypass = S.token === 'dev_bypass_token' || !S.token;
+    logoutBtn.style.display = isDevBypass ? 'none' : '';
+  }
 }
 
 async function checkServerHealth(){
@@ -1147,6 +1153,7 @@ function renderVersionHistory(versions, liveId){
     const isLive = v.id===liveId;
     const statusMap = {approved:'tg',pending_review:'ty',draft:'tn',rejected:'tr',archived:'tn'};
     const cls = statusMap[v.status]||'tn';
+    const canQuickApprove = (v.status==='draft'||v.status==='pending_review') && !isLive;
     return `
       <div style="display:flex;align-items:center;gap:6px;padding:5px 7px;background:var(--bg3);border:1px solid ${isLive?'rgba(0,230,118,.3)':'var(--b2)'};margin-bottom:3px;cursor:pointer"
            onclick="loadVersionIntoEditor('${v.id}')">
@@ -1155,6 +1162,7 @@ function renderVersionHistory(versions, liveId){
         ${isLive?'<span style="font-size:8px;color:var(--g)">LIVE</span>':''}
         <span class="tag ${cls}" style="font-size:7px">${v.status}</span>
         ${v.last_eval_score?`<span style="font-size:8px;color:${v.last_eval_score>=8?'var(--g)':v.last_eval_score>=7?'var(--y)':'var(--r)'}">⚡${v.last_eval_score}</span>`:''}
+        ${canQuickApprove?`<button class="btn bp bxs" style="font-size:7px;padding:2px 6px" onclick="event.stopPropagation();quickApprove('${_editPromptId}','${v.id}')" title="Quick approve — go live immediately (local mode)">⚡ LIVE</button>`:''}
       </div>`;
   }).join('');
 }
@@ -1360,16 +1368,18 @@ function renderEvalResult(data){
         <div style="font-size:10px;color:${data.passed?'var(--g)':'var(--r)'}">
           ${data.passed?'✓ PASSED':'✗ FAILED'}</div>
         <div style="font-size:8px;color:var(--t3)">threshold: ${data.threshold||7} · ${data.duration_ms}ms</div>
+        ${data.provider?`<div style="font-size:8px;color:var(--t3)">${data.provider}/${data.model||''} · in:${data.tokens_in||0} out:${data.tokens_out||0} tok</div>`:''}
       </div>
     </div>
     ${Object.entries(criteria).map(([k,v])=>`
       <div class="crit-bar">
-        <div class="crit-label">${k.replace('_',' ')}</div>
+        <div class="crit-label">${k.replace(/_/g,' ')}</div>
         <div class="crit-track"><div class="crit-fill" style="width:${(v/10)*100}%;background:${v>=8?'var(--g)':v>=6?'var(--y)':'var(--r)'}"></div></div>
         <div class="crit-val">${v}</div>
       </div>`).join('')}
     ${data.strengths?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--g);letter-spacing:.08em;margin-bottom:4px">STRENGTHS</div>${data.strengths.map(s=>`<div style="font-size:9px;color:var(--t3);margin-bottom:2px">✓ ${s}</div>`).join('')}</div>`:''}
-    ${data.issues?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--r);letter-spacing:.08em;margin-bottom:4px">ISSUES</div>${data.issues.map(i=>`<div style="font-size:9px;color:var(--t3);margin-bottom:2px">⚠ ${i}</div>`).join('')}</div>`:''}`;
+    ${data.issues?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--r);letter-spacing:.08em;margin-bottom:4px">ISSUES</div>${data.issues.map(i=>`<div style="font-size:9px;color:var(--t3);margin-bottom:2px">⚠ ${i}</div>`).join('')}</div>`:''}
+    ${data.suggestions?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--y);letter-spacing:.08em;margin-bottom:4px">SUGGESTIONS</div>${data.suggestions.map(s=>`<div style="font-size:9px;color:var(--t3);margin-bottom:3px;padding:4px 6px;background:var(--bg3);border-left:2px solid var(--y)">→ ${s}</div>`).join('')}</div>`:''}`;
 }
 
 async function loadTeamKeys(){
@@ -1556,8 +1566,9 @@ function renderEnvList(){
 // ══════════════════════════════════════════════════════════════════════
 async function loadAudit(){
   const filter = document.getElementById('audit-filter')?.value||'';
-  const params = filter ? `?resource_type=${filter}` : '';
-  const data = await api('GET', `/api/v1/audit${params}&limit=50`);
+  // BUG-04 FIX: correctly build query string (?resource_type= or ?limit=)
+  const params = filter ? `?resource_type=${encodeURIComponent(filter)}&limit=50` : '?limit=50';
+  const data = await api('GET', `/api/v1/audit${params}`);
   if(!data) return;
   const logs = data.logs||[];
   const el = document.getElementById('audit-list');
@@ -1695,12 +1706,25 @@ function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').repla
 // ══════════════════════════════════════════════════════════════════════
 // KEYBOARD SHORTCUTS
 // ══════════════════════════════════════════════════════════════════════
-document.addEventListener('keydown', e=>{
+// BUG-05 FIX: check .hidden class, not style.display (auth overlay uses classList)
+document.addEventListener('keydown', e => {
   if(e.key==='Escape') closeModal();
-  if(e.key==='Enter' && document.getElementById('auth-overlay')?.style.display!=='none'){
-    if(document.getElementById('auth-login')?.style.display!=='none') doLogin();
+  const overlay = document.getElementById('auth-overlay');
+  if(e.key==='Enter' && overlay && !overlay.classList.contains('hidden')){
+    const loginPanel = document.getElementById('auth-login');
+    if(loginPanel && loginPanel.style.display !== 'none') doLogin();
   }
 });
+// Quick-approve from editor — sends to new /quick-approve endpoint
+async function quickApprove(promptId, versionId){
+  if(!promptId||!versionId){ notif('No version selected','warn'); return; }
+  const data = await api('POST', `/api/v1/prompts/${promptId}/versions/${versionId}/quick-approve`, {});
+  if(data){
+    notif(`⚡ Live — ${data.version?.version_num ? 'v'+data.version.version_num : ''} approved instantly`);
+    openPromptEditor(promptId);
+    loadDash();
+  }
+}
 // ══════════════════════════════════════════════════════════════════════
 // EXPORT / IMPORT
 // ══════════════════════════════════════════════════════════════════════

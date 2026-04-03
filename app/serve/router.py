@@ -1,7 +1,8 @@
+import re
 import time
 from datetime import datetime, timezone
-from typing import Optional
-from fastapi import APIRouter, Request, HTTPException, Header
+from typing import Optional, List
+from fastapi import APIRouter, Request, HTTPException, Header, Query
 from fastapi.responses import PlainTextResponse, JSONResponse
 from sqlalchemy.orm import Session
 
@@ -64,10 +65,10 @@ async def _resolve_api_key(key_hash, db=None):
 
 
 async def _resolve_prompt(env_id, prompt_key):
-    """Resolve prompt key to content data. Uses cache first."""
+    """Resolve prompt key to content data. Uses cache first. Returns (data, cache_hit)."""
     cached = await get_cached_prompt(env_id, prompt_key)
     if cached is not None:
-        return cached
+        return cached, True
     db = _db()
     try:
         prompt = db.query(Prompt).filter(Prompt.environment_id == env_id, Prompt.key == prompt_key).first()
@@ -87,25 +88,28 @@ async def _resolve_prompt(env_id, prompt_key):
         await cache_prompt(env_id, prompt_key, content_data["content"],
                            content_data["version_num"], content_data["version_id"],
                            content_data["variables"])
-        return content_data
+        return content_data, False
     finally:
         db.close()
 
 
-def _substitute_variables(content, vars_str):
-    """Replace {{variable}} placeholders with values from ?vars= query param."""
-    if not vars_str:
-        return content
-    import re
-    for pair in vars_str.split(","):
+def _substitute_variables(content: str, vars_list: list):
+    """
+    BUG-02 FIX: Replace {{variable}} placeholders.
+    Accepts repeated query params: ?vars=name=John&vars=city=London
+    Values can contain commas freely. Returns (content, unfilled_list).
+    """
+    var_dict = {}
+    for pair in vars_list:
         if "=" in pair:
             k, v = pair.split("=", 1)
             k = k.strip()
-            # Validate key name to prevent lookalike injection
-            if not re.match(r'^[\w_]+$', k):
-                continue
-            content = content.replace(f"{{{{{k}}}}}", v.strip())
-    return content
+            if re.match(r'^[\w_]+$', k):
+                var_dict[k] = v  # preserve value as-is; commas allowed
+    for k, v in var_dict.items():
+        content = content.replace(f"{{{{{k}}}}}", v)
+    unfilled = re.findall(r'\{\{([\w_]+)\}\}', content)
+    return content, unfilled
 
 
 @router.get("/pm/serve/{prompt_key:path}")
@@ -114,7 +118,7 @@ async def serve_prompt(
     request: Request,
     authorization: Optional[str] = Header(None),
     format: str = "text",
-    vars: Optional[str] = None,
+    vars: List[str] = Query(default=[]),
 ):
     t0 = time.monotonic()
     raw_key = _extract_raw_key(authorization)
@@ -129,20 +133,30 @@ async def serve_prompt(
                 content={"detail": f"Rate limit exceeded: {limit} requests/minute per key"},
                 headers={"X-RateLimit-Limit": str(limit), "X-RateLimit-Remaining": "0", "Retry-After": "60"}
             )
-    content_data = await _resolve_prompt(env_id, prompt_key)
-    content = _substitute_variables(content_data["content"], vars)
+    content_data, cache_hit = await _resolve_prompt(env_id, prompt_key)
+    content, unfilled = _substitute_variables(content_data["content"], vars)
     latency_ms = round((time.monotonic() - t0) * 1000, 2)
+    cache_status = "HIT" if cache_hit else "MISS"
+
     if format == "json":
-        return {
+        resp = {
             "key": prompt_key, "content": content,
             "version": content_data["version_num"],
             "version_id": content_data["version_id"],
             "environment": key_data.get("env_name", ""),
             "variables": content_data["variables"],
             "latency_ms": latency_ms,
+            "cache": cache_status,
             "served_at": datetime.now(timezone.utc).isoformat(),
         }
+        if unfilled:
+            resp["unfilled_variables"] = unfilled
+        return resp
     return PlainTextResponse(
         content=content,
-        headers={"X-PM-Version": str(content_data["version_num"]), "X-PM-Latency": str(latency_ms)}
+        headers={
+            "X-PM-Version": str(content_data["version_num"]),
+            "X-PM-Latency": str(latency_ms),
+            "X-PM-Cache": cache_status,
+        }
     )

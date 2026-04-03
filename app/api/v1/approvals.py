@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
 from app.models import PromptVersion, Prompt, Environment, User, Organisation, Project
@@ -8,9 +8,12 @@ router = APIRouter(prefix="/api/v1/approvals", tags=["approvals"])
 
 @router.get("")
 async def list_approvals(
+    limit: int = Query(default=20, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
     auth=Depends(get_current_user_and_org),
     db: Session = Depends(get_db)
 ):
+    """BUG-10 FIX: Paginated approval queue with total count."""
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
@@ -22,14 +25,18 @@ async def list_approvals(
     prompts = db.query(Prompt).filter(Prompt.environment_id.in_(env_ids)).all()
     prompt_ids = [p.id for p in prompts]
     prompt_map = {p.id: p for p in prompts}
+
+    base_q = db.query(PromptVersion).filter(
+        PromptVersion.prompt_id.in_(prompt_ids),
+        PromptVersion.status == "pending_review"
+    )
+    total = base_q.count()
     pending = (
-        db.query(PromptVersion)
+        base_q
         .options(joinedload(PromptVersion.proposed_by))
-        .filter(
-            PromptVersion.prompt_id.in_(prompt_ids),
-            PromptVersion.status == "pending_review"
-        )
         .order_by(PromptVersion.created_at.asc())
+        .offset(offset)
+        .limit(limit)
         .all()
     )
     result = []
@@ -60,4 +67,4 @@ async def list_approvals(
             } if v.proposed_by else None,
             "note": v.approval_note,
         })
-    return {"pending": result}
+    return {"pending": result, "total": total, "limit": limit, "offset": offset}
