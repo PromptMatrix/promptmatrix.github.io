@@ -1,5 +1,8 @@
 import os
+import uuid
+import datetime
 import logging
+import secrets as _secrets
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI
@@ -19,6 +22,107 @@ settings = get_settings()
 log = logging.getLogger(__name__)
 
 
+def _seed_local_admin():
+    """
+    Auto-create a default local admin + workspace on the very first run.
+
+    In local/development mode the backend already bypasses JWT auth entirely
+    (see app/core/auth.py — get_current_user returns db.query(User).first()
+    when APP_ENV=development and no Bearer token is present).  The dashboard
+    also calls /api/v1/auth/me without a token and auto-logs in if it gets a
+    valid response, so the login screen is never shown.
+
+    This function ensures a valid user always exists, so that first-run
+    users land directly in the dashboard without any registration step.
+
+    Safe to call every startup: returns immediately if users already exist.
+    """
+    from app.database import SessionLocal
+    from app.models import User, Organisation, OrgMember, Project, Environment
+    from app.core.auth import hash_password
+
+    db = SessionLocal()
+    try:
+        if db.query(User).count() > 0:
+            return  # already seeded — skip
+
+        log.info("First-run: seeding local admin workspace (no login required)...")
+
+        user = User(
+            id=str(uuid.uuid4()),
+            email="admin@local",
+            # Random password — never used because dev-mode bypasses auth entirely
+            hashed_pw=hash_password(_secrets.token_hex(16)),
+            full_name="Local Admin",
+            is_active=True,
+            email_verified=True,
+            created_at=datetime.datetime.utcnow(),
+        )
+        db.add(user)
+        db.flush()
+
+        # Unique org slug
+        slug = "promptmatrix"
+        i = 1
+        while db.query(Organisation).filter(Organisation.slug == slug).first():
+            slug = f"promptmatrix-{i}"
+            i += 1
+
+        org = Organisation(
+            id=str(uuid.uuid4()),
+            name="PromptMatrix",
+            slug=slug,
+            plan="local",
+            created_at=datetime.datetime.utcnow(),
+        )
+        db.add(org)
+        db.flush()
+
+        member = OrgMember(
+            id=str(uuid.uuid4()),
+            org_id=org.id,
+            user_id=user.id,
+            role="owner",
+            joined_at=datetime.datetime.utcnow(),
+        )
+        db.add(member)
+        db.flush()
+
+        # Seed default project + three standard environments
+        project = Project(
+            id=str(uuid.uuid4()),
+            org_id=org.id,
+            name="Default Project",
+            created_at=datetime.datetime.utcnow(),
+        )
+        db.add(project)
+        db.flush()
+
+        for env_name, display, color, protected, threshold in [
+            ("production",  "Production",  "#00e676", True,  7.0),
+            ("staging",     "Staging",     "#ff9800", True,  6.0),
+            ("development", "Development", "#448aff", False, 0.0),
+        ]:
+            db.add(Environment(
+                id=str(uuid.uuid4()),
+                project_id=project.id,
+                name=env_name,
+                display_name=display,
+                color=color,
+                is_protected=protected,
+                eval_pass_threshold=threshold,
+                created_at=datetime.datetime.utcnow(),
+            ))
+
+        db.commit()
+        log.info("Local admin seeded — dashboard opens without login.")
+    except Exception as e:
+        db.rollback()
+        log.warning("Could not auto-seed local admin: %s (non-fatal, will show login screen)", e)
+    finally:
+        db.close()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifecycle — runs on startup, yields, then runs on shutdown."""
@@ -31,6 +135,12 @@ async def lifespan(app: FastAPI):
             "JWT_SECRET_KEY. If you rotate JWT_SECRET_KEY, all stored eval keys will be "
             "unreadable. Set a separate ENCRYPTION_KEY in .env to avoid data loss."
         )
+
+    # Local-first: auto-seed default admin on first run so the login screen
+    # never appears in development/local mode.
+    # In production (APP_ENV=production), this is skipped — users must register.
+    if settings.app_env == "development":
+        _seed_local_admin()
 
     yield
 
