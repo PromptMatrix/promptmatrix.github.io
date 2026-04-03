@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.pytest_cache/
 .env
 
 # Database files — never commit these

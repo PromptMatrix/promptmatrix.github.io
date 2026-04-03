@@ -1,3 +1,6 @@
+# ── Python Version ──────────────────────────────────────────────────────────
+# Requires Python >=3.11, <3.13 — use pyenv or python.org to get the right version
+#
 # ── Core ──────────────────────────────────────────────────────────
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
