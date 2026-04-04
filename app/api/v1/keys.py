@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from app.database import get_db
-from app.models import ApiKey, Environment, Project, AuditLog
+from app.models import ApiKey, Environment, AuditLog
 from app.core.auth import get_current_user_and_org, require_role, generate_api_key
 from app.serve.cache import invalidate_key_cache
 
@@ -23,7 +23,7 @@ async def list_keys(
         raise HTTPException(status_code=403, detail="No org")
     keys = db.query(ApiKey).filter(
         ApiKey.environment_id == environment_id,
-        ApiKey.is_active == True
+        ApiKey.is_active
     ).order_by(ApiKey.created_at.desc()).all()
     return {"keys": [{
         "id": k.id,

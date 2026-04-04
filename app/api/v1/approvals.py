@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
-from app.models import PromptVersion, Prompt, Environment, User, Organisation, Project
+from app.models import PromptVersion, Prompt, Environment, Project
 from app.core.auth import get_current_user_and_org
 
 router = APIRouter(prefix="/api/v1/approvals", tags=["approvals"])

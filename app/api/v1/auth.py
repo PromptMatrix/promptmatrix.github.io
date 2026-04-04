@@ -1,14 +1,12 @@
 import re
-import secrets
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, field_validator
 from app.database import get_db
-from app.models import User, Organisation, OrgMember, Project, Environment, AuditLog
+from app.models import User, Organisation, OrgMember, Project, Environment
 from app.core.auth import (
-    hash_password, verify_password,
-    create_access_token, create_refresh_token, decode_token,
-    get_current_user, get_current_user_and_org
+    hash_password, decode_token,
+    get_current_user_and_org
 )
 
 from app.services.auth_service import AuthService

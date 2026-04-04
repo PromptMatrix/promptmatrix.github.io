@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
 from typing import Optional, Tuple
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 
-from app.models import User, OrgMember, ApiKey, Environment
+from app.models import User, ApiKey, Environment
 from app.core import auth as auth_core
 
 class AuthService:

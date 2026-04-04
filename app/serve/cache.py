@@ -2,7 +2,6 @@
 Local-only in-memory cache.
 No external dependencies. No Redis. No Upstash. No network calls.
 """
-import json
 import time
 import logging
 from typing import Optional
