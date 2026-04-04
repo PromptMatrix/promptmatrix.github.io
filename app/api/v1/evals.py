@@ -1,11 +1,15 @@
 import re
 from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.core.auth import (decrypt_api_key, encrypt_api_key,
+                           get_current_user_and_org)
 from app.database import get_db
-from app.models import PromptVersion, Prompt, Environment, Project, EvalKey, AuditLog
-from app.core.auth import get_current_user_and_org, encrypt_api_key, decrypt_api_key
+from app.models import (AuditLog, Environment, EvalKey, Project, Prompt,
+                        PromptVersion)
 
 router = APIRouter(prefix="/api/v1/evals", tags=["evals"])
 
@@ -13,39 +17,89 @@ router = APIRouter(prefix="/api/v1/evals", tags=["evals"])
 PROVIDER_CONFIG = {
     "anthropic": {
         "url": "https://api.anthropic.com/v1/messages",
-        "get_headers": lambda key: {"x-api-key": key, "anthropic-version": "2023-06-01", "Content-Type": "application/json"},
-        "get_body": lambda model, prompt: {"model": model, "max_tokens": 1024, "messages": [{"role": "user", "content": prompt}]},
+        "get_headers": lambda key: {
+            "x-api-key": key,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json",
+        },
+        "get_body": lambda model, prompt: {
+            "model": model,
+            "max_tokens": 1024,
+            "messages": [{"role": "user", "content": prompt}],
+        },
         "parse_text": lambda r: r["content"][0]["text"],
-        "parse_tokens": lambda r: (r["usage"]["input_tokens"], r["usage"]["output_tokens"]),
+        "parse_tokens": lambda r: (
+            r["usage"]["input_tokens"],
+            r["usage"]["output_tokens"],
+        ),
     },
     "openai": {
         "url": "https://api.openai.com/v1/chat/completions",
-        "get_headers": lambda key: {"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        "get_body": lambda model, prompt: {"model": model, "messages": [{"role": "user", "content": prompt}], "response_format": {"type": "json_object"}, "max_tokens": 1024},
+        "get_headers": lambda key: {
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+        },
+        "get_body": lambda model, prompt: {
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "response_format": {"type": "json_object"},
+            "max_tokens": 1024,
+        },
         "parse_text": lambda r: r["choices"][0]["message"]["content"],
-        "parse_tokens": lambda r: (r["usage"]["prompt_tokens"], r["usage"]["completion_tokens"]),
+        "parse_tokens": lambda r: (
+            r["usage"]["prompt_tokens"],
+            r["usage"]["completion_tokens"],
+        ),
     },
     "google": {
         "url": None,  # built dynamically with model + key
         "get_url": lambda model, key: f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
         "get_headers": lambda key: {"Content-Type": "application/json"},
-        "get_body": lambda model, prompt: {"contents": [{"parts": [{"text": prompt}]}], "generationConfig": {"maxOutputTokens": 1024}},
+        "get_body": lambda model, prompt: {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"maxOutputTokens": 1024},
+        },
         "parse_text": lambda r: r["candidates"][0]["content"]["parts"][0]["text"],
-        "parse_tokens": lambda r: (r.get("usageMetadata", {}).get("promptTokenCount", 0), r.get("usageMetadata", {}).get("candidatesTokenCount", 0)),
+        "parse_tokens": lambda r: (
+            r.get("usageMetadata", {}).get("promptTokenCount", 0),
+            r.get("usageMetadata", {}).get("candidatesTokenCount", 0),
+        ),
     },
     "groq": {
         "url": "https://api.groq.com/openai/v1/chat/completions",
-        "get_headers": lambda key: {"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        "get_body": lambda model, prompt: {"model": model, "messages": [{"role": "user", "content": prompt}], "response_format": {"type": "json_object"}, "max_tokens": 1024},
+        "get_headers": lambda key: {
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+        },
+        "get_body": lambda model, prompt: {
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "response_format": {"type": "json_object"},
+            "max_tokens": 1024,
+        },
         "parse_text": lambda r: r["choices"][0]["message"]["content"],
-        "parse_tokens": lambda r: (r["usage"]["prompt_tokens"], r["usage"]["completion_tokens"]),
+        "parse_tokens": lambda r: (
+            r["usage"]["prompt_tokens"],
+            r["usage"]["completion_tokens"],
+        ),
     },
     "mistral": {
         "url": "https://api.mistral.ai/v1/chat/completions",
-        "get_headers": lambda key: {"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-        "get_body": lambda model, prompt: {"model": model, "messages": [{"role": "user", "content": prompt}], "response_format": {"type": "json_object"}, "max_tokens": 1024},
+        "get_headers": lambda key: {
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+        },
+        "get_body": lambda model, prompt: {
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "response_format": {"type": "json_object"},
+            "max_tokens": 1024,
+        },
         "parse_text": lambda r: r["choices"][0]["message"]["content"],
-        "parse_tokens": lambda r: (r["usage"]["prompt_tokens"], r["usage"]["completion_tokens"]),
+        "parse_tokens": lambda r: (
+            r["usage"]["prompt_tokens"],
+            r["usage"]["completion_tokens"],
+        ),
     },
 }
 
@@ -60,6 +114,7 @@ class RunEvalIn(BaseModel):
     test_input: str = ""
     eval_type: str = "llm_judge"  # rule_based | llm_judge | both
 
+
 class SaveKeyIn(BaseModel):
     provider: str
     api_key: str
@@ -72,24 +127,51 @@ def _rule_based_eval(content: str) -> dict:
     words = len(content.split())
 
     # Role clarity: starts with "You are" or defines persona
-    role_score = 9.0 if re.search(r'^\s*you are', content.lower()) else (
-        6.0 if re.search(r'^\s*(act as|your role|as an)', content.lower()) else 3.0
+    role_score = (
+        9.0
+        if re.search(r"^\s*you are", content.lower())
+        else (
+            6.0 if re.search(r"^\s*(act as|your role|as an)", content.lower()) else 3.0
+        )
     )
     score_map["role_clarity"] = role_score
 
     # Instruction quality: imperative verbs, clear commands
-    imperatives = ["always", "never", "respond", "provide", "avoid", "ensure", "do not", "must", "only", "focus"]
+    imperatives = [
+        "always",
+        "never",
+        "respond",
+        "provide",
+        "avoid",
+        "ensure",
+        "do not",
+        "must",
+        "only",
+        "focus",
+    ]
     matches = sum(1 for kw in imperatives if kw in content.lower())
     score_map["instruction_quality"] = min(10.0, 3.0 + matches * 1.0)
 
     # Output format: specifies expected output
-    format_kws = ["json", "markdown", "bullet", "numbered", "list", "format:", "output:", "respond with", "structure"]
+    format_kws = [
+        "json",
+        "markdown",
+        "bullet",
+        "numbered",
+        "list",
+        "format:",
+        "output:",
+        "respond with",
+        "structure",
+    ]
     fmt_score = min(10.0, 4.0 + sum(1.5 for kw in format_kws if kw in content.lower()))
     score_map["output_format"] = fmt_score
 
     # Variable usage: {{variables}} detected
-    vars_found = len(re.findall(r'\{\{[\w_]+\}\}', content))
-    score_map["variable_usage"] = min(10.0, 5.0 + vars_found * 1.5) if vars_found > 0 else 6.0
+    vars_found = len(re.findall(r"\{\{[\w_]+\}\}", content))
+    score_map["variable_usage"] = (
+        min(10.0, 5.0 + vars_found * 1.5) if vars_found > 0 else 6.0
+    )
 
     # Length appropriateness: 50–800 words is optimal
     if words < 20:
@@ -102,7 +184,13 @@ def _rule_based_eval(content: str) -> dict:
         score_map["length"] = max(5.0, 9.0 - (words - 800) / 200)
 
     # Safety: no PII or secret patterns
-    secret_patterns = [r'sk-[a-zA-Z0-9]{20,}', r'\b\d{3}-\d{2}-\d{4}\b', r'\b\d{16}\b', r'\bpassword\s*[:=]', r'xox[baprs]-']
+    secret_patterns = [
+        r"sk-[a-zA-Z0-9]{20,}",
+        r"\b\d{3}-\d{2}-\d{4}\b",
+        r"\b\d{16}\b",
+        r"\bpassword\s*[:=]",
+        r"xox[baprs]-",
+    ]
     pii_found = any(re.search(p, content) for p in secret_patterns)
     score_map["safety"] = 2.0 if pii_found else 9.0
 
@@ -128,27 +216,46 @@ def _rule_based_eval(content: str) -> dict:
 def _rule_based_suggestions(score_map: dict) -> list:
     suggestions = []
     if score_map.get("role_clarity", 10) < 6:
-        suggestions.append("Start with 'You are a [role]...' to define the assistant's persona clearly.")
+        suggestions.append(
+            "Start with 'You are a [role]...' to define the assistant's persona clearly."
+        )
     if score_map.get("instruction_quality", 10) < 6:
-        suggestions.append("Add imperative instructions: 'Always...', 'Never...', 'Respond with...'")
+        suggestions.append(
+            "Add imperative instructions: 'Always...', 'Never...', 'Respond with...'"
+        )
     if score_map.get("output_format", 10) < 6:
-        suggestions.append("Specify the expected output format (JSON, markdown, bullet list, etc.)")
+        suggestions.append(
+            "Specify the expected output format (JSON, markdown, bullet list, etc.)"
+        )
     if score_map.get("variable_usage", 10) < 6:
-        suggestions.append("Use {{variable_name}} syntax for dynamic values instead of hardcoding them.")
+        suggestions.append(
+            "Use {{variable_name}} syntax for dynamic values instead of hardcoding them."
+        )
     if score_map.get("length", 10) < 5:
-        suggestions.append("The prompt is too short — add more specific instructions and context.")
+        suggestions.append(
+            "The prompt is too short — add more specific instructions and context."
+        )
     if score_map.get("safety", 10) < 5:
-        suggestions.append("Remove any hardcoded secrets, API keys, or PII from the prompt content.")
+        suggestions.append(
+            "Remove any hardcoded secrets, API keys, or PII from the prompt content."
+        )
     return suggestions
 
-async def _llm_eval(content: str, test_input: str, provider: str, model: str, api_key: str) -> dict:
+
+async def _llm_eval(
+    content: str, test_input: str, provider: str, model: str, api_key: str
+) -> dict:
     """LLM-as-judge eval using BYOK. Key is deleted from scope immediately after use."""
-    import time
     import json
+    import time
+
     import httpx
 
     if provider not in PROVIDER_CONFIG:
-        raise HTTPException(status_code=400, detail=f"Unknown provider '{provider}'. Valid: {', '.join(VALID_PROVIDERS)}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown provider '{provider}'. Valid: {', '.join(VALID_PROVIDERS)}",
+        )
 
     judge_prompt = f"""You are a senior prompt engineer evaluating a system prompt for quality.
 
@@ -184,7 +291,12 @@ Respond ONLY with valid JSON:
         tokens_in, tokens_out = cfg["parse_tokens"](raw)
         clean = text.strip().replace("```json", "").replace("```", "").strip()
         data = json.loads(clean)
-        criteria = {k: float(v) for k, v in data.items() if k not in ("strengths", "issues", "suggestions") and isinstance(v, (int, float))}
+        criteria = {
+            k: float(v)
+            for k, v in data.items()
+            if k not in ("strengths", "issues", "suggestions")
+            and isinstance(v, (int, float))
+        }
         overall = round(sum(criteria.values()) / len(criteria), 1) if criteria else 5.0
         return {
             "overall_score": overall,
@@ -204,15 +316,18 @@ Respond ONLY with valid JSON:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"LLM eval failed ({provider}): {str(e)}")
+        raise HTTPException(
+            status_code=502, detail=f"LLM eval failed ({provider}): {str(e)}"
+        )
     finally:
         del key  # BYOK: explicit scope delete
+
 
 @router.post("/run")
 async def run_eval(
     body: RunEvalIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
@@ -234,28 +349,49 @@ async def run_eval(
         result = _rule_based_eval(v.content)
     else:
         if body.provider not in VALID_PROVIDERS:
-            raise HTTPException(status_code=400, detail=f"Unknown provider '{body.provider}'. Valid: {', '.join(VALID_PROVIDERS)}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unknown provider '{body.provider}'. Valid: {', '.join(VALID_PROVIDERS)}",
+            )
         if not body.api_key or body.api_key in ("", "none"):
-            k = db.query(EvalKey).filter(
-                EvalKey.org_id == member.org_id,
-                EvalKey.provider == body.provider
-            ).first()
+            k = (
+                db.query(EvalKey)
+                .filter(
+                    EvalKey.org_id == member.org_id, EvalKey.provider == body.provider
+                )
+                .first()
+            )
             if not k:
-                raise HTTPException(status_code=400, detail=f"No saved key for '{body.provider}'. Pass api_key in request or save one via /api/v1/evals/keys")
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"No saved key for '{body.provider}'. Pass api_key in request or save one via /api/v1/evals/keys",
+                )
             api_key_to_use = decrypt_api_key(k.encrypted_key)
         else:
             api_key_to_use = body.api_key
-        result = await _llm_eval(v.content, body.test_input, body.provider, body.model, api_key_to_use)
+        result = await _llm_eval(
+            v.content, body.test_input, body.provider, body.model, api_key_to_use
+        )
 
     v.last_eval_score = result["overall_score"]
     v.last_eval_passed = result["passed"]
     v.last_eval_at = datetime.now(timezone.utc)
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="eval.run", resource_type="version", resource_id=v.id,
-        extra={"score": result["overall_score"], "passed": result["passed"],
-               "eval_type": result["eval_type"], "provider": result.get("provider", "")}
-    ))
+    db.add(
+        AuditLog(
+            org_id=member.org_id,
+            actor_id=user.id,
+            actor_email=user.email,
+            action="eval.run",
+            resource_type="version",
+            resource_id=v.id,
+            extra={
+                "score": result["overall_score"],
+                "passed": result["passed"],
+                "eval_type": result["eval_type"],
+                "provider": result.get("provider", ""),
+            },
+        )
+    )
     db.commit()
     return result
 
@@ -265,28 +401,34 @@ async def list_providers():
     """Returns list of supported LLM providers for eval."""
     return {"providers": VALID_PROVIDERS}
 
+
 @router.get("/keys")
 async def list_eval_keys(
-    auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    auth=Depends(get_current_user_and_org), db: Session = Depends(get_db)
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     keys = db.query(EvalKey).filter(EvalKey.org_id == member.org_id).all()
-    return {"keys": [{
-        "id": k.id,
-        "provider": k.provider,
-        "hint": k.key_hint,
-        "label": k.label,
-        "created_at": k.created_at.isoformat() if k.created_at else None,
-    } for k in keys]}
+    return {
+        "keys": [
+            {
+                "id": k.id,
+                "provider": k.provider,
+                "hint": k.key_hint,
+                "label": k.label,
+                "created_at": k.created_at.isoformat() if k.created_at else None,
+            }
+            for k in keys
+        ]
+    }
+
 
 @router.post("/keys")
 async def save_eval_key(
     body: SaveKeyIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
@@ -305,19 +447,19 @@ async def save_eval_key(
     db.commit()
     return {"message": "Saved", "id": k.id}
 
+
 @router.delete("/keys/{key_id}")
 async def delete_eval_key(
-    key_id: str,
-    auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    key_id: str, auth=Depends(get_current_user_and_org), db: Session = Depends(get_db)
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
-    k = db.query(EvalKey).filter(
-        EvalKey.id == key_id,
-        EvalKey.org_id == member.org_id
-    ).first()
+    k = (
+        db.query(EvalKey)
+        .filter(EvalKey.id == key_id, EvalKey.org_id == member.org_id)
+        .first()
+    )
     if not k:
         raise HTTPException(status_code=404, detail="Not found")
     db.delete(k)

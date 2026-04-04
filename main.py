@@ -1,21 +1,23 @@
-import uuid
 import datetime
 import logging
 import secrets as _secrets
+import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
-from app.config import get_settings
-from app.serve.router import router as serve_router
-from app.api.v1.auth import router as auth_router
-from app.api.v1.prompts import router as prompts_router
+from fastapi.responses import FileResponse, JSONResponse
+
 from app.api.v1.approvals import router as approvals_router
+from app.api.v1.audit import router as audit_router
+from app.api.v1.auth import router as auth_router
+from app.api.v1.evals import router as evals_router
 from app.api.v1.keys import router as keys_router
 from app.api.v1.projects import router as projects_router
-from app.api.v1.audit import router as audit_router
-from app.api.v1.evals import router as evals_router
+from app.api.v1.prompts import router as prompts_router
+from app.config import get_settings
+from app.serve.router import router as serve_router
 
 settings = get_settings()
 log = logging.getLogger(__name__)
@@ -36,9 +38,9 @@ def _seed_local_admin():
 
     Safe to call every startup: returns immediately if users already exist.
     """
-    from app.database import SessionLocal
-    from app.models import User, Organisation, OrgMember, Project, Environment
     from app.core.auth import hash_password
+    from app.database import SessionLocal
+    from app.models import Environment, Organisation, OrgMember, Project, User
 
     db = SessionLocal()
     try:
@@ -98,26 +100,30 @@ def _seed_local_admin():
         db.flush()
 
         for env_name, display, color, protected, threshold in [
-            ("production",  "Production",  "#00e676", True,  7.0),
-            ("staging",     "Staging",     "#ff9800", True,  6.0),
+            ("production", "Production", "#00e676", True, 7.0),
+            ("staging", "Staging", "#ff9800", True, 6.0),
             ("development", "Development", "#448aff", False, 0.0),
         ]:
-            db.add(Environment(
-                id=str(uuid.uuid4()),
-                project_id=project.id,
-                name=env_name,
-                display_name=display,
-                color=color,
-                is_protected=protected,
-                eval_pass_threshold=threshold,
-                created_at=datetime.datetime.utcnow(),
-            ))
+            db.add(
+                Environment(
+                    id=str(uuid.uuid4()),
+                    project_id=project.id,
+                    name=env_name,
+                    display_name=display,
+                    color=color,
+                    is_protected=protected,
+                    eval_pass_threshold=threshold,
+                    created_at=datetime.datetime.utcnow(),
+                )
+            )
 
         db.commit()
         log.info("Local admin seeded — dashboard opens without login.")
     except Exception as e:
         db.rollback()
-        log.warning("Could not auto-seed local admin: %s (non-fatal, will show login screen)", e)
+        log.warning(
+            "Could not auto-seed local admin: %s (non-fatal, will show login screen)", e
+        )
     finally:
         db.close()
 
@@ -186,21 +192,22 @@ async def status():
         "env": settings.app_env,
     }
 
+
 BASE_DIR = Path(__file__).resolve().parent
+
 
 @app.get("/")
 async def root():
     return FileResponse(BASE_DIR / "index.html")
 
+
 @app.get("/dashboard")
 async def dashboard():
     return FileResponse(BASE_DIR / "dashboard.html")
+
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
     if settings.debug:
         raise exc
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal server error"}
-    )
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})

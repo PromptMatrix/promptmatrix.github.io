@@ -9,6 +9,7 @@ Cache is replaced with a fresh _NoopCache so tests run without external deps.
 """
 
 import os
+
 import pytest
 
 # Set test env before any app imports
@@ -19,28 +20,25 @@ os.environ.setdefault("ENCRYPTION_KEY", "test-enc-key-not-for-prod-xxxxxx")
 # Protected routes must still require real JWT tokens.
 os.environ["APP_ENV"] = "testing"
 
+import sys
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from app.core.auth import generate_api_key, hash_password
 from app.database import Base, get_db
-from app.models import (
-    Organisation, User, OrgMember, Project, Environment,
-    Prompt, PromptVersion, ApiKey
-)
-from app.core.auth import hash_password, generate_api_key
+from app.models import (ApiKey, Environment, Organisation, OrgMember, Project,
+                        Prompt, PromptVersion, User)
 
 # ── Test database — fresh in-memory SQLite ────────────────────────
 
 TEST_DB_URL = "sqlite://"
 test_engine = create_engine(
-    TEST_DB_URL, 
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool
+    TEST_DB_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool
 )
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
@@ -69,8 +67,14 @@ def _clean_db():
     try:
         # Delete in dependency order
         for model in [
-            PromptVersion, Prompt, ApiKey,
-            Environment, Project, OrgMember, User, Organisation
+            PromptVersion,
+            Prompt,
+            ApiKey,
+            Environment,
+            Project,
+            OrgMember,
+            User,
+            Organisation,
         ]:
             db.query(model).delete()
         db.commit()
@@ -90,6 +94,7 @@ def client():
     cache_module._cache = cache_module._NoopCache()
 
     import app.database
+
     original_session_local = app.database.SessionLocal
     app.database.SessionLocal = TestSessionLocal
 
@@ -114,50 +119,70 @@ def db():
 
 # ── Seed helpers ──────────────────────────────────────────────────
 
+
 def seed_org_user(db, email="owner@test.com", role="owner", plan="local"):
     """Create org + user + membership. Returns (org, user, member, project, env)."""
     import re
+
     slug_base = re.sub(r"[^a-z0-9]", "-", email.split("@")[0])
     slug = slug_base
     i = 1
     while db.query(Organisation).filter(Organisation.slug == slug).first():
-        slug = f"{slug_base}-{i}"; i += 1
+        slug = f"{slug_base}-{i}"
+        i += 1
 
     org = Organisation(name=f"{email}'s Org", slug=slug, plan=plan)
-    db.add(org); db.flush()
+    db.add(org)
+    db.flush()
 
-    user = User(email=email, hashed_pw=hash_password("password123"), full_name="Test User")
-    db.add(user); db.flush()
+    user = User(
+        email=email, hashed_pw=hash_password("password123"), full_name="Test User"
+    )
+    db.add(user)
+    db.flush()
 
     member = OrgMember(org_id=org.id, user_id=user.id, role=role)
-    db.add(member); db.flush()
+    db.add(member)
+    db.flush()
 
     project = Project(org_id=org.id, name="Default")
-    db.add(project); db.flush()
+    db.add(project)
+    db.flush()
 
     env = Environment(
-        project_id=project.id, name="production",
-        display_name="Production", color="#00e676",
-        is_protected=True, eval_pass_threshold=7.0
+        project_id=project.id,
+        name="production",
+        display_name="Production",
+        color="#00e676",
+        is_protected=True,
+        eval_pass_threshold=7.0,
     )
-    db.add(env); db.flush()
+    db.add(env)
+    db.flush()
     db.commit()
 
     return org, user, member, project, env
 
 
-def seed_approved_prompt(db, env_id, user_id, key="assistant.system", content="You are a helpful assistant."):
+def seed_approved_prompt(
+    db, env_id, user_id, key="assistant.system", content="You are a helpful assistant."
+):
     """Create a prompt with one approved live version. Returns (prompt, version)."""
     prompt = Prompt(environment_id=env_id, key=key, description="test")
-    db.add(prompt); db.flush()
+    db.add(prompt)
+    db.flush()
 
     v = PromptVersion(
-        prompt_id=prompt.id, version_num=1,
-        content=content, commit_message="init",
+        prompt_id=prompt.id,
+        version_num=1,
+        content=content,
+        commit_message="init",
         status="approved",
-        proposed_by_id=user_id, approved_by_id=user_id,
+        proposed_by_id=user_id,
+        approved_by_id=user_id,
     )
-    db.add(v); db.flush()
+    db.add(v)
+    db.flush()
     prompt.live_version_id = v.id
     db.commit()
     return prompt, v
@@ -167,10 +192,10 @@ def seed_api_key(db, env_id, name="test-key"):
     """Create and return (full_key_string, ApiKey row)."""
     full_key, key_hash, key_prefix = generate_api_key("production")
     row = ApiKey(
-        environment_id=env_id, name=name,
-        key_hash=key_hash, key_prefix=key_prefix
+        environment_id=env_id, name=name, key_hash=key_hash, key_prefix=key_prefix
     )
-    db.add(row); db.commit()
+    db.add(row)
+    db.commit()
     return full_key, row
 
 

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import argparse
-import sys
 import os
-import httpx
+import sys
 from typing import Optional
 
+import httpx
+
 DEFAULT_BASE_URL = "http://localhost:8000"
+
 
 class PromptMatrixCLI:
     def __init__(self, base_url: str):
@@ -36,8 +38,9 @@ class PromptMatrixCLI:
     def list_prompts(self):
         # 1. Get projects to find the development environment
         resp = self.client.get("/api/v1/projects")
-        if resp.status_code != 200: self._handle_error(resp)
-        
+        if resp.status_code != 200:
+            self._handle_error(resp)
+
         projects = resp.json().get("projects", [])
         if not projects:
             print("No projects found.")
@@ -47,11 +50,12 @@ class PromptMatrixCLI:
             print(f"\nProject: {proj['name']} ({proj['id']})")
             for env in proj.get("environments", []):
                 print(f"  Env: {env['name']} [{env['display_name']}] ({env['id']})")
-                
+
                 # Fetch prompts for this environment
                 p_resp = self.client.get(f"/api/v1/prompts?environment_id={env['id']}")
-                if p_resp.status_code != 200: continue
-                
+                if p_resp.status_code != 200:
+                    continue
+
                 prompts = p_resp.json().get("prompts", [])
                 if not prompts:
                     print("    (no prompts)")
@@ -64,14 +68,15 @@ class PromptMatrixCLI:
         if not os.path.exists(file_path):
             print(f"Error: File not found: {file_path}")
             sys.exit(1)
-        
+
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         # 1. Find development environment
         resp = self.client.get("/api/v1/projects")
-        if resp.status_code != 200: self._handle_error(resp)
-        
+        if resp.status_code != 200:
+            self._handle_error(resp)
+
         projects = resp.json().get("projects", [])
         dev_env_id = None
         for proj in projects:
@@ -79,16 +84,18 @@ class PromptMatrixCLI:
                 if env["name"] == "development":
                     dev_env_id = env["id"]
                     break
-            if dev_env_id: break
-        
+            if dev_env_id:
+                break
+
         if not dev_env_id:
             print("Error: Could not find a 'development' environment.")
             sys.exit(1)
 
         # 2. Check if prompt exists
         p_resp = self.client.get(f"/api/v1/prompts?environment_id={dev_env_id}")
-        if p_resp.status_code != 200: self._handle_error(p_resp)
-        
+        if p_resp.status_code != 200:
+            self._handle_error(p_resp)
+
         prompts = p_resp.json().get("prompts", [])
         existing_prompt = next((p for p in prompts if p["key"] == key), None)
 
@@ -100,11 +107,12 @@ class PromptMatrixCLI:
                 "key": key,
                 "content": content,
                 "description": description or f"CLI push of {key}",
-                "commit_message": "Initial CLI push"
+                "commit_message": "Initial CLI push",
             }
             create_resp = self.client.post("/api/v1/prompts", json=payload)
-            if create_resp.status_code != 200: self._handle_error(create_resp)
-            
+            if create_resp.status_code != 200:
+                self._handle_error(create_resp)
+
             prompt_id = create_resp.json()["prompt"]["id"]
             # Prompt creation automatically creates v1 as draft. We need to find its ID.
             # Usually it's in the response, but our _serialize_prompt doesn't show all drafts.
@@ -120,19 +128,23 @@ class PromptMatrixCLI:
             # Create new version for existing prompt
             prompt_id = existing_prompt["id"]
             print(f"Updating prompt: {key} (ID: {prompt_id})...")
-            v_payload = {
-                "content": content,
-                "commit_message": "CLI update"
-            }
-            v_resp = self.client.post(f"/api/v1/prompts/{prompt_id}/versions", json=v_payload)
-            if v_resp.status_code != 200: self._handle_error(v_resp)
+            v_payload = {"content": content, "commit_message": "CLI update"}
+            v_resp = self.client.post(
+                f"/api/v1/prompts/{prompt_id}/versions", json=v_payload
+            )
+            if v_resp.status_code != 200:
+                self._handle_error(v_resp)
             version_id = v_resp.json()["version"]["id"]
 
         # 3. Quick Approve (Dev Mode Only)
         print(f"Approving version {version_id}...")
-        app_resp = self.client.post(f"/api/v1/prompts/{prompt_id}/versions/{version_id}/quick-approve")
+        app_resp = self.client.post(
+            f"/api/v1/prompts/{prompt_id}/versions/{version_id}/quick-approve"
+        )
         if app_resp.status_code == 200:
-            print(f"[OK] Successfully pushed and approved '{key}' (v{app_resp.json()['version']['version_num']})")
+            print(
+                f"[OK] Successfully pushed and approved '{key}' (v{app_resp.json()['version']['version_num']})"
+            )
         else:
             print(f"[WARN] Push succeeded but quick-approve failed: {app_resp.text}")
             print("You may need to approve it manually in the dashboard.")
@@ -150,10 +162,15 @@ class PromptMatrixCLI:
         else:
             self._handle_error(resp)
 
+
 def main():
     parser = argparse.ArgumentParser(description="PromptMatrix CLI - Local Edition")
-    parser.add_argument("--url", default=DEFAULT_BASE_URL, help=f"Base URL (default: {DEFAULT_BASE_URL})")
-    
+    parser.add_argument(
+        "--url",
+        default=DEFAULT_BASE_URL,
+        help=f"Base URL (default: {DEFAULT_BASE_URL})",
+    )
+
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
     # Status
@@ -163,13 +180,17 @@ def main():
     subparsers.add_parser("list", help="List all prompts and environments")
 
     # Push
-    push_parser = subparsers.add_parser("push", help="Push a local file as a live prompt")
+    push_parser = subparsers.add_parser(
+        "push", help="Push a local file as a live prompt"
+    )
     push_parser.add_argument("key", help="Prompt key (e.g. system.assistant)")
     push_parser.add_argument("file", help="Path to text file")
     push_parser.add_argument("--desc", help="Optional description")
 
     # Pull
-    pull_parser = subparsers.add_parser("pull", help="Pull live prompt content to a local file")
+    pull_parser = subparsers.add_parser(
+        "pull", help="Pull live prompt content to a local file"
+    )
     pull_parser.add_argument("key", help="Prompt key")
     pull_parser.add_argument("file", help="Destination path")
 
@@ -186,6 +207,7 @@ def main():
         cli.pull(args.key, args.file)
     else:
         parser.print_help()
+
 
 if __name__ == "__main__":
     main()

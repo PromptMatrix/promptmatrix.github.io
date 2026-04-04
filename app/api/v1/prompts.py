@@ -1,18 +1,18 @@
 import re
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func
-from pydantic import BaseModel, field_validator
-from app.database import get_db
-from app.models import (
-    Prompt, PromptVersion, Environment, AuditLog
-)
-from app.core.auth import get_current_user_and_org, require_role
-from app.serve.cache import invalidate_prompt_cache
 
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, field_validator
+from sqlalchemy import func
+from sqlalchemy.orm import Session, joinedload
+
+from app.core.auth import get_current_user_and_org, require_role
+from app.database import get_db
+from app.models import AuditLog, Environment, Prompt, PromptVersion
+from app.serve.cache import invalidate_prompt_cache
 from app.services.prompt_service import PromptService
 
 router = APIRouter(prefix="/api/v1/prompts", tags=["prompts"])
+
 
 class CreatePromptIn(BaseModel):
     environment_id: str
@@ -21,28 +21,37 @@ class CreatePromptIn(BaseModel):
     description: str = ""
     commit_message: str = "Initial version"
     tags: list = []
+
     @field_validator("key")
     def key_format(cls, v):
-        if not re.match(r'^[a-z0-9._\-]{1,200}$', v):
-            raise ValueError("Key format invalid. Use lowercase letters, digits, dots, dashes, underscores only.")
+        if not re.match(r"^[a-z0-9._\-]{1,200}$", v):
+            raise ValueError(
+                "Key format invalid. Use lowercase letters, digits, dots, dashes, underscores only."
+            )
         return v
+
 
 class CreateVersionIn(BaseModel):
     content: str
     commit_message: str = ""
 
+
 class SubmitReviewIn(BaseModel):
     note: str = ""
+
 
 class ApproveIn(BaseModel):
     note: str = ""
 
+
 class RejectIn(BaseModel):
     reason: str
+
 
 class PromoteIn(BaseModel):
     target_environment_id: str
     auto_approve: bool = False
+
 
 class AssistIn(BaseModel):
     task_description: str = ""
@@ -53,6 +62,7 @@ class AssistIn(BaseModel):
     api_key: str = ""
     eval_key_id: str = ""
 
+
 def _serialize_version(v: PromptVersion, is_live: bool = False) -> dict:
     return {
         "id": v.id,
@@ -62,8 +72,16 @@ def _serialize_version(v: PromptVersion, is_live: bool = False) -> dict:
         "status": v.status,
         "variables": v.variables or {},
         "parent_content": v.parent_content,
-        "proposed_by": {"email": v.proposed_by.email, "name": v.proposed_by.full_name} if v.proposed_by else None,
-        "approved_by": {"email": v.approved_by.email, "name": v.approved_by.full_name} if v.approved_by else None,
+        "proposed_by": (
+            {"email": v.proposed_by.email, "name": v.proposed_by.full_name}
+            if v.proposed_by
+            else None
+        ),
+        "approved_by": (
+            {"email": v.approved_by.email, "name": v.approved_by.full_name}
+            if v.approved_by
+            else None
+        ),
         "last_eval_score": v.last_eval_score,
         "last_eval_passed": v.last_eval_passed,
         "last_eval_at": v.last_eval_at.isoformat() if v.last_eval_at else None,
@@ -71,6 +89,7 @@ def _serialize_version(v: PromptVersion, is_live: bool = False) -> dict:
         "approved_at": v.approved_at.isoformat() if v.approved_at else None,
         "is_live": is_live,
     }
+
 
 def _serialize_prompt(p: Prompt, version_count: int = None) -> dict:
     live = p.live_version
@@ -85,11 +104,12 @@ def _serialize_prompt(p: Prompt, version_count: int = None) -> dict:
         "updated_at": p.updated_at.isoformat() if p.updated_at else None,
     }
 
+
 @router.get("")
 async def list_prompts(
     environment_id: str,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
@@ -109,24 +129,29 @@ async def list_prompts(
         .all()
     )
 
-    count_rows = db.query(version_counts_subq).filter(
-        version_counts_subq.c.prompt_id.in_([p.id for p in prompts])
-    ).all() if prompts else []
+    count_rows = (
+        db.query(version_counts_subq)
+        .filter(version_counts_subq.c.prompt_id.in_([p.id for p in prompts]))
+        .all()
+        if prompts
+        else []
+    )
     count_map = {row.prompt_id: row.cnt for row in count_rows}
 
     return {"prompts": [_serialize_prompt(p, count_map.get(p.id, 0)) for p in prompts]}
+
 
 @router.post("")
 async def create_prompt(
     body: CreatePromptIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "editor")
-    
+
     service = PromptService(db)
     prompt = service.create_prompt(
         env_id=body.environment_id,
@@ -137,17 +162,22 @@ async def create_prompt(
         org_id=member.org_id,
         description=body.description,
         commit_message=body.commit_message,
-        tags=body.tags
+        tags=body.tags,
     )
-    
-    vc = db.query(func.count(PromptVersion.id)).filter(PromptVersion.prompt_id == prompt.id).scalar()
+
+    vc = (
+        db.query(func.count(PromptVersion.id))
+        .filter(PromptVersion.prompt_id == prompt.id)
+        .scalar()
+    )
     return {"prompt": _serialize_prompt(prompt, version_count=vc)}
+
 
 @router.get("/{prompt_id}")
 async def get_prompt(
     prompt_id: str,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
@@ -157,7 +187,7 @@ async def get_prompt(
         .options(
             joinedload(Prompt.versions).joinedload(PromptVersion.proposed_by),
             joinedload(Prompt.versions).joinedload(PromptVersion.approved_by),
-            joinedload(Prompt.live_version)
+            joinedload(Prompt.live_version),
         )
         .filter(Prompt.id == prompt_id)
         .first()
@@ -168,21 +198,22 @@ async def get_prompt(
     versions = sorted(prompt.versions, key=lambda v: v.version_num)
     return {
         "prompt": _serialize_prompt(prompt),
-        "versions": [_serialize_version(v, v.id == lv_id) for v in versions]
+        "versions": [_serialize_version(v, v.id == lv_id) for v in versions],
     }
+
 
 @router.post("/{prompt_id}/versions")
 async def create_version(
     prompt_id: str,
     body: CreateVersionIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "editor")
-    
+
     service = PromptService(db)
     v = service.create_version(
         prompt_id=prompt_id,
@@ -190,9 +221,10 @@ async def create_version(
         user_id=user.id,
         user_email=user.email,
         org_id=member.org_id,
-        commit_message=body.commit_message
+        commit_message=body.commit_message,
     )
     return {"version": _serialize_version(v)}
+
 
 @router.post("/{prompt_id}/versions/{version_id}/submit")
 async def submit_for_review(
@@ -200,25 +232,30 @@ async def submit_for_review(
     version_id: str,
     body: SubmitReviewIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
-    
+
     service = PromptService(db)
     # Guard: cannot submit if already pending or approved
-    v_check = db.query(PromptVersion).filter(
-        PromptVersion.id == version_id, PromptVersion.prompt_id == prompt_id
-    ).first()
+    v_check = (
+        db.query(PromptVersion)
+        .filter(PromptVersion.id == version_id, PromptVersion.prompt_id == prompt_id)
+        .first()
+    )
     if not v_check:
         raise HTTPException(status_code=404, detail="Version not found")
     if v_check.status == "pending_review":
         raise HTTPException(status_code=400, detail="Already submitted for review")
     if v_check.status in ("approved", "archived"):
-        raise HTTPException(status_code=400, detail="Cannot submit an already approved/archived version")
+        raise HTTPException(
+            status_code=400, detail="Cannot submit an already approved/archived version"
+        )
     v = await service.submit_for_review(prompt_id, version_id, body.note, user, member)
     return {"version": _serialize_version(v)}
+
 
 @router.post("/{prompt_id}/versions/{version_id}/approve")
 async def approve_version(
@@ -226,16 +263,17 @@ async def approve_version(
     version_id: str,
     body: ApproveIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    
+
     service = PromptService(db)
     v = await service.approve_version(prompt_id, version_id, body.note, user, member)
     return {"version": _serialize_version(v), "message": "Live"}
+
 
 @router.post("/{prompt_id}/versions/{version_id}/reject")
 async def reject_version(
@@ -243,47 +281,53 @@ async def reject_version(
     version_id: str,
     body: RejectIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    
+
     service = PromptService(db)
     v = await service.reject_version(prompt_id, version_id, body.reason, user, member)
     return {"version": _serialize_version(v)}
+
 
 @router.post("/{prompt_id}/versions/{version_id}/rollback")
 async def rollback_to_version(
     prompt_id: str,
     version_id: str,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    
+
     service = PromptService(db)
-    v = await service.rollback_prompt(prompt_id, version_id, user.id, user.email, member.org_id)
+    v = await service.rollback_prompt(
+        prompt_id, version_id, user.id, user.email, member.org_id
+    )
     return {"message": "Success", "version": _serialize_version(v)}
+
 
 @router.post("/{prompt_id}/versions/{version_id}/quick-approve")
 async def quick_approve_version(
     prompt_id: str,
     version_id: str,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """Phase 1 UX: 1-click draft-to-live. ONLY available in development/local mode."""
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
-    
+
     service = PromptService(db)
-    v = await service.approve_version(prompt_id, version_id, "Quick approved (local mode)", user, member)
+    v = await service.approve_version(
+        prompt_id, version_id, "Quick approved (local mode)", user, member
+    )
     return {"version": _serialize_version(v, is_live=True), "message": "Live"}
 
 
@@ -292,7 +336,7 @@ async def promote_prompt(
     prompt_id: str,
     body: PromoteIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """Handle promotion from one environment to another."""
     user, member = auth
@@ -307,43 +351,56 @@ async def promote_prompt(
         user_id=user.id,
         user_email=user.email,
         org_id=member.org_id,
-        auto_approve=body.auto_approve
+        auto_approve=body.auto_approve,
     )
-    
+
     return {
         "prompt_id": prompt.id,
         "version_id": version.id,
         "status": version.status,
-        "target_environment_id": body.target_environment_id
+        "target_environment_id": body.target_environment_id,
     }
-
 
 
 @router.post("/assist")
 async def writing_assist(
     body: AssistIn,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """Phase 1 UX: LLM writing assist. BYOK — key is never stored or logged."""
-    import httpx
     import json
+
+    import httpx
+
     from app.api.v1.evals import PROVIDER_CONFIG, VALID_PROVIDERS
+
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
 
     if not body.api_key and not body.eval_key_id:
-        raise HTTPException(status_code=400, detail="Provide api_key (BYOK) or eval_key_id in request body")
+        raise HTTPException(
+            status_code=400,
+            detail="Provide api_key (BYOK) or eval_key_id in request body",
+        )
     if body.provider not in VALID_PROVIDERS:
-        raise HTTPException(status_code=400, detail=f"Unknown provider. Valid: {', '.join(VALID_PROVIDERS)}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown provider. Valid: {', '.join(VALID_PROVIDERS)}",
+        )
 
     # Resolve API key: BYOK preferred
     key = body.api_key
     if not key and body.eval_key_id:
-        from app.models import EvalKey
         from app.core.auth import decrypt_api_key
-        ek = db.query(EvalKey).filter(EvalKey.id == body.eval_key_id, EvalKey.org_id == member.org_id).first()
+        from app.models import EvalKey
+
+        ek = (
+            db.query(EvalKey)
+            .filter(EvalKey.id == body.eval_key_id, EvalKey.org_id == member.org_id)
+            .first()
+        )
         if not ek:
             raise HTTPException(status_code=404, detail="Eval key not found")
         key = decrypt_api_key(ek.encrypted_key)
@@ -409,7 +466,7 @@ Context / goal: {body.task_description or '(not specified)'}"""
 async def delete_prompt(
     prompt_id: str,
     auth=Depends(get_current_user_and_org),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     user, member = auth
     if not member:
@@ -421,11 +478,17 @@ async def delete_prompt(
     env = db.query(Environment).filter(Environment.id == prompt.environment_id).first()
     if env:
         await invalidate_prompt_cache(env.id, prompt.key)
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="prompt.deleted", resource_type="prompt", resource_id=prompt_id,
-        extra={"key": prompt.key}
-    ))
+    db.add(
+        AuditLog(
+            org_id=member.org_id,
+            actor_id=user.id,
+            actor_email=user.email,
+            action="prompt.deleted",
+            resource_type="prompt",
+            resource_id=prompt_id,
+            extra={"key": prompt.key},
+        )
+    )
     db.delete(prompt)
     db.commit()
     return {"message": "Deleted"}
