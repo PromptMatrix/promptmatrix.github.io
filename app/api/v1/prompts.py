@@ -15,10 +15,7 @@ from app.core.policy import redact_identified_secrets, analyze_prompt_safety
 from app.config import get_settings
 import hashlib
 
-def _generate_integrity_hash(action: str, resource_id: str, ts: datetime) -> str:
-    """Generate a SHA-256 hash to ensure log integrity."""
-    ctx = f"{action}:{resource_id}:{ts.isoformat()}"
-    return hashlib.sha256(ctx.encode()).hexdigest()
+from app.services.prompt_service import PromptService
 
 router = APIRouter(prefix="/api/v1/prompts", tags=["prompts"])
 
@@ -50,34 +47,16 @@ class RejectIn(BaseModel):
 
 class PromoteIn(BaseModel):
     target_environment_id: str
-    auto_approve: bool = False  # only works in dev mode
+    auto_approve: bool = False
 
 class AssistIn(BaseModel):
     task_description: str = ""
     existing_content: str = ""
-    mode: str = "improve"  # generate | improve | critique
+    mode: str = "improve"
     provider: str = "anthropic"
     model: str = "claude-haiku-4-5"
-    api_key: str = ""  # BYOK: never stored, never logged
-    eval_key_id: str = ""  # use saved org key
-
-def _detect_variables(content: str) -> dict:
-    found = re.findall(r'\{\{([\w_]+)\}\}', content)
-    return {v: "" for v in set(found)}
-
-
-def _next_version_num(prompt_id: str, db: Session) -> int:
-    result = db.query(func.max(PromptVersion.version_num)).filter(
-        PromptVersion.prompt_id == prompt_id
-    ).scalar()
-    return (result + 1) if result is not None else 1
-
-
-def _count_versions(prompt_id: str, db: Session) -> int:
-    return db.query(func.count(PromptVersion.id)).filter(
-        PromptVersion.prompt_id == prompt_id
-    ).scalar() or 0
-
+    api_key: str = ""
+    eval_key_id: str = ""
 
 def _serialize_version(v: PromptVersion, is_live: bool = False) -> dict:
     return {
@@ -98,7 +77,6 @@ def _serialize_version(v: PromptVersion, is_live: bool = False) -> dict:
         "is_live": is_live,
     }
 
-
 def _serialize_prompt(p: Prompt, version_count: int = None) -> dict:
     live = p.live_version
     return {
@@ -112,19 +90,16 @@ def _serialize_prompt(p: Prompt, version_count: int = None) -> dict:
         "updated_at": p.updated_at.isoformat() if p.updated_at else None,
     }
 
-
 @router.get("")
 async def list_prompts(
     environment_id: str,
     auth=Depends(get_current_user_and_org),
     db: Session = Depends(get_db)
 ):
-    """BUG-03 FIX: Does NOT joinedload all version content. Loads live_version only, counts versions via subquery."""
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
 
-    # Count versions per prompt in a single subquery (not N+1)
     version_counts_subq = (
         db.query(PromptVersion.prompt_id, func.count(PromptVersion.id).label("cnt"))
         .group_by(PromptVersion.prompt_id)
@@ -133,13 +108,12 @@ async def list_prompts(
 
     prompts = (
         db.query(Prompt)
-        .options(joinedload(Prompt.live_version))  # only live version, NOT all versions
+        .options(joinedload(Prompt.live_version))
         .filter(Prompt.environment_id == environment_id)
         .order_by(Prompt.created_at.desc())
         .all()
     )
 
-    # Build count map from subquery
     count_rows = db.query(version_counts_subq).filter(
         version_counts_subq.c.prompt_id.in_([p.id for p in prompts])
     ).all() if prompts else []
@@ -157,47 +131,21 @@ async def create_prompt(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "editor")
-    if db.query(Prompt).filter(
-        Prompt.environment_id == body.environment_id,
-        Prompt.key == body.key
-    ).first():
-        raise HTTPException(status_code=409, detail="Key exists")
-    prompt = Prompt(
-        environment_id=body.environment_id,
+    
+    service = PromptService(db)
+    prompt = service.create_prompt(
+        env_id=body.environment_id,
         key=body.key,
+        content=body.content,
+        user_id=user.id,
+        user_email=user.email,
+        org_id=member.org_id,
         description=body.description,
-        tags=body.tags,
+        commit_message=body.commit_message,
+        tags=body.tags
     )
-    db.add(prompt)
-    db.flush()
-    # Security Policy: Redact Secrets
-    content_safe = redact_identified_secrets(body.content)
-    risks = analyze_prompt_safety(body.content)
     
-    v = PromptVersion(
-        prompt_id=prompt.id,
-        version_num=1,
-        content=content_safe,
-        commit_message=body.commit_message or "Initial version",
-        variables=_detect_variables(content_safe),
-        status="draft",
-        proposed_by_id=user.id,
-        approval_note = f"Policy Check: {len(risks)} risks detected." if risks else "Policy Check: Pass.",
-    )
-    db.add(v)
-    db.flush()
-    
-    ts = datetime.now(timezone.utc)
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="prompt.created", resource_type="prompt", resource_id=prompt.id,
-        extra={"key": body.key, "env": body.environment_id, "policy_risks": [r[0] for r in risks]},
-        created_at=ts,
-        integrity_hash=_generate_integrity_hash("prompt.created", prompt.id, ts)
-    ))
-    db.commit()
-    db.refresh(prompt)
-    vc = _count_versions(prompt.id, db)
+    vc = db.query(func.count(PromptVersion.id)).filter(PromptVersion.prompt_id == prompt.id).scalar()
     return {"prompt": _serialize_prompt(prompt, version_count=vc)}
 
 @router.get("/{prompt_id}")
@@ -239,48 +187,16 @@ async def create_version(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "editor")
-    prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
-    if not prompt:
-        raise HTTPException(status_code=404, detail="Not found")
-    parent_content = None
-    if prompt.live_version_id:
-        live = db.query(PromptVersion).filter(PromptVersion.id == prompt.live_version_id).first()
-        if live:
-            parent_content = live.content
-    from sqlalchemy.exc import IntegrityError
-    for attempt in range(3):
-        try:
-            vnum = _next_version_num(prompt_id, db)
-            # Security Policy: Redact secrets in new version content
-            from app.core.policy import redact_identified_secrets, analyze_prompt_safety
-            content_safe = redact_identified_secrets(body.content)
-            risks = analyze_prompt_safety(body.content)
-            v = PromptVersion(
-                prompt_id=prompt_id,
-                version_num=vnum,
-                content=content_safe,
-                commit_message=body.commit_message or f"Version {vnum}",
-                variables=_detect_variables(content_safe),
-                status="draft",
-                proposed_by_id=user.id,
-                parent_content=parent_content,
-                approval_note=f"Policy Check: {len(risks)} risks detected." if risks else "Policy Check: Pass.",
-            )
-            db.add(v)
-            db.flush()
-            break
-        except IntegrityError:
-            db.rollback()
-            if attempt == 2:
-                raise HTTPException(status_code=409, detail="Conflict")
-            continue
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="version.created", resource_type="version", resource_id=v.id,
-        extra={"prompt_key": prompt.key, "version_num": vnum}
-    ))
-    db.commit()
-    db.refresh(v)
+    
+    service = PromptService(db)
+    v = service.create_version(
+        prompt_id=prompt_id,
+        content=body.content,
+        user_id=user.id,
+        user_email=user.email,
+        org_id=member.org_id,
+        commit_message=body.commit_message
+    )
     return {"version": _serialize_version(v)}
 
 @router.post("/{prompt_id}/versions/{version_id}/submit")
@@ -294,46 +210,19 @@ async def submit_for_review(
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
-    v = db.query(PromptVersion).filter(
-        PromptVersion.id == version_id,
-        PromptVersion.prompt_id == prompt_id
+    
+    service = PromptService(db)
+    # Guard: cannot submit if already pending or approved
+    v_check = db.query(PromptVersion).filter(
+        PromptVersion.id == version_id, PromptVersion.prompt_id == prompt_id
     ).first()
-    if not v:
-        raise HTTPException(status_code=404, detail="Not found")
-    if v.status != "draft":
-        raise HTTPException(status_code=400, detail="Version must be in draft status to submit for review")
-    v.status = "pending_review"
-    v.approval_note = body.note
-    prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="version.submitted", resource_type="version", resource_id=v.id,
-        extra={"prompt_key": prompt.key if prompt else "", "note": body.note}
-    ))
-    db.commit()
-    try:
-        from app.core.email import send_approval_needed
-        from app.config import get_settings
-        settings = get_settings()
-        # Resolve actual environment name
-        _env = db.query(Environment).filter(Environment.id == prompt.environment_id).first() if prompt else None
-        _env_name = _env.name if _env else "unknown"
-        engineers = db.query(User).join(OrgMember).filter(
-            OrgMember.org_id == member.org_id,
-            OrgMember.role.in_(["engineer", "admin", "owner"])
-        ).all()
-        for eng in engineers:
-            await send_approval_needed(
-                approver_email=eng.email,
-                requester_name=user.full_name or user.email,
-                prompt_key=prompt.key if prompt else version_id,
-                version_num=v.version_num,
-                env_name=_env_name,
-                note=body.note,
-                dashboard_url=settings.app_url
-            )
-    except Exception:
-        pass
+    if not v_check:
+        raise HTTPException(status_code=404, detail="Version not found")
+    if v_check.status == "pending_review":
+        raise HTTPException(status_code=400, detail="Already submitted for review")
+    if v_check.status in ("approved", "archived"):
+        raise HTTPException(status_code=400, detail="Cannot submit an already approved/archived version")
+    v = await service.submit_for_review(prompt_id, version_id, body.note, user, member)
     return {"version": _serialize_version(v)}
 
 @router.post("/{prompt_id}/versions/{version_id}/approve")
@@ -348,50 +237,9 @@ async def approve_version(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    v = db.query(PromptVersion).filter(
-        PromptVersion.id == version_id,
-        PromptVersion.prompt_id == prompt_id
-    ).first()
-    if not v:
-        raise HTTPException(status_code=404, detail="Not found")
-    if v.status != "pending_review":
-        raise HTTPException(status_code=400, detail="Version must be in pending_review status to approve. Submit it for review first.")
-    prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
-    if prompt and prompt.live_version_id and prompt.live_version_id != version_id:
-        old = db.query(PromptVersion).filter(PromptVersion.id == prompt.live_version_id).first()
-        if old:
-            old.status = "archived"
-    v.status = "approved"
-    v.approved_by_id = user.id
-    v.approved_at = datetime.now(timezone.utc)
-    v.approval_note = body.note
-    if prompt:
-        prompt.live_version_id = v.id
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="version.approved", resource_type="version", resource_id=v.id,
-        extra={"prompt_key": prompt.key if prompt else "", "version_num": v.version_num}
-    ))
-    db.commit()
-    if prompt:
-        env = db.query(Environment).filter(Environment.id == prompt.environment_id).first()
-        if env:
-            await invalidate_prompt_cache(env.id, prompt.key)
-    try:
-        from app.core.email import send_version_approved
-        if v.proposed_by_id:
-            requester = db.query(User).filter(User.id == v.proposed_by_id).first()
-            _env_name_approve = env.name if env else "unknown"
-            if requester:
-                await send_version_approved(
-                    requester_email=requester.email,
-                    approver_name=user.full_name or user.email,
-                    prompt_key=prompt.key if prompt else "",
-                    version_num=v.version_num,
-                    env_name=_env_name_approve
-                )
-    except Exception:
-        pass
+    
+    service = PromptService(db)
+    v = await service.approve_version(prompt_id, version_id, body.note, user, member)
     return {"version": _serialize_version(v), "message": "Live"}
 
 @router.post("/{prompt_id}/versions/{version_id}/reject")
@@ -406,39 +254,9 @@ async def reject_version(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    v = db.query(PromptVersion).filter(
-        PromptVersion.id == version_id,
-        PromptVersion.prompt_id == prompt_id
-    ).first()
-    if not v:
-        raise HTTPException(status_code=404, detail="Not found")
-    v.status = "rejected"
-    v.rejected_by_id = user.id
-    v.rejection_reason = body.reason
-    prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="version.rejected", resource_type="version", resource_id=v.id,
-        extra={"reason": body.reason, "prompt_key": prompt.key if prompt else ""}
-    ))
-    db.commit()
-    try:
-        from app.core.email import send_version_rejected
-        from app.config import get_settings
-        settings = get_settings()
-        if v.proposed_by_id:
-            requester = db.query(User).filter(User.id == v.proposed_by_id).first()
-            if requester:
-                await send_version_rejected(
-                    requester_email=requester.email,
-                    reviewer_name=user.full_name or user.email,
-                    prompt_key=prompt.key if prompt else "",
-                    version_num=v.version_num,
-                    reason=body.reason,
-                    dashboard_url=settings.app_url
-                )
-    except Exception:
-        pass
+    
+    service = PromptService(db)
+    v = await service.reject_version(prompt_id, version_id, body.reason, user, member)
     return {"version": _serialize_version(v)}
 
 @router.post("/{prompt_id}/versions/{version_id}/rollback")
@@ -452,54 +270,10 @@ async def rollback_to_version(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    target = db.query(PromptVersion).filter(
-        PromptVersion.id == version_id,
-        PromptVersion.prompt_id == prompt_id
-    ).first()
-    if not target:
-        raise HTTPException(status_code=404, detail="Not found")
-    prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
-    if not prompt:
-        raise HTTPException(status_code=404, detail="Not found")
-    from sqlalchemy.exc import IntegrityError
-    for attempt in range(3):
-        try:
-            vnum = _next_version_num(prompt_id, db)
-            rollback_v = PromptVersion(
-                prompt_id=prompt_id,
-                version_num=vnum,
-                content=target.content,
-                commit_message=f"Rollback to v{target.version_num}",
-                variables=target.variables,
-                status="approved",
-                proposed_by_id=user.id,
-                approved_by_id=user.id,
-                approved_at=datetime.now(timezone.utc),
-                parent_content=prompt.live_version.content if prompt.live_version else None,
-            )
-            db.add(rollback_v)
-            db.flush()
-            break
-        except IntegrityError:
-            db.rollback()
-            if attempt == 2:
-                raise HTTPException(status_code=409, detail="Conflict")
-            continue
-    if prompt.live_version_id:
-        old = db.query(PromptVersion).filter(PromptVersion.id == prompt.live_version_id).first()
-        if old:
-            old.status = "archived"
-    prompt.live_version_id = rollback_v.id
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="version.rollback", resource_type="version", resource_id=rollback_v.id,
-        extra={"rolled_back_to": target.version_num, "new_version": vnum, "prompt_key": prompt.key}
-    ))
-    db.commit()
-    env = db.query(Environment).filter(Environment.id == prompt.environment_id).first()
-    if env:
-        await invalidate_prompt_cache(env.id, prompt.key)
-    return {"message": "Success"}
+    
+    service = PromptService(db)
+    v = await service.rollback_prompt(prompt_id, version_id, user.id, user.email, member.org_id)
+    return {"message": "Success", "version": _serialize_version(v)}
 
 @router.post("/{prompt_id}/versions/{version_id}/quick-approve")
 async def quick_approve_version(
@@ -509,43 +283,12 @@ async def quick_approve_version(
     db: Session = Depends(get_db)
 ):
     """Phase 1 UX: 1-click draft-to-live. ONLY available in development/local mode."""
-    settings = get_settings()
-    if settings.app_env != "development":
-        raise HTTPException(status_code=403, detail="Quick approve is only available in local/development mode.")
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
-    v = db.query(PromptVersion).filter(
-        PromptVersion.id == version_id, PromptVersion.prompt_id == prompt_id
-    ).first()
-    if not v:
-        raise HTTPException(status_code=404, detail="Version not found")
-    if v.status not in ("draft", "pending_review"):
-        raise HTTPException(status_code=400, detail=f"Cannot quick-approve from status '{v.status}'.")
-    prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
-    if not prompt:
-        raise HTTPException(status_code=404, detail="Prompt not found")
-    # Archive current live version
-    if prompt.live_version_id and prompt.live_version_id != version_id:
-        old = db.query(PromptVersion).filter(PromptVersion.id == prompt.live_version_id).first()
-        if old:
-            old.status = "archived"
-    v.status = "approved"
-    v.approved_by_id = user.id
-    v.approved_at = datetime.now(timezone.utc)
-    v.approval_note = "Quick approved (local mode)"
-    prompt.live_version_id = v.id
-    ts = datetime.now(timezone.utc)
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="version.quick_approved", resource_type="version", resource_id=v.id,
-        extra={"prompt_key": prompt.key, "version_num": v.version_num},
-        integrity_hash=_generate_integrity_hash("version.quick_approved", v.id, ts)
-    ))
-    db.commit()
-    env = db.query(Environment).filter(Environment.id == prompt.environment_id).first()
-    if env:
-        await invalidate_prompt_cache(env.id, prompt.key)
+    
+    service = PromptService(db)
+    v = await service.approve_version(prompt_id, version_id, "Quick approved (local mode)", user, member)
     return {"version": _serialize_version(v, is_live=True), "message": "Live"}
 
 
@@ -556,67 +299,29 @@ async def promote_prompt(
     auth=Depends(get_current_user_and_org),
     db: Session = Depends(get_db)
 ):
-    """Copy an approved version to a target environment as a new draft."""
+    """Handle promotion from one environment to another."""
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    source_prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
-    if not source_prompt or not source_prompt.live_version_id:
-        raise HTTPException(status_code=404, detail="Source prompt has no live version to promote")
-    target_env = db.query(Environment).filter(Environment.id == body.target_environment_id).first()
-    if not target_env:
-        raise HTTPException(status_code=404, detail="Target environment not found")
-    live_v = db.query(PromptVersion).filter(PromptVersion.id == source_prompt.live_version_id).first()
-    if not live_v:
-        raise HTTPException(status_code=404, detail="Live version not found")
-    # Find or create prompt in target env
-    target_prompt = db.query(Prompt).filter(
-        Prompt.environment_id == body.target_environment_id,
-        Prompt.key == source_prompt.key
-    ).first()
-    if not target_prompt:
-        target_prompt = Prompt(
-            environment_id=body.target_environment_id,
-            key=source_prompt.key,
-            description=source_prompt.description,
-            tags=source_prompt.tags,
-        )
-        db.add(target_prompt)
-        db.flush()
-    settings = get_settings()
-    new_status = "approved" if (body.auto_approve and settings.app_env == "development") else "draft"
-    vnum = _next_version_num(target_prompt.id, db)
-    new_v = PromptVersion(
-        prompt_id=target_prompt.id,
-        version_num=vnum,
-        content=live_v.content,
-        commit_message=f"Promoted from {source_prompt.key} (v{live_v.version_num})",
-        variables=live_v.variables,
-        status=new_status,
-        proposed_by_id=user.id,
-        parent_content=target_prompt.live_version.content if target_prompt.live_version else "",
+
+    service = PromptService(db)
+    prompt, version = await service.promote_prompt(
+        prompt_id=prompt_id,
+        target_env_id=body.target_environment_id,
+        user_id=user.id,
+        user_email=user.email,
+        org_id=member.org_id,
+        auto_approve=body.auto_approve
     )
-    if new_status == "approved":
-        new_v.approved_by_id = user.id
-        new_v.approved_at = datetime.now(timezone.utc)
-    db.add(new_v)
-    db.flush()
-    if new_status == "approved":
-        if target_prompt.live_version_id:
-            old = db.query(PromptVersion).filter(PromptVersion.id == target_prompt.live_version_id).first()
-            if old:
-                old.status = "archived"
-        target_prompt.live_version_id = new_v.id
-    db.add(AuditLog(
-        org_id=member.org_id, actor_id=user.id, actor_email=user.email,
-        action="prompt.promoted", resource_type="prompt", resource_id=target_prompt.id,
-        extra={"from_prompt_id": source_prompt.id, "from_version": live_v.version_num, "target_env": body.target_environment_id, "auto_approved": new_status == "approved"}
-    ))
-    db.commit()
-    if new_status == "approved":
-        await invalidate_prompt_cache(body.target_environment_id, target_prompt.key)
-    return {"prompt_id": target_prompt.id, "version_id": new_v.id, "status": new_status, "target_environment_id": body.target_environment_id}
+    
+    return {
+        "prompt_id": prompt.id,
+        "version_id": version.id,
+        "status": version.status,
+        "target_environment_id": body.target_environment_id
+    }
+
 
 
 @router.post("/assist")

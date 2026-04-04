@@ -1,6 +1,7 @@
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 from functools import lru_cache
-
+from typing import Self
 
 class Settings(BaseSettings):
     # ── Core ─────────────────────────────────────────────────────────────
@@ -15,10 +16,19 @@ class Settings(BaseSettings):
     frontend_url: str = "http://localhost:8000"
     debug: bool = False
 
-    # ── Local Performance ────────────────────────────────────────────────
-    prompt_cache_ttl_seconds: int = 30
-    api_key_cache_ttl_seconds: int = 300
-    serve_rate_limit_rpm: int = 600
+    # ── Local Performance (Hot Path) ────────────────────────────────────
+    prompt_cache_ttl_seconds: int = 60  # Increased for efficiency
+    api_key_cache_ttl_seconds: int = 600  # 10 minutes cache for keys
+    serve_rate_limit_rpm: int = 600  # Requests per minute per API key
+
+    @model_validator(mode="after")
+    def validate_security(self) -> Self:
+        if self.app_env == "production" and not self.encryption_key:
+            raise ValueError(
+                "CRITICAL SECURITY ERROR: encryption_key MUST be set in production. "
+                "Falling back to jwt_secret_key is a data-loss risk during key rotation."
+            )
+        return self
 
     class Config:
         env_file = ".env"
@@ -29,3 +39,4 @@ class Settings(BaseSettings):
 @lru_cache()
 def get_settings() -> Settings:
     return Settings()
+

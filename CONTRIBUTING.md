@@ -66,12 +66,6 @@ The test suite uses an in-memory SQLite database and does not require any extern
 
 ---
 
-## 📁 Project Structure
-
-See the [Repository Structure](README.md#-repository-structure) section in the README for a full breakdown of the codebase.
-
----
-
 ## 📄 License
 
 By contributing, you agree that your contributions will be licensed under the [MIT License](LICENSE).
