@@ -1,7 +1,7 @@
 """Initial schema — all tables
 
 Revision ID: 0001
-Revises: 
+Revises:
 Create Date: 2026-03-23
 
 Notes:
@@ -11,9 +11,11 @@ Notes:
     - SQLite (local dev): inline FK — SQLite ignores FK enforcement by default
       so this does not need ALTER TABLE and works without batch mode.
 """
+
 from typing import Sequence, Union
-from alembic import op
+
 import sqlalchemy as sa
+from alembic import op
 
 revision: str = "0001"
 down_revision: Union[str, None] = None
@@ -50,8 +52,18 @@ def upgrade() -> None:
     op.create_table(
         "org_members",
         sa.Column("id", sa.String(), primary_key=True),
-        sa.Column("org_id", sa.String(), sa.ForeignKey("organisations.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("user_id", sa.String(), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "org_id",
+            sa.String(),
+            sa.ForeignKey("organisations.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column(
+            "user_id",
+            sa.String(),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("role", sa.String(20), server_default="editor"),
         sa.Column("joined_at", sa.DateTime(), nullable=True),
         sa.UniqueConstraint("org_id", "user_id"),
@@ -60,7 +72,12 @@ def upgrade() -> None:
     op.create_table(
         "projects",
         sa.Column("id", sa.String(), primary_key=True),
-        sa.Column("org_id", sa.String(), sa.ForeignKey("organisations.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "org_id",
+            sa.String(),
+            sa.ForeignKey("organisations.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("name", sa.String(120), nullable=False),
         sa.Column("created_at", sa.DateTime(), nullable=True),
     )
@@ -68,13 +85,23 @@ def upgrade() -> None:
     op.create_table(
         "environments",
         sa.Column("id", sa.String(), primary_key=True),
-        sa.Column("project_id", sa.String(), sa.ForeignKey("projects.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "project_id",
+            sa.String(),
+            sa.ForeignKey("projects.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("name", sa.String(40), nullable=False),
         sa.Column("display_name", sa.String(80), server_default=""),
         sa.Column("color", sa.String(20), server_default="#888888"),
         sa.Column("is_protected", sa.Boolean(), server_default="1"),
         sa.Column("eval_pass_threshold", sa.Float(), server_default="7.0"),
-        sa.Column("promotion_source_id", sa.String(), sa.ForeignKey("environments.id"), nullable=True),
+        sa.Column(
+            "promotion_source_id",
+            sa.String(),
+            sa.ForeignKey("environments.id"),
+            nullable=True,
+        ),
         sa.Column("created_at", sa.DateTime(), nullable=True),
         sa.UniqueConstraint("project_id", "name"),
     )
@@ -82,12 +109,19 @@ def upgrade() -> None:
     op.create_table(
         "api_keys",
         sa.Column("id", sa.String(), primary_key=True),
-        sa.Column("environment_id", sa.String(), sa.ForeignKey("environments.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "environment_id",
+            sa.String(),
+            sa.ForeignKey("environments.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("name", sa.String(120), nullable=False),
         sa.Column("key_hash", sa.String(64), unique=True, nullable=False),
         sa.Column("key_prefix", sa.String(20), nullable=False),
         sa.Column("is_active", sa.Boolean(), server_default="1"),
-        sa.Column("created_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True),
+        sa.Column(
+            "created_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True
+        ),
         sa.Column("expires_at", sa.DateTime(), nullable=True),
         sa.Column("last_used_at", sa.DateTime(), nullable=True),
         sa.Column("created_at", sa.DateTime(), nullable=True),
@@ -96,19 +130,31 @@ def upgrade() -> None:
     op.create_table(
         "eval_keys",
         sa.Column("id", sa.String(), primary_key=True),
-        sa.Column("org_id", sa.String(), sa.ForeignKey("organisations.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "org_id",
+            sa.String(),
+            sa.ForeignKey("organisations.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("provider", sa.String(40), nullable=False),
         sa.Column("encrypted_key", sa.Text(), nullable=False),
         sa.Column("key_hint", sa.String(20), server_default=""),
         sa.Column("label", sa.String(120), server_default=""),
-        sa.Column("created_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True),
+        sa.Column(
+            "created_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True
+        ),
         sa.Column("created_at", sa.DateTime(), nullable=True),
     )
 
     op.create_table(
         "audit_logs",
         sa.Column("id", sa.String(), primary_key=True),
-        sa.Column("org_id", sa.String(), sa.ForeignKey("organisations.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "org_id",
+            sa.String(),
+            sa.ForeignKey("organisations.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("actor_id", sa.String(), sa.ForeignKey("users.id"), nullable=True),
         sa.Column("actor_email", sa.String(255), server_default=""),
         sa.Column("action", sa.String(80), nullable=False),
@@ -123,7 +169,12 @@ def upgrade() -> None:
     op.create_table(
         "prompts",
         sa.Column("id", sa.String(), primary_key=True),
-        sa.Column("environment_id", sa.String(), sa.ForeignKey("environments.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "environment_id",
+            sa.String(),
+            sa.ForeignKey("environments.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("key", sa.String(200), nullable=False),
         sa.Column("description", sa.Text(), server_default=""),
         sa.Column("tags", sa.JSON(), nullable=True),
@@ -136,15 +187,26 @@ def upgrade() -> None:
     op.create_table(
         "prompt_versions",
         sa.Column("id", sa.String(), primary_key=True),
-        sa.Column("prompt_id", sa.String(), sa.ForeignKey("prompts.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "prompt_id",
+            sa.String(),
+            sa.ForeignKey("prompts.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("version_num", sa.Integer(), nullable=False),
         sa.Column("content", sa.Text(), nullable=False),
         sa.Column("commit_message", sa.String(500), server_default=""),
         sa.Column("variables", sa.JSON(), nullable=True),
         sa.Column("status", sa.String(30), server_default="draft"),
-        sa.Column("proposed_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True),
-        sa.Column("approved_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True),
-        sa.Column("rejected_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True),
+        sa.Column(
+            "proposed_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True
+        ),
+        sa.Column(
+            "approved_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True
+        ),
+        sa.Column(
+            "rejected_by_id", sa.String(), sa.ForeignKey("users.id"), nullable=True
+        ),
         sa.Column("rejection_reason", sa.Text(), server_default=""),
         sa.Column("approval_note", sa.Text(), server_default=""),
         sa.Column("parent_content", sa.Text(), nullable=True),
@@ -165,8 +227,10 @@ def upgrade() -> None:
     if not _is_sqlite():
         op.create_foreign_key(
             "fk_prompt_live_version",
-            "prompts", "prompt_versions",
-            ["live_version_id"], ["id"],
+            "prompts",
+            "prompt_versions",
+            ["live_version_id"],
+            ["id"],
         )
 
 

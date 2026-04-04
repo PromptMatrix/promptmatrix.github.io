@@ -16,6 +16,7 @@ def test_default_config_has_sqlite():
 def test_default_app_env_is_development():
     """Default environment is development (set in .env.example)."""
     import os
+
     # When DATABASE_URL is set in test env, app_env comes from os.environ
     env_val = os.environ.get("APP_ENV", "development")
     s = Settings()

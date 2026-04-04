@@ -6,6 +6,7 @@ Notification happens entirely within the dashboard UI.
 
 If you build a cloud/SaaS fork, replace this module with your email provider.
 """
+
 import logging
 
 log = logging.getLogger(__name__)
