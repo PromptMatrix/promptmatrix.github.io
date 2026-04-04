@@ -132,6 +132,31 @@ PromptMatrix/
 - 100% open source — MIT licensed
 - Instant setup: run `./start.sh` or `start.bat`
 
+---
+
+## ⌨️ CLI Utilities (`pmx.py`)
+
+PromptMatrix includes a lightweight CLI for terminal-first prompt engineering. It allows you to push local files directly to the dev environment and pull live prompts back down to your filesystem.
+
+### Setup
+Ensure the server is running, then use the Python environment:
+```bash
+# Windows
+venv\Scripts\python.exe pmx.py --help
+
+# Linux / macOS
+./venv/bin/python pmx.py --help
+```
+
+### Common Commands
+*   **Check Status:** `python pmx.py status`
+*   **List Prompts:** `python pmx.py list`
+*   **Push a Prompt:** `python pmx.py push project.assistant ./prompt.txt`
+    *   *Creates/updates the prompt and auto-approves it in development mode.*
+*   **Pull a Prompt:** `python pmx.py pull project.assistant ./downloaded.txt`
+
+---
+
 ### ☁️ Cloud / Team Version (Coming Soon)
 
 - **Multi-user, team collaboration**

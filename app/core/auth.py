@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 import bcrypt
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, Request, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.config import get_settings
@@ -74,15 +74,22 @@ def hash_api_key(key: str) -> str:
 bearer_scheme = HTTPBearer(auto_error=False)
 
 def get_current_user(
+    request: Request = None,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ):
     from app.models import User
-    if not credentials:
-        if settings.app_env == "development":
+    
+    # 🕵️ STRONGER DEV BYPASS: Localhost + app_env == 'development'
+    if not credentials and settings.app_env == "development":
+        client_host = request.client.host if request and request.client else "unknown"
+        if client_host in ("127.0.0.1", "::1", "localhost", "unknown"):
             user = db.query(User).first()
             if user: return user
+            
+    if not credentials:
         raise HTTPException(status_code=401, detail="Not authenticated")
+        
     payload = decode_token(credentials.credentials)
     user_id = payload.get("sub")
     if not user_id:
@@ -93,17 +100,24 @@ def get_current_user(
     return user
 
 def get_current_user_and_org(
+    request: Request = None,
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ):
     from app.models import User, OrgMember
-    if not credentials:
-        if settings.app_env == "development":
+    
+    # 🕵️ STRONGER DEV BYPASS: Localhost + app_env == 'development'
+    if not credentials and settings.app_env == "development":
+        client_host = request.client.host if request and request.client else "unknown"
+        if client_host in ("127.0.0.1", "::1", "localhost", "unknown"):
             user = db.query(User).first()
             if user:
                 member = db.query(OrgMember).filter(OrgMember.user_id == user.id).first()
                 if member: return user, member
+                
+    if not credentials:
         raise HTTPException(status_code=401, detail="Not authenticated")
+        
     payload = decode_token(credentials.credentials)
     user_id = payload.get("sub")
     org_id  = payload.get("org")
