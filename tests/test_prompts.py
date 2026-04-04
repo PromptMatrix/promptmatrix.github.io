@@ -7,8 +7,7 @@ Covers the core governance state machine:
   rollback creates new approved version
 """
 
-import pytest
-from tests.conftest import seed_org_user, seed_approved_prompt, seed_api_key, auth_headers
+from tests.conftest import seed_org_user, seed_approved_prompt, auth_headers
 
 
 def test_create_prompt(client, db):

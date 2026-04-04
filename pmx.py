@@ -2,7 +2,6 @@
 import argparse
 import sys
 import os
-import json
 import httpx
 from typing import Optional
 
@@ -29,9 +28,9 @@ class PromptMatrixCLI:
                 print(f"[OK] PromptMatrix is alive at {self.base_url}")
             else:
                 print(f"[WARN] PromptMatrix responded with {resp.status_code}")
-        except Exception as e:
+        except Exception:
             print(f"[FAIL] Could not connect to PromptMatrix at {self.base_url}")
-            print(f"Make sure the server is running (e.g., python main.py)")
+            print("Make sure the server is running (e.g., python main.py)")
             sys.exit(1)
 
     def list_prompts(self):

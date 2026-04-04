@@ -1,8 +1,7 @@
 import re
 import time
-import asyncio
 from datetime import datetime, timezone
-from typing import Optional, List, Dict
+from typing import Optional, List
 from fastapi import APIRouter, Request, HTTPException, Header, Query, BackgroundTasks
 from fastapi.responses import PlainTextResponse, JSONResponse
 from sqlalchemy.orm import Session
@@ -11,7 +10,6 @@ import app.database
 from app.serve.cache import (
     get_cached_key, cache_key,
     get_cached_prompt, cache_prompt,
-    invalidate_prompt_cache,
     check_rate_limit,
 )
 from app.core.auth import hash_api_key
@@ -42,7 +40,7 @@ async def _resolve_api_key(key_hash, db=None):
     own_db = db is None
     db = db or _db()
     try:
-        api_key = db.query(ApiKey).filter(ApiKey.key_hash == key_hash, ApiKey.is_active == True).first()
+        api_key = db.query(ApiKey).filter(ApiKey.key_hash == key_hash, ApiKey.is_active).first()
         if not api_key:
             raise HTTPException(status_code=401, detail="Invalid API key")
         

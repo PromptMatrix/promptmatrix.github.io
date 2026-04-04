@@ -4,7 +4,6 @@ Config validation tests
 PromptMatrix local config accepts all environment values for ease of setup.
 """
 
-import pytest
 from app.config import Settings
 
 

@@ -1,14 +1,13 @@
 import re
 import hashlib
 from datetime import datetime, timezone
-from typing import Optional, List, Tuple
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 
 from app.models import (
-    Prompt, PromptVersion, Environment, AuditLog, User, Organisation, Project, OrgMember
+    Prompt, PromptVersion, Environment, AuditLog, User, OrgMember
 )
 from app.core.policy import redact_identified_secrets, analyze_prompt_safety
 from app.serve.cache import invalidate_prompt_cache

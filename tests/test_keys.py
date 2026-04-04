@@ -1,6 +1,5 @@
 """API key lifecycle tests — create, revoke, rotate"""
 
-import pytest
 from tests.conftest import seed_org_user, seed_approved_prompt, seed_api_key, auth_headers
 
 
@@ -78,10 +77,10 @@ def test_rotate_key_old_key_blocked_new_works(client, db):
 def test_viewer_cannot_create_key(client, db):
     """Only engineer+ can create API keys — viewer must get 403."""
     _, _, _, _, env = seed_org_user(db)
-    hdrs = auth_headers(client)  # owner (logged in via seed)
+    auth_headers(client)  # owner (logged in via seed)
 
     # Create a second user as viewer in the SAME org
-    from app.models import User, OrgMember, Organisation
+    from app.models import User, OrgMember
     owner = db.query(User).filter(User.email == "owner@test.com").first()
     owner_member = db.query(OrgMember).filter(OrgMember.user_id == owner.id).first()
     from app.core.auth import hash_password

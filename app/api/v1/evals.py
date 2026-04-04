@@ -3,10 +3,9 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from typing import Optional
 from app.database import get_db
 from app.models import PromptVersion, Prompt, Environment, Project, EvalKey, AuditLog
-from app.core.auth import get_current_user_and_org, require_role, encrypt_api_key, decrypt_api_key
+from app.core.auth import get_current_user_and_org, encrypt_api_key, decrypt_api_key
 
 router = APIRouter(prefix="/api/v1/evals", tags=["evals"])
 

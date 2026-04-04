@@ -1,6 +1,5 @@
 """Auth route tests — register, login, refresh, me"""
 
-import pytest
 from tests.conftest import seed_org_user
 
 

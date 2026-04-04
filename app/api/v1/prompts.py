@@ -1,19 +1,14 @@
 import re
-from datetime import datetime, timezone
-from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from pydantic import BaseModel, field_validator
 from app.database import get_db
 from app.models import (
-    Prompt, PromptVersion, Environment, OrgMember, AuditLog, User, Organisation, Project
+    Prompt, PromptVersion, Environment, AuditLog
 )
 from app.core.auth import get_current_user_and_org, require_role
 from app.serve.cache import invalidate_prompt_cache
-from app.core.policy import redact_identified_secrets, analyze_prompt_safety
-from app.config import get_settings
-import hashlib
 
 from app.services.prompt_service import PromptService
 
@@ -331,7 +326,8 @@ async def writing_assist(
     db: Session = Depends(get_db)
 ):
     """Phase 1 UX: LLM writing assist. BYOK — key is never stored or logged."""
-    import httpx, json
+    import httpx
+    import json
     from app.api.v1.evals import PROVIDER_CONFIG, VALID_PROVIDERS
     user, member = auth
     if not member:

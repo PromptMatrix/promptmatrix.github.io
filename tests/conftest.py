@@ -10,7 +10,6 @@ Cache is replaced with a fresh _NoopCache so tests run without external deps.
 
 import os
 import pytest
-import pytest_asyncio
 
 # Set test env before any app imports
 os.environ.setdefault("DATABASE_URL", "sqlite://")
@@ -117,7 +116,7 @@ def db():
 
 def seed_org_user(db, email="owner@test.com", role="owner", plan="local"):
     """Create org + user + membership. Returns (org, user, member, project, env)."""
-    import re, secrets
+    import re
     slug_base = re.sub(r"[^a-z0-9]", "-", email.split("@")[0])
     slug = slug_base
     i = 1

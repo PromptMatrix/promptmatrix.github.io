@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Project, Environment, Organisation, OrgMember, Prompt, PromptVersion
+from app.models import Project, Environment, Prompt, PromptVersion
 from app.core.auth import get_current_user_and_org
 from datetime import datetime, timezone
 
@@ -192,7 +192,6 @@ async def import_workspace(
 
     db.commit()
     from app.models import AuditLog
-    from datetime import datetime, timezone
     db.add(AuditLog(
         org_id=member.org_id, actor_id=user.id, actor_email=user.email,
         action="workspace.imported", resource_type="workspace", resource_id=member.org_id,
