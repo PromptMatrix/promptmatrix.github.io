@@ -10,8 +10,8 @@
   </p>
 
   <p>
-    <a href="https://github.com/PromptMatrix/PromptMatrix/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
-    <a href="https://github.com/PromptMatrix/PromptMatrix/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/PromptMatrix?label=version" alt="Version" /></a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/promptmatrix.github.io?label=version" alt="Version" /></a>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+" /></a>
     <img src="https://img.shields.io/badge/SQLite-local--first-orange.svg" alt="Local-first SQLite" />
   </p>
@@ -21,7 +21,7 @@
     <a href="#-features">Features</a> •
     <a href="#-deployment-models">Deployment Models</a> •
     <a href="#-manual-installation">Manual Installation</a> •
-    <a href="https://github.com/PromptMatrix/PromptMatrix/blob/main/LICENSE">MIT License</a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE">MIT License</a>
   </p>
 </div>
 
@@ -83,7 +83,7 @@ chmod +x start.sh
 ## 🛠 Manual Installation
 
 ```bash
-git clone https://github.com/PromptMatrix/PromptMatrix.git
+git clone https://github.com/PromptMatrix/promptmatrix.github.io.git
 cd PromptMatrix
 
 python -m venv venv
