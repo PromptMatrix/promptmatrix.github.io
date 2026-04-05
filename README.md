@@ -11,7 +11,7 @@
 
   <p>
     <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/promptmatrix.github.io?label=version" alt="Version" /></a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/releases"><img src="https://img.shields.io/github/v/tag/PromptMatrix/promptmatrix.github.io?label=version" alt="Version" /></a>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+" /></a>
     <img src="https://img.shields.io/badge/SQLite-local--first-orange.svg" alt="Local-first SQLite" />
   </p>
@@ -66,6 +66,10 @@ agent.run(system_prompt)
 ## 🚀 Quick Start
 
 PromptMatrix runs purely on SQLite with zero external database dependencies.
+
+**Step 1:** Download the latest `.zip` source code from the [GitHub Releases](https://github.com/PromptMatrix/promptmatrix.github.io/releases) page and extract it to your desired folder.
+
+**Step 2:** Run the startup script for your system:
 
 ### Windows
 Double-click **`start.bat`** — it handles venv creation, dependencies, secret generation, and database migrations automatically.
