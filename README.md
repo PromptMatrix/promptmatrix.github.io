@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="PromptMatrix.png" alt="PromptMatrix" width="100%" style="border-radius:12px;margin-bottom:18px;" />
+  <img src="https://raw.githubusercontent.com/PromptMatrix/promptmatrix.github.io/main/PromptMatrix.png" alt="PromptMatrix" width="100%">
 
   <h1>⬡ PromptMatrix</h1>
   <h3>The Governance Engine for AI Systems</h3>
