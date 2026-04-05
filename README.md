@@ -11,7 +11,7 @@
 
   <p>
     <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/releases"><img src="https://img.shields.io/github/v/tag/PromptMatrix/promptmatrix.github.io?label=version" alt="Version" /></a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/promptmatrix.github.io?label=version" alt="Version" /></a>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+" /></a>
     <img src="https://img.shields.io/badge/SQLite-local--first-orange.svg" alt="Local-first SQLite" />
   </p>
