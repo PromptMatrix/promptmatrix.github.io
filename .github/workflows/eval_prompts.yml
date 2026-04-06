@@ -1,0 +1,51 @@
+name: Evaluate Prompts CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'prompts/**'
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install PromptMatrix CLI
+        run: |
+          pip install httpx
+          # In a real environment, you might pip install promptmatrix
+          # Or curl the pmx.py script
+
+      - name: Run Rule-Based Eval on All Prompts
+        env:
+          PM_URL: ${{ secrets.PM_URL }} # e.g. https://pm.yourorg.internal
+          PM_TOKEN: ${{ secrets.PM_TOKEN }}
+        run: |
+          for file in prompts/*.txt; do
+            key=$(basename "$file" .txt)
+            echo "Evaluating $key..."
+            # Adjust path to pmx.py accordingly
+            python pmx.py --url "$PM_URL" eval "$key" "$file" --type rule_based
+          done
+
+      # (Optional) Run LLM Eval
+      # - name: Run LLM-as-Judge
+      #   env:
+      #     PM_URL: ${{ secrets.PM_URL }}
+      #     PM_TOKEN: ${{ secrets.PM_TOKEN }}
+      #     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      #   run: |
+      #     for file in prompts/*.txt; do
+      #       key=$(basename "$file" .txt)
+      #       python pmx.py --url "$PM_URL" eval "$key" "$file" --type llm_judge --provider anthropic --model claude-3-5-sonnet-20241022 --api-key "$ANTHROPIC_API_KEY"
+      #     done

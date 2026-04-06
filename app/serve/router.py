@@ -6,6 +6,7 @@ from typing import List, Optional
 from fastapi import (APIRouter, BackgroundTasks, Header, HTTPException, Query,
                      Request)
 from fastapi.responses import JSONResponse, PlainTextResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 import app.database
@@ -18,6 +19,15 @@ from app.serve.cache import (cache_key, cache_prompt, check_rate_limit,
 
 router = APIRouter()
 settings = get_settings()
+
+
+class FeedbackIn(BaseModel):
+    version_id: str
+    outcome: str = "success"
+    latency_ms: int = 0
+    tokens_used: int = 0
+    llm_latency_ms: int = 0
+    metadata: dict = {}
 
 
 def _db() -> Session:
@@ -291,15 +301,7 @@ async def serve_prompt(
     return PlainTextResponse(content=content, headers=headers)
 
 
-from pydantic import BaseModel
 
-class FeedbackIn(BaseModel):
-    version_id: str
-    outcome: str = "success"
-    latency_ms: int = 0
-    tokens_used: int = 0
-    llm_latency_ms: int = 0
-    metadata: dict = {}
 
 @router.post("/pm/serve/{prompt_key:path}/feedback")
 async def serve_feedback(

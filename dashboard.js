@@ -424,14 +424,14 @@ async function loadApprovals(){
           <button class="btn br bxs" onclick="rejectVersion('${a.prompt?.id}','${a.version?.id}')">REJECT</button>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;background:var(--bg1)">
-        <div style="padding:10px;border-right:1px solid var(--b2)">
-           <div style="font-size:9px;color:var(--t3);margin-bottom:6px;letter-spacing:.1em">BEFORE</div>
-           <pre style="font-size:11px;color:var(--t2);white-space:pre-wrap;margin:0">${esc(a.version?.parent_content?.slice(0,300)||(S.prompts.find(p=>p.id===a.prompt.id)?.live_version?.content||'').slice(0,300))}</pre>
+      <div style="display:grid;grid-template-columns:1fr 1fr;background:var(--bg3);max-height:400px;overflow-y:auto;border-bottom:1px solid var(--b2)">
+        <div style="padding:12px;border-right:1px solid var(--b2);">
+           <div style="font-size:9px;color:var(--t3);margin-bottom:8px;letter-spacing:.1em">BEFORE (Live or Parent)</div>
+           <pre style="font-size:11px;color:var(--t2);white-space:pre-wrap;margin:0;font-family:var(--font)">${esc(a.version?.parent_content||(S.prompts.find(p=>p.id===a.prompt.id)?.live_version?.content||'No previous content / New prompt'))}</pre>
         </div>
-        <div style="padding:10px">
-           <div style="font-size:9px;color:var(--t3);margin-bottom:6px;letter-spacing:.1em">PROPOSED</div>
-           <pre style="font-size:11px;color:var(--t);white-space:pre-wrap;margin:0">${esc(a.version?.content?.slice(0,300))}</pre>
+        <div style="padding:12px">
+           <div style="font-size:9px;color:var(--c);margin-bottom:8px;letter-spacing:.1em">PROPOSED</div>
+           <pre style="font-size:11px;color:var(--t);white-space:pre-wrap;margin:0;font-family:var(--font)">${esc(a.version?.content||'')}</pre>
         </div>
       </div>
     </div>`).join('');
