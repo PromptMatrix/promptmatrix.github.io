@@ -6,9 +6,8 @@
 #
 # ── Core ──────────────────────────────────────────────────────────
 fastapi==0.115.0
-# starlette must be pinned to prevent newer global installs from breaking APIRouter
-# (fastapi 0.115.0 ships with starlette 0.41.2 which works; pip may warn but it passes)
-starlette==0.41.2
+# (fastapi 0.115.0 allows starlette>=0.37.0)
+starlette>=0.37.2,<0.41.0
 uvicorn[standard]==0.32.0
 sqlalchemy==2.0.36
 alembic==1.14.0
