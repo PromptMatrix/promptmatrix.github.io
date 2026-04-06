@@ -19,22 +19,19 @@ async def list_approvals(
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
-    projects = db.query(Project).filter(Project.org_id == member.org_id).all()
-    project_ids = [p.id for p in projects]
-    envs = db.query(Environment).filter(Environment.project_id.in_(project_ids)).all()
-    env_ids = [e.id for e in envs]
-    env_map = {e.id: e for e in envs}
-    prompts = db.query(Prompt).filter(Prompt.environment_id.in_(env_ids)).all()
-    prompt_ids = [p.id for p in prompts]
-    prompt_map = {p.id: p for p in prompts}
-
-    base_q = db.query(PromptVersion).filter(
-        PromptVersion.prompt_id.in_(prompt_ids),
-        PromptVersion.status == "pending_review",
+    base_q = (
+        db.query(PromptVersion)
+        .join(Prompt, Prompt.id == PromptVersion.prompt_id)
+        .join(Environment, Environment.id == Prompt.environment_id)
+        .join(Project, Project.id == Environment.project_id)
+        .filter(Project.org_id == member.org_id, PromptVersion.status == "pending_review")
     )
     total = base_q.count()
     pending = (
-        base_q.options(joinedload(PromptVersion.proposed_by))
+        base_q.options(
+            joinedload(PromptVersion.proposed_by),
+            joinedload(PromptVersion.prompt).joinedload(Prompt.environment)
+        )
         .order_by(PromptVersion.created_at.asc())
         .offset(offset)
         .limit(limit)
@@ -42,8 +39,8 @@ async def list_approvals(
     )
     result = []
     for v in pending:
-        p = prompt_map.get(v.prompt_id)
-        env = env_map.get(p.environment_id) if p else None
+        p = v.prompt
+        env = p.environment if p else None
         result.append(
             {
                 "approval_request_id": v.id,

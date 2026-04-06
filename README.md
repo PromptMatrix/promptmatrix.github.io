@@ -68,6 +68,16 @@ agent.run(system_prompt)
 
 ---
 
+## 🆕 Release v0.2.0: Zero-Trust Architecture Update
+
+We have heavily fortified the system for production-ready, zero-trust deployments:
+*   **IDOR Protections:** Enforced strict Multi-Tenant schemas guaranteeing prompt and workspace isolation.
+*   **Security Headers:** Natively integrated `Referrer-Policy` and `Permissions-Policy` in the Security Middleware.
+*   **JWT Integrity:** Pinned symmetric signing algorithms to mitigate CVE-2024-33663 algorithm confusion.
+*   **Strict Pagination:** Data endpoints now cap payloads strictly (e.g., limit=100) protecting against DDOS vector payload expansions.
+
+---
+
 ## 🚀 Quick Start
 
 PromptMatrix runs purely on SQLite with zero external database dependencies.

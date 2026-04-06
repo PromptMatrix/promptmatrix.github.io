@@ -346,6 +346,7 @@ def main():
         "pull", help="Pull live prompt content to a local file"
     )
     pull_parser.add_argument("key", help="Prompt key")
+    pull_parser.add_argument("file", help="Path to save the file")
     diff_parser = subparsers.add_parser(
         "diff", help="Diff local file against live remote prompt"
     )

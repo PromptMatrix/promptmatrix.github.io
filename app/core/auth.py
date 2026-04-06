@@ -39,7 +39,7 @@ def create_access_token(user_id: str, org_id: Optional[str] = None) -> str:
         "iat": now,
     }
     return jwt.encode(
-        payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm
+        payload, settings.jwt_secret_key, algorithm="HS256"
     )
 
 
@@ -53,14 +53,15 @@ def create_refresh_token(user_id: str, org_id: Optional[str] = None) -> str:
         "iat": now,
     }
     return jwt.encode(
-        payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm
+        payload, settings.jwt_secret_key, algorithm="HS256"
     )
 
 
 def decode_token(token: str) -> dict:
+    # Hardcode HS256 — prevents algorithm confusion / none-alg CVE in python-jose
     try:
         return jwt.decode(
-            token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+            token, settings.jwt_secret_key, algorithms=["HS256"]
         )
     except JWTError:
         raise HTTPException(
@@ -101,7 +102,7 @@ def get_current_user(
     # 🕵️ STRONGER DEV BYPASS: Localhost + app_env == 'development'
     if not credentials and settings.app_env == "development":
         client_host = request.client.host if request and request.client else "unknown"
-        if client_host in ("127.0.0.1", "::1", "localhost", "unknown"):
+        if client_host in ("127.0.0.1", "::1", "localhost"):
             user = db.query(User).first()
             if user:
                 return user
@@ -129,7 +130,7 @@ def get_current_user_and_org(
     # 🕵️ STRONGER DEV BYPASS: Localhost + app_env == 'development'
     if not credentials and settings.app_env == "development":
         client_host = request.client.host if request and request.client else "unknown"
-        if client_host in ("127.0.0.1", "::1", "localhost", "unknown"):
+        if client_host in ("127.0.0.1", "::1", "localhost"):
             user = db.query(User).first()
             if user:
                 member = (
