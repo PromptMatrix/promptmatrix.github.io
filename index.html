@@ -718,7 +718,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="#faq" onclick="closeMobNav()">FAQ</a>
     <div class="mob-divider"></div>
     <a class="mob-nl" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="mob-nl mob-cta" href="https://promptmatrixx.vercel.app/dashboard">LOGIN / ACCESS</a>
+    <a class="mob-nl mob-cta" href="https://promptmatrix.vercel.app/dashboard">LOGIN / ACCESS</a>
   </div>
 </div>
 
@@ -2248,10 +2248,10 @@ _updateSpotsBadges();
 
 /* CLAIM SPOT (early seat) */
 function claimSpot(btn){
-  // Razorpay payment link — $149 founding seat
+  // Lemon Squeezy payment link — $499 founding seat
   if(btn){btn.textContent='OPENING...';btn.disabled=true;}
-  window.open('RAZORPAY_PAYMENT_LINK_HERE','_blank');
-  if(btn){setTimeout(()=>{btn.textContent='★ GET STARTED — $149 FOUNDING';btn.disabled=false;},2000);}
+  window.open('LEMON_SQUEEZY_PAYMENT_LINK_HERE','_blank');
+  if(btn){setTimeout(()=>{btn.textContent='★ GET STARTED — $499 FOUNDING';btn.disabled=false;},2000);}
 }
 
 /* HERO WAITLIST — reads hero-email input, validates, opens Beehiiv */
@@ -2295,8 +2295,8 @@ async function submitEmail(id,plan){
   const orig=btn?btn.textContent:'';
   if(btn){btn.textContent='...';btn.disabled=true;}
   if(plan==='founding'||plan==='pro'){
-    // Razorpay payment link
-    window.open('RAZORPAY_PAYMENT_LINK_HERE','_blank');
+    // Lemon Squeezy payment link
+    window.open('LEMON_SQUEEZY_PAYMENT_LINK_HERE','_blank');
     if(btn){btn.textContent='OPENING...';setTimeout(()=>{btn.textContent=orig;btn.disabled=false;},2000);}
     return;
   } else if(plan==='enterprise'||plan==='team'){
