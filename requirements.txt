@@ -16,7 +16,7 @@ pydantic>=2.10.3
 pydantic-settings>=2.6.1
 
 # ── Auth & Security ──────────────────────────────────────────────
-python-jose[cryptography]==3.4.0
+python-jose[cryptography]==3.5.0
 bcrypt==4.2.1
 cryptography>=46.0.0
 
