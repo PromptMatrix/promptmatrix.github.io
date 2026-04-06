@@ -1916,6 +1916,79 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   </div>
 </section>
 
+<!-- PRICING TIERS -->
+<section id="pricing" style="position:relative;z-index:2;padding:120px 0;background:var(--bg)">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:60px" class="rv">
+      <div class="slabel">// INFRASTRUCTURE_COST</div>
+      <h2 class="stitle">Scale from localhost<br><span class="em si">to global edge.</span></h2>
+      <p class="sbody" style="margin-top:12px;margin-left:auto;margin-right:auto;max-width:560px">From single-player open source to multi-tenant enterprise orchestration. Host it yourself for free, or let us handle the uptime, evaluations, and compliance.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;align-items:start">
+      
+      <!-- OSS TIER -->
+      <div class="tc2 rv" style="padding:40px 30px;border-color:rgba(128,222,234,.2);display:flex;flex-direction:column;height:100%">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--cy);margin-bottom:12px">// TIER_01 · LOCAL</div>
+        <div style="font-size:28px;font-weight:400;color:var(--w);margin-bottom:12px;font-family:var(--mono)">Open Source</div>
+        <div style="font-size:42px;font-weight:600;color:var(--w);margin-bottom:8px">$0<span style="font-size:16px;font-weight:400;color:var(--txt3)"> / forever</span></div>
+        <p style="font-size:14px;color:var(--txt2);line-height:1.6;margin-bottom:30px">Zero-dependency local engine for individual developers. Your machine, your database.</p>
+        <ul style="list-style:none;padding:0;margin:0 0 30px;gap:12px;display:flex;flex-direction:column;font-size:13px;color:var(--txt1)">
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> Unlimited Prompts & Routes</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> Local SQLite Storage</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> Visual Dashboard (Vanilla JS)</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> Single Admin Workflow</li>
+        </ul>
+        <a href="https://github.com/PromptMatrix/PromptMatrix" style="margin-top:auto;width:100%;text-align:center;padding:14px;background:rgba(128,222,234,.08);border:1px solid rgba(128,222,234,.3);color:var(--cy);text-decoration:none;font-family:var(--mono);font-size:12px;letter-spacing:.05em;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(128,222,234,.15)'" onmouseout="this.style.background='rgba(128,222,234,.08)'">DOWNLOAD OSS ↓</a>
+      </div>
+
+      <!-- TEAMS TIER -->
+      <div class="tc2 rv" style="padding:40px 30px;border-color:rgba(0,230,118,.3);background:linear-gradient(180deg, rgba(0,230,118,.03) 0%, rgba(8,10,8,0) 100%);display:flex;flex-direction:column;height:100%;position:relative;transition-delay:0.1s">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--g);color:#080a08;font-family:var(--mono);font-size:10px;font-weight:700;padding:4px 12px;letter-spacing:.1em">RECOMMENDED</div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--g);margin-bottom:12px">// TIER_02 · CLOUD</div>
+        <div style="font-size:28px;font-weight:400;color:var(--w);margin-bottom:12px;font-family:var(--mono)">Teams</div>
+        <div style="font-size:42px;font-weight:600;color:var(--w);margin-bottom:8px">$29<span style="font-size:16px;font-weight:400;color:var(--txt3)"> / mo</span></div>
+        <p style="font-size:14px;color:var(--txt2);line-height:1.6;margin-bottom:30px">Multi-player SaaS for startups and agencies. Ship prompts with confident peer reviews.</p>
+        <ul style="list-style:none;padding:0;margin:0 0 30px;gap:12px;display:flex;flex-direction:column;font-size:13px;color:var(--txt1)">
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> Up to 5 Team Members</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> PostgreSQL Managed Storage</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> Mandatory PR-style Approvals</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> 10,000 Edge Serve Requests/mo</li>
+        </ul>
+        <button onclick="openWaitlist('team')" style="margin-top:auto;width:100%;padding:14px;background:var(--g);border:1px solid var(--g);color:#080a08;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.05em;cursor:pointer;transition:all .2s" onmouseover="this.style.background='#00c853';this.style.boxShadow='0 0 15px rgba(0,230,118,0.4)'" onmouseout="this.style.background='var(--g)';this.style.boxShadow='none'">JOIN CLOUD WAITLIST</button>
+      </div>
+
+      <!-- SCALE TIER -->
+      <div class="tc2 rv" style="padding:40px 30px;border-color:rgba(179,136,255,.2);display:flex;flex-direction:column;height:100%;transition-delay:0.2s">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--pu);margin-bottom:12px">// TIER_03 · SCALE</div>
+        <div style="font-size:28px;font-weight:400;color:var(--w);margin-bottom:12px;font-family:var(--mono)">Scale</div>
+        <div style="font-size:42px;font-weight:600;color:var(--w);margin-bottom:8px">$99<span style="font-size:16px;font-weight:400;color:var(--txt3)"> / mo</span></div>
+        <p style="font-size:14px;color:var(--txt2);line-height:1.6;margin-bottom:30px">High-throughput production infrastructure. For apps evaluating millions of tokens.</p>
+        <ul style="list-style:none;padding:0;margin:0 0 30px;gap:12px;display:flex;flex-direction:column;font-size:13px;color:var(--txt1)">
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> Unlimited Team Members</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> LLM-as-a-Judge Eval Pipelines</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> Immutable Audit Logs (1 Yr)</li>
+          <li style="display:flex;gap:10px"><span style="color:var(--g)">✓</span> 100,000 Edge Serve Requests/mo</li>
+        </ul>
+        <button onclick="openWaitlist('scale')" style="margin-top:auto;width:100%;padding:14px;background:rgba(179,136,255,.08);border:1px solid rgba(179,136,255,.3);color:var(--pu);font-family:var(--mono);font-size:12px;letter-spacing:.05em;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(179,136,255,.15)'" onmouseout="this.style.background='rgba(179,136,255,.08)'">JOIN CLOUD WAITLIST</button>
+      </div>
+
+    </div>
+
+    <!-- WHITE GLOVE CTA -->
+    <div class="tc2 rv" style="margin-top:24px;border-color:rgba(255,215,0,.3);background:linear-gradient(90deg, rgba(255,215,0,.04) 0%, rgba(8,10,8,0) 100%);padding:40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:30px">
+      <div style="flex:1;min-width:280px">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--am);margin-bottom:12px">// TIER_04 · ENTERPRISE</div>
+        <h3 style="font-size:24px;font-weight:400;color:var(--w);margin-bottom:10px">White-Glove Integration</h3>
+        <p style="font-size:14px;color:var(--txt2);line-height:1.6;max-width:500px">Need SSO, SAML, VPC deployment, or a dedicated implementation engineer to migrate 500+ prompts? We limit founding enterprise partnerships to ensure radical success.</p>
+      </div>
+      <div>
+        <button onclick="submitEmail(null, 'enterprise')" style="padding:14px 28px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.4);color:var(--am);font-family:var(--mono);font-size:12px;letter-spacing:.05em;cursor:pointer;white-space:nowrap;transition:all .2s" onmouseover="this.style.background='rgba(255,215,0,.2)'" onmouseout="this.style.background='rgba(255,215,0,.1)'">CONTACT SALES →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- FAQ -->
 <section class="faq" id="faq">
   <div class="faq-in">
