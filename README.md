@@ -10,11 +10,11 @@
   </p>
 
   <p>
-    <a href="https://github.com/PromptMatrix/PromptMatrix/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
-    <a href="https://github.com/PromptMatrix/PromptMatrix/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/PromptMatrix?label=version" alt="Version" /></a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/promptmatrix.github.io?label=version" alt="Version" /></a>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+" /></a>
     <img src="https://img.shields.io/badge/SQLite-local--first-orange.svg" alt="Local-first SQLite" />
-    <a href="https://github.com/PromptMatrix/PromptMatrix/actions"><img src="https://github.com/PromptMatrix/PromptMatrix/actions/workflows/test.yml/badge.svg" alt="CI" /></a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/actions"><img src="https://github.com/PromptMatrix/promptmatrix.github.io/actions/workflows/test.yml/badge.svg" alt="CI" /></a>
   </p>
 
   <p>
@@ -22,7 +22,7 @@
     <a href="#-features">Features</a> •
     <a href="#-deployment-models">Deployment Models</a> •
     <a href="#-manual-installation">Manual Installation</a> •
-    <a href="https://github.com/PromptMatrix/PromptMatrix/blob/main/LICENSE">MIT License</a>
+    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE">MIT License</a>
   </p>
 </div>
 
@@ -82,7 +82,7 @@ We have heavily fortified the system for production-ready, zero-trust deployment
 
 PromptMatrix runs purely on SQLite with zero external database dependencies.
 
-**Step 1:** Download the latest `.zip` from the [GitHub Releases](https://github.com/PromptMatrix/PromptMatrix/releases) page and extract it.
+**Step 1:** Download the latest `.zip` from the [GitHub Releases](https://github.com/PromptMatrix/promptmatrix.github.io/releases) page and extract it.
 
 **Step 2:** Run the startup script for your system:
 
@@ -107,8 +107,8 @@ docker compose up -d
 ## 🛠 Manual Installation
 
 ```bash
-git clone https://github.com/PromptMatrix/PromptMatrix.git
-cd PromptMatrix
+git clone https://github.com/PromptMatrix/promptmatrix.github.io.git
+cd promptmatrix.github.io
 
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -212,7 +212,7 @@ The test suite uses an in-memory SQLite database. No external services required.
 ## 🤝 Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR.
-Bug reports and feature requests go in [Issues](https://github.com/PromptMatrix/PromptMatrix/issues).
+Bug reports and feature requests go in [Issues](https://github.com/PromptMatrix/promptmatrix.github.io/issues).
 
 ---
 
@@ -225,4 +225,4 @@ See [SECURITY.md](SECURITY.md) for our responsible disclosure policy.
 
 ## 📄 License
 
-MIT © [PromptMatrix](https://github.com/PromptMatrix/PromptMatrix)
+MIT © [PromptMatrix](https://github.com/PromptMatrix/promptmatrix.github.io)
