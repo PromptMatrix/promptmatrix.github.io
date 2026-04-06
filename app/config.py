@@ -19,17 +19,33 @@ class Settings(BaseSettings):
     debug: bool = False
 
     # ── Local Performance (Hot Path) ────────────────────────────────────
-    prompt_cache_ttl_seconds: int = 60  # Increased for efficiency
+    prompt_cache_ttl_seconds: int = 30
     api_key_cache_ttl_seconds: int = 600  # 10 minutes cache for keys
     serve_rate_limit_rpm: int = 600  # Requests per minute per API key
 
     @model_validator(mode="after")
     def validate_security(self) -> Self:
-        if self.app_env == "production" and not self.encryption_key:
-            raise ValueError(
-                "CRITICAL SECURITY ERROR: encryption_key MUST be set in production. "
-                "Falling back to jwt_secret_key is a data-loss risk during key rotation."
-            )
+        if self.app_env == "production":
+            if not self.encryption_key:
+                raise ValueError(
+                    "CRITICAL: ENCRYPTION_KEY must be set in production. "
+                    "Falling back to jwt_secret_key is a data-loss risk during key rotation."
+                )
+            if self.jwt_secret_key == "dev-secret-change-me":
+                raise ValueError(
+                    "CRITICAL: JWT_SECRET_KEY must not be the default value in production. "
+                    "Generate a secure key: python -c \"import secrets; print(secrets.token_hex(32))\""
+                )
+            if not self.database_url.startswith("postgresql"):
+                raise ValueError(
+                    "CRITICAL: DATABASE_URL must be a PostgreSQL connection string in production. "
+                    "SQLite is not suitable for multi-user or team deployments."
+                )
+            if self.encryption_key == self.jwt_secret_key:
+                raise ValueError(
+                    "CRITICAL: ENCRYPTION_KEY and JWT_SECRET_KEY must be different values. "
+                    "Using the same key for both creates a data-loss risk during key rotation."
+                )
         return self
 
     class Config:

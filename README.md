@@ -10,10 +10,11 @@
   </p>
 
   <p>
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/tags"><img src="https://img.shields.io/github/v/tag/PromptMatrix/promptmatrix.github.io?label=version" alt="Version" /></a>
+    <a href="https://github.com/PromptMatrix/PromptMatrix/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
+    <a href="https://github.com/PromptMatrix/PromptMatrix/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/PromptMatrix?label=version" alt="Version" /></a>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+" /></a>
     <img src="https://img.shields.io/badge/SQLite-local--first-orange.svg" alt="Local-first SQLite" />
+    <a href="https://github.com/PromptMatrix/PromptMatrix/actions"><img src="https://github.com/PromptMatrix/PromptMatrix/actions/workflows/test.yml/badge.svg" alt="CI" /></a>
   </p>
 
   <p>
@@ -21,7 +22,7 @@
     <a href="#-features">Features</a> •
     <a href="#-deployment-models">Deployment Models</a> •
     <a href="#-manual-installation">Manual Installation</a> •
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE">MIT License</a>
+    <a href="https://github.com/PromptMatrix/PromptMatrix/blob/main/LICENSE">MIT License</a>
   </p>
 </div>
 
@@ -56,10 +57,14 @@ agent.run(system_prompt)
 
 *   **⏱️ Zero-Downtime Hot Swaps:** Update your LLM instructions in real time. Changes propagate in milliseconds.
 *   **⏪ Immutable Version History:** 1-click rollbacks for broken prompts. Never lose a historical state.
-*   **⚖️ Built-in LLM-As-Judge Evals:** Natively test your prompts against Anthropic, OpenAI, or Google before deploying them to production.
-*   **🛡️ Cryptographic Security:** Integration API keys are AES-256-GCM encrypted in the database.
-*   **🔌 Universal API:** Low-latency `GET` endpoints with fail-open caching for ultimate reliability.
-*   **📊 Visual Dashboard:** Full governance UI at `http://localhost:8000/dashboard`.
+*   **⚖️ Built-in LLM-As-Judge Evals:** Natively test your prompts against Anthropic, OpenAI, Google, Groq, or Mistral before deploying.
+*   **🛡️ Cryptographic Security:** Eval API keys are AES-256-GCM encrypted. Integration keys are SHA-256 hashed — never stored in plaintext.
+*   **🔌 Universal Serve API:** Low-latency `GET /pm/serve/{key}` with in-memory caching, variable substitution, and JSON/text output modes.
+*   **📊 Visual Dashboard:** Full governance UI at `http://localhost:8000/dashboard` — vanilla JavaScript, no build step required.
+*   **🔒 Zero-Dependency Eval:** Rule-based eval engine scores across 6 dimensions with zero external dependencies — works completely offline.
+*   **⌨️ Full CLI:** `pmx.py` for push, pull, diff, list, eval, and promote from the terminal.
+*   **🐳 Docker Ready:** Multi-stage optimized container image with non-root user execution.
+*   **📱 PWA Support:** Dashboard is installable as a Progressive Web App for desktop-like local access.
 
 ---
 
@@ -67,7 +72,7 @@ agent.run(system_prompt)
 
 PromptMatrix runs purely on SQLite with zero external database dependencies.
 
-**Step 1:** Download the latest `.zip` source code from the [GitHub Releases](https://github.com/PromptMatrix/promptmatrix.github.io/releases) page and extract it to your desired folder.
+**Step 1:** Download the latest `.zip` from the [GitHub Releases](https://github.com/PromptMatrix/PromptMatrix/releases) page and extract it.
 
 **Step 2:** Run the startup script for your system:
 
@@ -81,7 +86,6 @@ chmod +x start.sh
 ```
 
 ### Docker (Recommended for Servers)
-PromptMatrix includes a highly optimized, multi-stage Docker build.
 ```bash
 docker compose up -d
 ```
@@ -93,17 +97,17 @@ docker compose up -d
 ## 🛠 Manual Installation
 
 ```bash
-git clone https://github.com/PromptMatrix/promptmatrix.github.io.git
+git clone https://github.com/PromptMatrix/PromptMatrix.git
 cd PromptMatrix
 
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-cp .env.example .env      # Configure your secrets!
+cp .env.example .env      # Auto-generates secure keys on first run
 alembic upgrade head
 
-python -m uvicorn main:app --reload --port 8000
+uvicorn main:app --reload --port 8000
 ```
 
 ---
@@ -113,25 +117,27 @@ python -m uvicorn main:app --reload --port 8000
 ```
 PromptMatrix/
 ├── app/
-│   ├── api/v1/          # FastAPI route handlers (auth, prompts, keys, evals, etc.)
-│   ├── core/            # Auth logic, policy, email (disabled in local mode)
-│   ├── serve/           # Low-latency prompt serving router + cache
+│   ├── api/v1/          # FastAPI route handlers (auth, prompts, keys, evals, approvals, etc.)
+│   ├── core/            # Auth logic, policy scanner, email stubs (disabled in local mode)
+│   ├── serve/           # Low-latency prompt serving router + in-memory cache
+│   ├── services/        # Business logic: PromptService, AuthService, AuditService
 │   ├── config.py        # Pydantic settings (reads from .env)
 │   ├── database.py      # SQLAlchemy session + SQLite/PostgreSQL engine
-│   └── models.py        # ORM models (User, Org, Prompt, etc.)
+│   └── models.py        # ORM models (14 tables)
 ├── migrations/
-│   └── versions/        # Alembic migration files
-├── tests/               # pytest test suite (auth, prompts, keys, serve)
-├── dashboard.html        # Vue.js governance dashboard (served by FastAPI)
-├── index.html            # Landing / entry page
-├── main.py               # FastAPI application entry point
-├── Dockerfile            # Multi-stage optimized container image
-├── docker-compose.yml    # Production-ready compose configuration
-├── start.sh              # One-click setup for Linux/macOS
-├── start.bat             # One-click setup for Windows
-├── .env.example          # Configuration template
-├── requirements.txt      # Python dependencies
-└── alembic.ini           # Alembic configuration
+│   └── versions/        # Alembic migration files (upgrades + downgrades)
+├── tests/               # pytest test suite
+├── dashboard.html       # Governance dashboard UI (vanilla JavaScript — no build step)
+├── index.html           # Landing page
+├── main.py              # FastAPI application entry point
+├── pmx.py               # CLI: push, pull, diff, list, eval, promote
+├── Dockerfile           # Multi-stage optimized container image (non-root)
+├── docker-compose.yml   # Production-ready compose configuration
+├── start.sh             # One-click setup for Linux/macOS
+├── start.bat            # One-click setup for Windows
+├── .env.example         # Configuration template (no secrets)
+├── requirements.txt     # Python dependencies (no cloud services required)
+└── alembic.ini          # Alembic configuration
 ```
 
 ---
@@ -141,65 +147,72 @@ PromptMatrix/
 ### 🏠 Local / Self-Hosted (This Repository)
 
 - **Single-user, fully autonomous deployment**
-- SQLite database (zero external dependencies)
+- SQLite database — zero external dependencies
 - Perfect for individual developers managing prompts locally
 - 100% open source — MIT licensed
 - Instant setup: run `./start.sh` or `start.bat`
+- Login screen is skipped in development mode — dashboard opens directly
+
+### ☁️ Team / Production (Self-Hosted PostgreSQL)
+
+Switch to PostgreSQL for team deployments:
+
+1. Set `DATABASE_URL=postgresql://user:password@host:5432/promptmatrix` in `.env`
+2. Set `APP_ENV=production` to enable the login screen and security validators
+3. Uncomment `psycopg2-binary` in `requirements.txt`
+4. Run `alembic upgrade head` to apply migrations
+
+> For multi-user team collaboration with RBAC, managed hosting, and advanced workflow features — see the [Cloud version](https://promptmatrix.io).
 
 ---
 
-## ⌨️ CLI Utilities (`pmx.py`)
+## ⌨️ CLI (`pmx.py`)
 
-PromptMatrix includes a lightweight CLI for terminal-first prompt engineering. It allows you to push local files directly to the dev environment and pull live prompts back down to your filesystem.
-
-### Setup
-Ensure the server is running, then use the Python environment:
 ```bash
-# Windows
-venv\Scripts\python.exe pmx.py --help
-
-# Linux / macOS
-./venv/bin/python pmx.py --help
+python pmx.py status                                         # Server health + version
+python pmx.py list                                           # List all prompts
+python pmx.py push agent.system ./prompt.txt                 # Push + auto-approve (dev mode)
+python pmx.py pull agent.system ./out.txt                    # Pull live prompt to file
+python pmx.py diff agent.system ./prompt.txt                 # Unified diff local vs live
+python pmx.py eval agent.system ./prompt.txt --type rule_based  # Score offline (no API key)
+python pmx.py promote agent.system production                # Promote to another environment
 ```
 
-### Common Commands
-*   **Check Status:** `python pmx.py status`
-*   **List Prompts:** `python pmx.py list`
-*   **Push a Prompt:** `python pmx.py push project.assistant ./prompt.txt`
-    *   *Creates/updates the prompt and auto-approves it in development mode.*
-*   **Pull a Prompt:** `python pmx.py pull project.assistant ./downloaded.txt`
+### CI/CD Integration
 
----
-
-### ☁️ Cloud / Team Version (Coming Soon)
-
-- **Multi-user, team collaboration**
-- PostgreSQL backend for production scale
-- Role-Based Access Control (RBAC)
-- Multi-stage approval workflows
-- Managed hosting available
-
-> For team features or production deployments, see the PostgreSQL config in `.env.example` and uncomment `psycopg2-binary` in `requirements.txt`.
+```yaml
+# .github/workflows/eval_prompts.yml
+- name: Evaluate prompts
+  run: python pmx.py eval agent.system ./prompts/agent.txt --type rule_based
+```
 
 ---
 
 ## 🧪 Running Tests
 
 ```bash
-# Activate your venv first
 source venv/bin/activate  # Windows: venv\Scripts\activate
-
-pytest
+pytest -v
 ```
+
+The test suite uses an in-memory SQLite database. No external services required.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please open an issue or pull request. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines (coming soon).
+Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR.
+Bug reports and feature requests go in [Issues](https://github.com/PromptMatrix/PromptMatrix/issues).
+
+---
+
+## 🔒 Security
+
+Found a vulnerability? **Do not open a public issue.**
+See [SECURITY.md](SECURITY.md) for our responsible disclosure policy.
 
 ---
 
 ## 📄 License
 
-MIT © [PromptMatrix](https://github.com/PromptMatrix)
+MIT © [PromptMatrix](https://github.com/PromptMatrix/PromptMatrix)

@@ -35,8 +35,8 @@ def test_local_config_with_sqlite_always_passes():
 
 
 def test_any_app_env_is_accepted():
-    """OSS does not restrict app_env values — all are valid."""
-    for env in ["local", "development", "staging", "production"]:
+    """OSS does not restrict app_env values — except production enforces rules."""
+    for env in ["local", "development", "staging"]:
         s = Settings(app_env=env)
         assert s.app_env == env
 
