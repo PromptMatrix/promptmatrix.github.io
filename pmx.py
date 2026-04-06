@@ -12,7 +12,18 @@ DEFAULT_BASE_URL = "http://localhost:8000"
 class PromptMatrixCLI:
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
-        self.client = httpx.Client(base_url=self.base_url, timeout=30.0)
+        # PM_TOKEN for authenticated remote governance
+        self.token = os.environ.get("PM_TOKEN")
+        
+        headers = {}
+        if self.token:
+            headers["Authorization"] = f"Bearer {self.token}"
+            
+        self.client = httpx.Client(
+            base_url=self.base_url, 
+            timeout=30.0,
+            headers=headers
+        )
 
     def _handle_error(self, response: httpx.Response):
         try:
@@ -28,6 +39,8 @@ class PromptMatrixCLI:
             resp = self.client.get("/")
             if resp.status_code == 200:
                 print(f"[OK] PromptMatrix is alive at {self.base_url}")
+                if self.token:
+                    print("[AUTH] Using PM_TOKEN for authentication.")
             else:
                 print(f"[WARN] PromptMatrix responded with {resp.status_code}")
         except Exception:
@@ -114,9 +127,6 @@ class PromptMatrixCLI:
                 self._handle_error(create_resp)
 
             prompt_id = create_resp.json()["prompt"]["id"]
-            # Prompt creation automatically creates v1 as draft. We need to find its ID.
-            # Usually it's in the response, but our _serialize_prompt doesn't show all drafts.
-            # Get prompt details to find the draft version
             detail_resp = self.client.get(f"/api/v1/prompts/{prompt_id}")
             versions = detail_resp.json().get("versions", [])
             draft_v = next((v for v in versions if v["status"] == "draft"), None)
@@ -151,7 +161,6 @@ class PromptMatrixCLI:
 
     def pull(self, key: str, file_path: str):
         print(f"Pulling live content for '{key}'...")
-        # Use the serving endpoint
         resp = self.client.get(f"/pm/serve/{key}")
         if resp.status_code == 200:
             with open(file_path, "w", encoding="utf-8") as f:
@@ -173,13 +182,9 @@ def main():
 
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
-    # Status
     subparsers.add_parser("status", help="Check connection to PromptMatrix")
-
-    # List
     subparsers.add_parser("list", help="List all prompts and environments")
 
-    # Push
     push_parser = subparsers.add_parser(
         "push", help="Push a local file as a live prompt"
     )
@@ -187,7 +192,6 @@ def main():
     push_parser.add_argument("file", help="Path to text file")
     push_parser.add_argument("--desc", help="Optional description")
 
-    # Pull
     pull_parser = subparsers.add_parser(
         "pull", help="Pull live prompt content to a local file"
     )

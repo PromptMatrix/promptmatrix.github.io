@@ -1,8 +1,14 @@
 # ── Python Version ──────────────────────────────────────────────────────────
 # Requires Python >=3.11, <3.13 — use pyenv or python.org to get the right version
+# IMPORTANT: Always run tests inside the virtualenv:
+#   Windows:  .\venv\Scripts\activate && pytest
+#   Linux/Mac: source venv/bin/activate && pytest
 #
 # ── Core ──────────────────────────────────────────────────────────
 fastapi==0.115.0
+# starlette must be pinned to prevent newer global installs from breaking APIRouter
+# (fastapi 0.115.0 ships with starlette 0.41.2 which works; pip may warn but it passes)
+starlette==0.41.2
 uvicorn[standard]==0.32.0
 sqlalchemy==2.0.36
 alembic==1.14.0
@@ -24,3 +30,4 @@ python-multipart==0.0.22
 # ── Testing ──────────────────────────────────────────────────────
 pytest==8.3.3
 pytest-asyncio==0.24.0
+anyio[trio]==4.4.0

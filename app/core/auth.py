@@ -183,8 +183,11 @@ except ImportError:
 
 
 def _derive_encryption_key() -> bytes:
-    key_material = settings.encryption_key or settings.jwt_secret_key
-    return hashlib.sha256(key_material.encode()).digest()
+    if not settings.encryption_key:
+        # 🚨 CRITICAL: Never fallback to JWT secret for data encryption.
+        # Doing so risks data loss/corruption if JWT_SECRET_KEY is rotated.
+        raise RuntimeError("ENCRYPTION_KEY environment variable must be set!")
+    return hashlib.sha256(settings.encryption_key.encode()).digest()
 
 
 def encrypt_api_key(plaintext: str) -> str:

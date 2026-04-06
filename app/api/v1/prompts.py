@@ -123,7 +123,10 @@ async def list_prompts(
 
     prompts = (
         db.query(Prompt)
-        .options(joinedload(Prompt.live_version))
+        .options(
+            joinedload(Prompt.live_version).joinedload(PromptVersion.proposed_by),
+            joinedload(Prompt.live_version).joinedload(PromptVersion.approved_by),
+        )
         .filter(Prompt.environment_id == environment_id)
         .order_by(Prompt.created_at.desc())
         .all()
@@ -319,14 +322,22 @@ async def quick_approve_version(
     auth=Depends(get_current_user_and_org),
     db: Session = Depends(get_db),
 ):
-    """Phase 1 UX: 1-click draft-to-live. ONLY available in development/local mode."""
+    """1-click draft-to-live for local development only. Returns 403 in production."""
+    from app.config import get_settings
+
+    if get_settings().app_env != "development":
+        raise HTTPException(
+            status_code=403,
+            detail="Quick approve is only available in local/development mode.",
+        )
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
 
     service = PromptService(db)
     v = await service.approve_version(
-        prompt_id, version_id, "Quick approved (local mode)", user, member
+        prompt_id, version_id, "Quick approved (local mode)", user, member,
+        quick_approve=True,
     )
     return {"version": _serialize_version(v, is_live=True), "message": "Live"}
 

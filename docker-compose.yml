@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  promptmatrix:
+    build: .
+    container_name: promptmatrix-engine
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the database locally so prompt history is preserved on container restart
+      - ./data:/app/data
+    environment:
+      # Set to "production" for multi-user authentication, "development" for local single-user access
+      - APP_ENV=development
+      # Replace this with a strong 32-character hex key via: python -c "import secrets; print(secrets.token_hex(32))"
+      - JWT_SECRET_KEY=change-me-to-a-random-secret
+      - DATABASE_URL=sqlite:///./data/promptmatrix.db
+    restart: unless-stopped

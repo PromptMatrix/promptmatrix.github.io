@@ -201,6 +201,9 @@ class ApiKey(Base):
     environment_id = Column(
         String, ForeignKey("environments.id", ondelete="CASCADE"), nullable=False
     )
+    org_id = Column(String, index=True, nullable=True)  # Denormalized for hot-path performance
+    plan = Column(String(30), default="local")  # Denormalized for rate-limiting logic
+
     name = Column(String(120), nullable=False)
     key_hash = Column(String(64), unique=True, nullable=False)
     key_prefix = Column(String(20), nullable=False)

@@ -5,15 +5,17 @@ import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.v1.approvals import router as approvals_router
 from app.api.v1.audit import router as audit_router
 from app.api.v1.auth import router as auth_router
 from app.api.v1.evals import router as evals_router
 from app.api.v1.keys import router as keys_router
+from app.api.v1.orgs import router as orgs_router
 from app.api.v1.projects import router as projects_router
 from app.api.v1.prompts import router as prompts_router
 from app.config import get_settings
@@ -21,6 +23,31 @@ from app.serve.router import router as serve_router
 
 settings = get_settings()
 log = logging.getLogger(__name__)
+
+
+class SecurityMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        # Content Security Policy: restrict scripts to self
+        csp = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data:; "
+            "connect-src 'self';"
+        )
+        response.headers["Content-Security-Policy"] = csp
+        # Anti-Clickjacking
+        response.headers["X-Frame-Options"] = "DENY"
+        # Prevent MIME type sniffing
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        # HSTS (1 year) - only if not in dev
+        if settings.app_env != "development":
+            response.headers["Strict-Transport-Security"] = (
+                "max-age=31536000; includeSubDomains"
+            )
+        return response
 
 
 def _seed_local_admin():
@@ -166,6 +193,7 @@ allowed_origins = [
     "http://127.0.0.1:8000",
 ]
 
+app.add_middleware(SecurityMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -179,6 +207,7 @@ app.include_router(auth_router)
 app.include_router(prompts_router)
 app.include_router(approvals_router)
 app.include_router(keys_router)
+app.include_router(orgs_router)
 app.include_router(projects_router)
 app.include_router(audit_router)
 app.include_router(evals_router)
@@ -186,10 +215,22 @@ app.include_router(evals_router)
 
 @app.get("/api/status")
 async def status():
+    from sqlalchemy import text
+    from app.database import SessionLocal
+    db_status = "unknown"
+    db = SessionLocal()
+    try:
+        db.execute(text("SELECT 1"))
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)[:80]}"
+    finally:
+        db.close()
     return {
         "status": "ok",
         "version": "0.1.0",
         "env": settings.app_env,
+        "db": db_status,
     }
 
 
@@ -204,6 +245,21 @@ async def root():
 @app.get("/dashboard")
 async def dashboard():
     return FileResponse(BASE_DIR / "dashboard.html")
+
+
+@app.get("/manifest.json")
+async def manifest():
+    return FileResponse(BASE_DIR / "manifest.json")
+
+
+@app.get("/sw.js")
+async def service_worker():
+    return FileResponse(BASE_DIR / "sw.js")
+
+
+@app.get("/dashboard.js")
+async def dashboard_script():
+    return FileResponse(BASE_DIR / "dashboard.js")
 
 
 @app.exception_handler(Exception)

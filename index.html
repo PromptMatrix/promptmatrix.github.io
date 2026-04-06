@@ -20,10 +20,21 @@
 <meta property="og:image" content="https://promptmatrix.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="theme-color" content="#000301">
-<meta name="robots" content="index, follow">
-<meta name="author" content="PromptMatrix">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PromptMatrix","description":"Enterprise CI/CD pipeline prompt management tool. Govern LLM prompts with version control, auditable workflows, and instant cloud updates.","url":"https://promptmatrix.github.io/","applicationCategory":"DeveloperApplication","offers":[{"@type":"Offer","name":"Founder Tier","price":"499.00","priceCurrency":"USD"},{"@type":"Offer","name":"Starter Tier","price":"16.00","priceCurrency":"USD"},{"@type":"Offer","name":"Pro Tier","price":"39.00","priceCurrency":"USD"},{"@type":"Offer","name":"Scale Tier","price":"79.00","priceCurrency":"USD"}]}</script>
+<meta name="theme-color" content="#3b82f6">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/mizdra/prompt-matrix/main/assets/icon-192.png">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').then(reg => {
+        console.log('SW registered:', reg);
+      }).catch(err => {
+        console.log('SW failed:', err);
+      });
+    });
+  }
+</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PromptMatrix","description":"Enterprise CI/CD pipeline prompt management tool. Govern LLM prompts with version control, auditable workflows, and instant cloud updates.","url":"https://promptmatrix.github.io/","applicationCategory":"DeveloperApplication"}</script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -689,12 +700,11 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="nl" href="#how-it-works">PROTOCOL</a>
     <a class="nl" href="#features">FEATURES</a>
     <a class="nl" href="#quickstart">INTEGRATION</a>
-    <a class="nl" href="#pricing">PRICING</a>
     <a class="nl" href="#faq">FAQ</a>
   </div>
   <div class="nact">
     <a class="btn btn-ghost" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="btn btn-primary" href="https://promptmatrixx.vercel.app/dashboard" style="margin-right:4px">LOGIN / ACCESS</a>
+    <a class="btn btn-primary" href="/dashboard" style="margin-right:4px">OPEN DASHBOARD</a>
   </div>
   <button class="nhbg" id="nhbg" onclick="toggleMobNav()" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
@@ -705,7 +715,6 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="#how-it-works" onclick="closeMobNav()">PROTOCOL</a>
     <a class="mob-nl" href="#features" onclick="closeMobNav()">FEATURES</a>
     <a class="mob-nl" href="#quickstart" onclick="closeMobNav()">INTEGRATION</a>
-    <a class="mob-nl" href="#pricing" onclick="closeMobNav()">PRICING</a>
     <a class="mob-nl" href="#faq" onclick="closeMobNav()">FAQ</a>
     <div class="mob-divider"></div>
     <a class="mob-nl" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
@@ -746,33 +755,11 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     </div>
 
     <!-- EMAIL WAITLIST INPUT -->
-    <div style="display:flex;flex-direction:column;gap:8px;max-width:480px;animation:rise .7s .26s var(--ease) both">
-
-      <!-- Row 1: email + waitlist button (long primary) -->
-      <div style="display:flex;align-items:stretch;border:1px solid var(--b3);border-radius:3px;overflow:hidden;background:rgba(0,6,2,.95);box-shadow:0 0 28px rgba(0,230,118,.08)">
-        <input id="hero-email" class="hinput" type="email" placeholder="your@email.com" style="flex:1;padding:12px 14px;font-size:10.5px;min-width:0" onkeydown="if(event.key==='Enter')heroJoinWaitlist()" autocomplete="email" />
-        <button id="hero-waitlist-btn" onclick="heroJoinWaitlist()"
-          style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;padding:12px 22px;background:rgba(0,230,118,.18);color:var(--g);border:none;border-left:1px solid var(--b3);cursor:pointer;transition:all .18s;white-space:nowrap;text-shadow:0 0 12px rgba(0,230,118,.5);flex-shrink:0"
-          onmouseover="this.style.background='rgba(0,230,118,.3)';this.style.boxShadow='0 0 24px rgba(0,230,118,.18)'"
-          onmouseout="this.style.background='rgba(0,230,118,.18)';this.style.boxShadow='none'">
-          JOIN WAITLIST →
-        </button>
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;animation:rise .7s .26s var(--ease) both">
+      <div style="display:flex;gap:10px">
+        <a href="/dashboard" class="btn btn-primary" style="padding:14px 32px;font-size:12px">LAUNCH LOCAL DASHBOARD →</a>
+        <a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" class="btn btn-ghost" style="padding:14px 24px;font-size:11px">VIEW DOCUMENTATION</a>
       </div>
-
-      <!-- Row 2: spots counter + early seat button (shorter secondary) -->
-      <div style="display:flex;align-items:center;gap:10px">
-        <button onclick="claimSpot(this)"
-          style="font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.1em;padding:10px 20px;background:transparent;color:rgba(255,204,2,.75);border:1px solid rgba(255,204,2,.28);border-radius:3px;cursor:pointer;transition:all .16s;white-space:nowrap;flex-shrink:0"
-          onmouseover="this.style.background='rgba(255,204,2,.07)';this.style.color='var(--am)';this.style.borderColor='rgba(255,204,2,.5)';this.style.boxShadow='0 0 16px rgba(255,204,2,.1)'"
-          onmouseout="this.style.background='transparent';this.style.color='rgba(255,204,2,.75)';this.style.borderColor='rgba(255,204,2,.28)';this.style.boxShadow='none'">
-          ★ GET STARTED — $499 FOUNDING
-        </button>
-        <span style="font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.08em;display:flex;align-items:center;gap:5px">
-          <span style="width:5px;height:5px;border-radius:50%;background:var(--am);box-shadow:0 0 6px rgba(255,204,2,.6);display:inline-block;flex-shrink:0;animation:pip 1.4s infinite"></span>
-          <span id="hero-spots-count">100 TEAMS ONLY</span>
-        </span>
-      </div>
-
     </div>
 
     <!-- GITHUB GHOST LINK -->
@@ -794,7 +781,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 
     <div class="hstats">
       <div class="hst"><span class="hst-v">0</span><span class="hst-k">DEPLOYS PER CHANGE</span></div>
-      <div class="hst"><span class="hst-v">4</span><span class="hst-k">STORAGE TIERS</span></div>
+      <div class="hst"><span class="hst-v">3</span><span class="hst-k">STORAGE TIERS</span></div>
       <div class="hst"><span class="hst-v">MIT</span><span class="hst-k">OPEN SOURCE</span></div>
       <div class="hst"><span class="hst-v">∞</span><span class="hst-k">PROMPTS · AGENTS</span></div>
     </div>
@@ -1003,12 +990,12 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <div class="rv" style="transition-delay:.21s;background:rgba(3,4,0,.9);border:1px solid rgba(255,204,2,.18);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
         <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.22),transparent)"></div>
         <div style="font-family:var(--mono);font-size:22px;margin-bottom:10px">☁️</div>
-        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--am);margin-bottom:8px">// TIER 4 · CLOUD · COMING</div>
-        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Managed Cloud</div>
-        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Zero ops. Fully managed backend — login, sync, team access, audit trail, from anywhere. Ships when 5 people register. No infrastructure bill until there's real demand. You could be one of those 5.</p>
-        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--am)">⚡</span> Ships at 5 registrations</div>
-        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Team seats + sync</div>
-        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Founding rate: $149 one-time</div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--am);margin-bottom:8px">// CLOUD HOSTING</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Managed Cloud Engine</div>
+        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Zero ops. Fully managed backend with role-based access, API limits, and team sync. The Scale tier matches up to 10 team members at $79/mo. Lifetime Founding Access locks your platform at $499 one-time (5 team members).</p>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--am)">⚡</span> Scale Tier: $79/mo (10 seats)</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Founder Tier: $499 one-time (5 seats)</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Prompts and API limits locked safely</div>
       </div>
 
     </div>
@@ -1652,32 +1639,6 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
           </div>
         </div>
 
-        <div class="tc2-builder rv" style="transition-delay:.18s">
-          <div class="tcb-avatar">PM</div>
-          <div class="tcb-body">
-            <div class="tcb-label">// FROM THE BUILDER · SOLO FOUNDER · GUWAHATI, INDIA</div>
-            <p class="tcb-quote">I built this because I was running 26 AI agents on OpenClaw and every prompt was hardcoded somewhere — agent configs, .env files, Python strings. Every time a briefing needed tuning, it was: find the file, edit the string, restart the process. PromptMatrix started as my personal solution. It stores all my agent prompts in the browser today, SQLite when I need persistence, and cloud when the team needs it. <strong>Then I realized: anyone building with AI is in the same trap. That's why it's open source.</strong></p>
-            <div class="tcb-meta">
-              <span class="tcb-name">PromptMatrix</span>
-              <span class="tcb-role">Open source · MIT · Using it myself, daily</span>
-              <span class="tcb-badge">SOLO PROJECT</span>
-            </div>
-          </div>
-          <div class="tcb-stats">
-            <div class="tcb-stat">
-              <span class="tcb-stat-v">26</span>
-              <span class="tcb-stat-k">AI AGENTS</span>
-            </div>
-            <div class="tcb-stat">
-              <span class="tcb-stat-v">0</span>
-              <span class="tcb-stat-k">DEPLOYS/CHANGE</span>
-            </div>
-            <div class="tcb-stat">
-              <span class="tcb-stat-v">10s</span>
-              <span class="tcb-stat-k">TO APPROVE</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -1894,176 +1855,9 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       </div>
       <div class="dash-frame-note">
         DEMO MODE · All data is simulated · No backend required ·
-        <a href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener" style="color:rgba(0,230,118,.45);text-decoration:none">Self-host on GitHub →</a>
+        <a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener" style="color:rgba(0,230,118,.45);text-decoration:none">Self-host on GitHub →</a>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="pricing" id="pricing">
-  <div class="prinr">
-    <div class="prih rv">
-      <div class="slabel" style="text-align:center">// SAAS_PRICING</div>
-      <h2 class="stitle" style="text-align:center">Managed Access.<br><span class="em si">Production Ready.</span></h2>
-      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:500px">Get started with the managed cloud today. Founder seats are limited and price-locked forever.</p>
-    </div>
-
-    <!-- ROW 1: FOUNDER -->
-    <div class="pricing-row1">
-
-      <!-- FOUNDER ACCESS -->
-      <div class="plan founder rv" style="transition-delay:.08s; padding:0;">
-        <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(255,204,2,.045),transparent 80%);pointer-events:none"></div>
-        <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;min-height:100%">
-          
-          <!-- LEFT COL: Info -->
-          <div style="flex:1;min-width:300px;padding:34px 42px;border-right:1px solid rgba(255,204,2,.1);display:flex;flex-direction:column;justify-content:center">
-            <div style="display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:7.5px;color:rgba(0,0,0,0.8);background:var(--am);box-shadow:0 0 20px rgba(255,204,2,.3);padding:4px 12px;border-radius:2px;letter-spacing:.12em;margin-bottom:18px;width:fit-content;font-weight:700">
-              <span class="spot-pip" style="background:#000"></span>
-              ★ WHITE GLOVE ONBOARDING · <span id="pro-spots-badge" style="color:#000">100 TEAMS ONLY</span>
-            </div>
-            <div class="pname" style="color:rgba(255,204,2,.55);font-size:10px">// CLOUD · FOUNDING SEAT · FOREVER</div>
-            <div class="pprice" style="color:var(--am);text-shadow:0 0 28px rgba(255,204,2,.3);font-size:55px;margin-bottom:8px"><sup style="color:var(--am);font-size:24px">$</sup>499<sub style="font-size:13px;color:rgba(255,204,2,.45)"> once</sub></div>
-            <div class="pperiod" style="color:rgba(255,204,2,.55);font-size:9.5px;margin-bottom:21px">PAY ONCE · PRICE LOCKED FOREVER · NO SUBSCRIPTION</div>
-            <p class="pdesc" style="color:rgba(255,240,180,.5);font-size:14px;max-width:380px;margin-bottom:0">Scale plan access — permanently. When this moves to recurring pricing, founding members pay nothing more. Ever. You get the cloud the moment it ships, and your price stays at $499 for the life of the product.</p>
-          </div>
-
-          <!-- RIGHT COL: Features -->
-          <div style="flex:1;min-width:300px;padding:34px 42px;background:rgba(255,204,2,.015);display:flex;flex-direction:column">
-            <ul class="pitems" style="flex:1;gap:9px">
-              <li style="color:rgba(255,204,2,.85);font-weight:500"><span style="color:var(--am);font-size:11px">⚡</span> Everything in Scale plan — forever</li>
-              <li style="color:rgba(255,204,2,.85);font-weight:500"><span style="color:var(--am);font-size:11px">⚡</span> Price never increases. Ever.</li>
-              <li style="color:rgba(255,204,2,.85);font-weight:500"><span style="color:var(--am);font-size:11px">⚡</span> Lifetime locked · no subscription fee</li>
-              <li style="padding-top:6px;border-top:1px solid rgba(255,204,2,.1);margin-top:2px">Managed cloud backend — zero ops</li>
-              <li>Up to 5 team seats + role-based access</li>
-              <li>Cross-device sync from anywhere</li>
-              <li>Direct line to the builder</li>
-              <li>Shape what gets built next</li>
-            </ul>
-            <button class="pbtn am" id="claim-btn" onclick="claimSpot(this)" style="margin-top:24px;font-size:11px;padding:14px">★ GET STARTED — $499 FOUNDING →</button>
-            <p style="font-family:var(--mono);font-size:8.5px;color:rgba(255,204,2,.45);letter-spacing:.06em;margin-top:12px;text-align:center">Founding rate · $499 one-time · locked forever · no subscription ever</p>
-          </div>
-          
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ROW 2: STARTER + PRO + SCALE + ENTERPRISE -->
-    <div class="pricing-row2">
-
-      <!-- STARTER -->
-      <div class="plan rv" style="transition-delay:.05s">
-        <div class="pname">// STARTER</div>
-        <div class="pprice"><sup>$</sup>16<sub>/mo</sub></div>
-        <div class="pperiod">1 SEAT · 10 PROMPTS</div>
-        <p class="pdesc">Zero ops — login, edit, serve. The perfect entry point for solo developers running production AI.</p>
-        <ul class="pitems">
-          <li>Browser + Local Mode</li>
-          <li>Managed cloud backend</li>
-          <li>1 workspace seat</li>
-          <li>10 Prompts limit</li>
-          <li>50,000 API Requests / month</li>
-          <li>Automatic updates</li>
-          <li>99.9% uptime SLA</li>
-          <li class="off">Team seats</li>
-          <li class="off">Role-based access</li>
-          <li class="off">Slack notifications</li>
-        </ul>
-        <button class="pbtn g" onclick="openWaitlist('starter')">JOIN WAITLIST →</button>
-      </div>
-
-      <!-- PRO -->
-      <div class="plan rv" style="transition-delay:.10s">
-        <div class="pname">// PRO</div>
-        <div class="pprice"><sup>$</sup>39<sub>/mo</sub></div>
-        <div class="pperiod">UP TO 3 SEATS · 50 PROMPTS</div>
-        <p class="pdesc">The core governance protocol for small teams. Role-based access, approvals, and immutable audit logs.</p>
-        <ul class="pitems">
-          <li>Everything in Starter</li>
-          <li>Up to 3 team seats</li>
-          <li>50 Prompts limit</li>
-          <li>250,000 API Requests / month</li>
-          <li>Role-based access — 5 levels</li>
-          <li>Approval workflow</li>
-          <li>CSV audit log export</li>
-          <li>Standard support</li>
-          <li class="off">LLM-as-judge scoring</li>
-          <li class="off">SSO / SAML</li>
-        </ul>
-        <button class="pbtn g" onclick="openWaitlist('pro3')">JOIN WAITLIST →</button>
-      </div>
-
-      <!-- SCALE — most popular -->
-      <div class="plan hot rv" style="transition-delay:.12s">
-        <div class="phot">
-          <span class="spot-pip g"></span>
-          MOST POPULAR
-        </div>
-        <div class="pname">// SCALE</div>
-        <div class="pprice"><sup>$</sup>79<sub>/mo</sub></div>
-        <div class="pperiod">UP TO 10 SEATS · 150 PROMPTS</div>
-        <p class="pdesc">Advanced governance for scaling organisations. Full workflow automation, Slack approvals, and LLM eval scoring.</p>
-        <ul class="pitems">
-          <li>Everything in Pro</li>
-          <li>Up to 10 team seats</li>
-          <li>150 Prompts limit</li>
-          <li>1,000,000 API Requests / month</li>
-          <li>Slack approval notifications</li>
-          <li>LLM-as-judge eval scoring</li>
-          <li>Priority support</li>
-          <li class="off">SSO / SAML</li>
-          <li class="off">Custom data residency</li>
-          <li class="off">Dedicated onboarding</li>
-        </ul>
-        <button class="pbtn p" onclick="openWaitlist('scale10')">JOIN WAITLIST →</button>
-      </div>
-
-      <!-- ENTERPRISE — contact sales -->
-      <div class="plan rv" style="transition-delay:.15s">
-        <div class="pname">// ENTERPRISE</div>
-        <div style="font-family:var(--mono);font-size:28px;font-weight:600;color:var(--g);line-height:1;margin-bottom:5px;letter-spacing:-.01em">CONTACT<br><span style="font-size:13px;color:var(--txt3);font-weight:400;letter-spacing:.06em">hello@promptmatrix.io</span></div>
-        <div class="pperiod">ANNUAL CONTRACT · UNLIMITED SEATS</div>
-        <p class="pdesc">For organisations with compliance mandates, large teams, and enterprise procurement requirements.</p>
-        <ul class="pitems">
-          <li>Everything in Scale</li>
-          <li>Unlimited seats & limits</li>
-          <li>Unlimited API Requests</li>
-          <li>SSO / SAML</li>
-          <li>Custom data residency</li>
-          <li>SOC 2 Type II (roadmap)</li>
-          <li>Dedicated onboarding</li>
-          <li>Custom SLA & Audit API</li>
-          <li>On-premise deployment option</li>
-          <li>24/7 support channel</li>
-        </ul>
-        <button class="pbtn g" onclick="submitEmail(null,'enterprise')">CONTACT SALES →</button>
-        <p style="font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.06em;margin-top:10px;text-align:center">hello@promptmatrix.io · response within 48h</p>
-      </div>
-
-    </div>
-
-    <!-- HOW FOUNDING ACCESS WORKS -->
-    <div class="rv" style="transition-delay:.22s;border:1px solid rgba(255,204,2,.15);border-radius:5px;padding:28px 34px;background:rgba(4,3,0,.85);max-width:680px;margin:0 auto 13px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.18),transparent)"></div>
-      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(255,204,2,.4);text-align:center;margin-bottom:21px">// HOW FOUNDING ACCESS WORKS</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:21px">
-        <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.28);line-height:1;margin-bottom:8px">01</div>
-          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">Grab a seat. Email confirms your spot. No card charged now.</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--am);text-shadow:0 0 18px rgba(255,204,2,.28);line-height:1;margin-bottom:8px">100</div>
-          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">White Glove Onboarding. Lifetime locked. Seat reserved.</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.28);line-height:1;margin-bottom:8px">∞</div>
-          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">One payment — $499. Scale tier access. Price locked forever. No subscriptions. No surprises.</div>
-        </div>
-      </div>
-    </div>
-    <p class="rv" style="transition-delay:.28s;text-align:center;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.07em">100 founding teams · hello@promptmatrix.io · Secure Early Access</p>
   </div>
 </section>
 
@@ -2141,8 +1935,8 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
         <div class="faqa"><p>Yes — that's the default mode. Open the HTML file in your browser, start adding prompts. Everything persists in localStorage. Your local agents and scripts can call the serve endpoint directly. No installation, no backend, no account required. The browser mode is the zero-infrastructure starting point. When you need durability across browser restarts, move to SQLite mode — one flag in the config.</p></div>
       </div>
       <div class="faqitem">
-        <button class="faqq" onclick="toggleFaq(this)">What storage options are available and when should I upgrade? <span class="faqico">+</span></button>
-        <div class="faqa"><p>There are four tiers: <strong>Browser localStorage</strong> — zero setup, start immediately, data lives in your browser. <strong>SQLite</strong> — download the repo, point it at a local file, data persists across sessions and is git-friendly. <strong>Self-hosted database</strong> — Postgres, MySQL, or any backend you already run, full data sovereignty. <strong>Managed cloud</strong> — coming when 5 people register, handles sync, team access, and cross-device availability. You can export your prompt registry and migrate between tiers at any time. Your prompts, your schema, no lock-in.</p></div>
+        <button class="faqq" onclick="toggleFaq(this)">What storage options are available? <span class="faqico">+</span></button>
+        <div class="faqa"><p>There are three tiers: <strong>Browser localStorage</strong> — zero setup, start immediately, data lives in your browser. <strong>SQLite</strong> — download the repo, point it at a local file, data persists across sessions and is git-friendly. <strong>Self-hosted database</strong> — Postgres, MySQL, or any backend you already run, full data sovereignty. You can export your prompt registry and migrate between tiers at any time. Your prompts, your schema, no lock-in.</p></div>
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">Why not use environment variables or a database config table? <span class="faqico">+</span></button>
@@ -2186,26 +1980,9 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   <h2 class="ctah">Your prompts don't<br>belong in <span class="em"><span class="si">your code.</span></span></h2>
   <p class="ctab">Start in your browser right now — no install, no account, no card. Every hardcoded prompt is one registration away from being versioned, governed, and instantly updatable.</p>
   <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin-bottom:13px">
-    <button
-      style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.08em;padding:13px 28px;background:transparent;color:var(--txt3);border:1px solid var(--b2);border-radius:3px;cursor:pointer;transition:all .18s;white-space:nowrap"
-      onmouseover="this.style.color='var(--txt2)';this.style.borderColor='var(--b3)';this.style.background='rgba(0,230,118,.03)'"
-      onmouseout="this.style.color='var(--txt3)';this.style.borderColor='var(--b2)';this.style.background='transparent'"
-      onclick="window.open('https://github.com/PromptMatrix/promptmatrix.github.io','_blank')">
-      CLONE FREE ON GITHUB →
-    </button>
-    <button
-      style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;padding:13px 28px;background:rgba(0,230,118,.12);color:var(--g);border:1px solid rgba(0,230,118,.35);border-radius:3px;cursor:pointer;transition:all .18s;text-shadow:0 0 10px rgba(0,230,118,.4);box-shadow:0 0 24px rgba(0,230,118,.06);white-space:nowrap"
-      onmouseover="this.style.background='rgba(0,230,118,.2)';this.style.boxShadow='0 0 40px rgba(0,230,118,.15)';this.style.transform='translateY(-1px)'"
-      onmouseout="this.style.background='rgba(0,230,118,.12)';this.style.boxShadow='0 0 24px rgba(0,230,118,.06)';this.style.transform=''"
-      onclick="claimSpot(this)">
-      ★ GET STARTED — $499 FOUNDING →
-    </button>
-  </div>
-  <div class="ctafine">
-    <span>Browser · SQLite · self-hosted · cloud</span>
+    <span>Browser · SQLite · self-hosted</span>
     <span>Self-host on your infra</span>
-    <span>White Glove Onboarding</span>
-    <span>$499 one-time · price locked forever</span>
+    <span>Open Source · MIT Licensed</span>
   </div>
 </section>
 
@@ -2218,7 +1995,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
         <div class="ngl"><span>PM</span></div>
         <span class="nlt">PromptMatrix</span>
       </a>
-      <p class="fabout">Prompt governance for AI builders. Every hardcoded prompt is a liability — PromptMatrix pulls them into a governed registry. Browser, SQLite, self-hosted, or cloud. Open source. MIT.</p>
+      <p class="fabout">Prompt governance for AI builders. Every hardcoded prompt is a liability — PromptMatrix pulls them into a governed registry. Browser, SQLite, or self-hosted. Open source. MIT.</p>
       <div class="fstatus"><span class="npip"></span>OPEN SOURCE · MIT · FREE TO SELF-HOST</div>
     </div>
     <div>
@@ -2226,7 +2003,6 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       <ul class="flinks">
         <li><a href="#how-it-works">The Protocol</a></li>
         <li><a href="#features">Features</a></li>
-        <li><a href="#pricing">Pricing</a></li>
         <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
@@ -2237,7 +2013,6 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
         <li><a href="#features">Approval Workflow</a></li>
         <li><a href="#features">Audit Trail</a></li>
         <li><a href="#features">Version History</a></li>
-        <li><a href="#pricing">Enterprise Controls</a></li>
         <li><a href="#features">Diff Review</a></li>
       </ul>
     </div>

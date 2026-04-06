@@ -34,7 +34,7 @@ def _extract_raw_key(authorization):
 
 
 async def _resolve_api_key(key_hash, db=None):
-    """Resolve API key hash with object-based caching."""
+    """Resolve API key hash with single-lookup denormalized data."""
     cached = await get_cached_key(key_hash)
     if cached:
         return cached
@@ -42,33 +42,37 @@ async def _resolve_api_key(key_hash, db=None):
     own_db = db is None
     db = db or _db()
     try:
-        api_key = (
-            db.query(ApiKey)
+        # Optimized: Single JOIN to get everything (ApiKey + Env Name)
+        # Project and Org lookups are now avoided thanks to denormalization
+        row = (
+            db.query(
+                ApiKey.id, 
+                ApiKey.environment_id, 
+                ApiKey.org_id, 
+                ApiKey.plan, 
+                Environment.name.label("env_name")
+            )
+            .join(Environment, ApiKey.environment_id == Environment.id)
             .filter(ApiKey.key_hash == key_hash, ApiKey.is_active)
             .first()
         )
-        if not api_key:
+
+        if not row:
             raise HTTPException(status_code=401, detail="Invalid API key")
 
-        env = (
-            db.query(Environment)
-            .filter(Environment.id == api_key.environment_id)
-            .first()
-        )
-        project = db.query(Project).filter(Project.id == env.project_id).first()
-        org = db.query(Organisation).filter(Organisation.id == project.org_id).first()
-
         key_data = {
-            "api_key_id": api_key.id,
-            "environment_id": env.id,
-            "env_name": env.name,
-            "org_id": org.id,
-            "plan": org.plan,
+            "api_key_id": row.id,
+            "environment_id": row.environment_id,
+            "env_name": row.env_name,
+            "org_id": row.org_id,
+            "plan": row.plan,
         }
+        
         await cache_key(
-            key_hash, env.id, org.id, org.plan, env.name, api_key_id=api_key.id
+            key_hash, row.environment_id, row.org_id, row.plan, row.env_name, api_key_id=row.id
         )
         return key_data
+
     finally:
         if own_db:
             db.close()
@@ -94,9 +98,17 @@ async def _resolve_prompt(env_id, prompt_key):
 
         version = (
             db.query(PromptVersion)
-            .filter(PromptVersion.id == prompt.live_version_id)
+            .filter(
+                PromptVersion.id == prompt.live_version_id,
+                PromptVersion.status == "approved",
+            )
             .first()
         )
+        if not version:
+            raise HTTPException(
+                status_code=404,
+                detail="Prompt has no approved live version",
+            )
         content_data = {
             "prompt_id": prompt.id,
             "content": version.content,
@@ -145,6 +157,8 @@ def _log_serve_event_bg(
     environment_id: str,
     latency_ms: int,
     outcome: str = "served",
+    tokens_used: int = 0,
+    llm_latency_ms: int = 0,
     extra: dict = None,
 ):
     """Background task to log telemetry to SQLite."""
@@ -157,6 +171,8 @@ def _log_serve_event_bg(
             version_id=version_id,
             environment_id=environment_id,
             latency_ms=latency_ms,
+            tokens_used=tokens_used,
+            llm_latency_ms=llm_latency_ms,
             outcome=outcome,
             extra=extra or {},
         )
@@ -218,7 +234,12 @@ async def serve_prompt(
             key_hash, settings.serve_rate_limit_rpm
         )
         if not allowed:
-            raise HTTPException(status_code=429, detail="Rate limit exceeded")
+            from fastapi.responses import Response
+            return JSONResponse(
+                status_code=429,
+                content={"detail": "Rate limit exceeded. Retry after 60 seconds."},
+                headers={"Retry-After": "60"},
+            )
 
     content_data, cache_hit = await _resolve_prompt(
         key_data["environment_id"], prompt_key
@@ -268,3 +289,68 @@ async def serve_prompt(
         )
 
     return PlainTextResponse(content=content, headers=headers)
+
+
+from pydantic import BaseModel
+
+class FeedbackIn(BaseModel):
+    version_id: str
+    outcome: str = "success"
+    latency_ms: int = 0
+    tokens_used: int = 0
+    llm_latency_ms: int = 0
+    metadata: dict = {}
+
+@router.post("/pm/serve/{prompt_key:path}/feedback")
+async def serve_feedback(
+    prompt_key: str,
+    body: FeedbackIn,
+    background_tasks: BackgroundTasks,
+    authorization: Optional[str] = Header(None),
+):
+    if not authorization and settings.app_env == "development":
+        key_hash = "dev-bypass"
+        org_id = "dev-bypass-org"
+        api_key_id = "dev-bypass-id"
+        db = _db()
+        try:
+            env = db.query(Environment).filter(Environment.name == "development").first() or db.query(Environment).first()
+            project = db.query(Project).filter(Project.id == env.project_id).first()
+            org = db.query(Organisation).filter(Organisation.id == project.org_id).first()
+            org_id = org.id
+            env_id = env.id
+        finally:
+            db.close()
+    else:
+        raw_key = _extract_raw_key(authorization)
+        key_hash = hash_api_key(raw_key)
+        key_data = await _resolve_api_key(key_hash)
+        org_id = key_data["org_id"]
+        api_key_id = key_data["api_key_id"]
+        env_id = key_data["environment_id"]
+
+    db = _db()
+    try:
+        prompt = db.query(Prompt).filter(Prompt.environment_id == env_id, Prompt.key == prompt_key).first()
+        if not prompt:
+            raise HTTPException(status_code=404, detail="Prompt not found")
+        prompt_id = prompt.id
+    finally:
+        db.close()
+
+    background_tasks.add_task(
+        _log_serve_event_bg,
+        org_id=org_id,
+        api_key_id=api_key_id,
+        prompt_id=prompt_id,
+        version_id=body.version_id,
+        environment_id=env_id,
+        latency_ms=body.latency_ms,
+        outcome=body.outcome,
+        tokens_used=body.tokens_used,
+        llm_latency_ms=body.llm_latency_ms,
+        extra=body.metadata,
+    )
+    
+    return {"recorded": True}
+
