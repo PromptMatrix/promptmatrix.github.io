@@ -13,6 +13,7 @@
 <meta property="og:description" content="The ultimate CI/CD pipeline prompt management tool for AI teams. Ensure enterprise-grade prompt governance with version control, approval workflows, and a fast serve endpoint.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://promptmatrix.github.io/">
+<meta name="keywords" content="prompt engineering, prompt management, CI/CD, AI governance, LLM orchestration, version control, audit trail, enterprise AI">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PromptMatrix — CI/CD Pipeline Prompt Management Tool">
 <meta name="twitter:description" content="Integrate prompt governance directly into your CI/CD pipeline. Version control, approval workflows, and instant production updates for LLM prompts.">
@@ -20,7 +21,7 @@
 <meta property="og:image" content="https://promptmatrix.github.io/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta name="theme-color" content="#3b82f6">
+<meta name="theme-color" content="#000301">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/mizdra/prompt-matrix/main/assets/icon-192.png">
 <script>
@@ -34,7 +35,43 @@
     });
   }
 </script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"PromptMatrix","description":"Enterprise CI/CD pipeline prompt management tool. Govern LLM prompts with version control, auditable workflows, and instant cloud updates.","url":"https://promptmatrix.github.io/","applicationCategory":"DeveloperApplication"}</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PromptMatrix",
+  "description": "Enterprise-grade CI/CD pipeline prompt management tool. Govern LLM prompts with version control, auditable workflows, and instant production updates.",
+  "url": "https://promptmatrix.github.io/",
+  "applicationCategory": "DeveloperApplication",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Founding Seat",
+      "price": "499.00",
+      "priceCurrency": "USD",
+      "description": "Lifetime access to Scale tier with white-glove onboarding."
+    },
+    {
+      "@type": "Offer",
+      "name": "Starter",
+      "price": "16.00",
+      "priceCurrency": "USD"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro",
+      "price": "39.00",
+      "priceCurrency": "USD"
+    },
+    {
+      "@type": "Offer",
+      "name": "Scale",
+      "price": "79.00",
+      "priceCurrency": "USD"
+    }
+  ]
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -709,7 +746,8 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
   <button class="nhbg" id="nhbg" onclick="toggleMobNav()" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
 
-<div class="mob-nav" id="mob-nav">
+<main aria-label="Main Content Container">
+  <nav class="mob-nav" id="mob-nav" aria-label="Mobile Navigation">
   <div class="mob-nav-inner">
     <a class="mob-nl" href="#problem" onclick="closeMobNav()">PROBLEM</a>
     <a class="mob-nl" href="#how-it-works" onclick="closeMobNav()">PROTOCOL</a>
@@ -720,10 +758,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
     <a class="mob-nl mob-cta" href="https://promptmatrix.vercel.app/dashboard">LOGIN / ACCESS</a>
   </div>
-</div>
+</nav>
 
-<!-- HERO -->
-<section class="hero" id="hero">
+  <!-- HERO -->
+  <section class="hero" id="hero" aria-label="Hero Section">
   <div class="hero-sweep"></div>
   <div class="hl">
     <div class="hkick">
@@ -857,10 +895,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       </div>
     </div>
   </div>
-</section>
+  </section>
 
-<!-- MARQUEE -->
-<div class="mq">
+  <!-- MARQUEE -->
+  <aside class="mq" aria-label="Feature marquee">
   <div class="mq-t">
     <div class="mqi"><span class="dot">◆</span>PROMPT GOVERNANCE</div>
     <div class="mqi"><span class="dot">◆</span>APPROVAL WORKFLOW</div>
@@ -887,10 +925,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <div class="mqi"><span class="dot">◆</span>COMPLIANCE AUDIT LOG</div>
     <div class="mqi"><span class="dot">◆</span>ENTERPRISE READY</div>
   </div>
-</div>
+  </aside>
 
-<!-- WHO IS THIS FOR -->
-<section id="who-its-for" style="position:relative;z-index:2;padding:64px 0 0">
+  <!-- WHO IS THIS FOR -->
+  <section id="who-its-for" aria-label="Target Audience and Use Cases" style="position:relative;z-index:2;padding:64px 0 0">
   <div class="wrap">
     <div class="rv" style="text-align:center;margin-bottom:32px">
       <div class="slabel" style="text-align:center">// OPERATOR_PROFILES</div>
@@ -1099,10 +1137,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       </div>
     </div>
   </div>
-</section>
+  </section>
 
-<!-- HOW IT WORKS -->
-<div class="hiw" id="how-it-works">
+  <!-- HOW IT WORKS -->
+  <section class="hiw" id="how-it-works" aria-label="Operational Protocol">
   <div class="hiw-in">
     <div class="hiw-h rv">
       <div class="slabel" style="text-align:center">// THE_PROTOCOL</div>
@@ -1144,10 +1182,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       </div>
     </div>
   </div>
-</div>
+  </section>
 
-<!-- DIFF SECTION -->
-<section id="diff-view" style="position:relative;z-index:2">
+  <!-- DIFF SECTION -->
+  <section id="diff-view" aria-label="Engineering Diff and Review Interface" style="position:relative;z-index:2">
   <div class="wrap">
     <div class="diff-sect">
       <div class="diffg">
@@ -1191,10 +1229,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       </div>
     </div>
   </div>
-</section>
+  </section>
 
-<!-- FEATURES -->
-<section id="features" style="position:relative;z-index:2">
+  <!-- FEATURES -->
+  <section id="features" aria-label="Governance Platform Features" style="position:relative;z-index:2">
   <div class="wrap">
     <div class="feats">
       <div class="fhead">
@@ -1251,10 +1289,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       </div>
     </div>
   </div>
-</section>
+  </section>
 
-<!-- VS ALTERNATIVES -->
-<section id="vs-alternatives" style="position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,2,0,.4);padding:80px 0">
+  <!-- VS ALTERNATIVES -->
+  <section id="vs-alternatives" aria-label="Competitive Analysis and Differentiators" style="position:relative;z-index:2;border-top:1px solid var(--b);background:rgba(0,2,0,.4);padding:80px 0">
   <div class="wrap">
     <div class="rv" style="margin-bottom:40px">
       <div class="slabel">// ALTERNATIVES_ANALYSIS</div>
@@ -1321,10 +1359,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     </div>
     <p class="rv" style="transition-delay:.16s;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.08em;margin-top:14px;text-align:center">~ = partial or limited · ✗ = not supported · ✓ = built for this</p>
   </div>
-</section>
+  </section>
 
-<!-- INTEGRATION / QUICK START -->
-<section class="qs-section" id="quickstart">
+  <!-- INTEGRATION / QUICK START -->
+  <section class="qs-section" id="quickstart" aria-label="Developer Integration and Quickstart">
   <div class="qs-inner">
 
     <div class="qs-head rv">
@@ -1523,10 +1561,10 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
     </div>
 
   </div>
-</section>
+  </section>
 
-<!-- WHAT YOU CAN GOVERN -->
-<section class="pt-section" id="use-cases">
+  <!-- WHAT YOU CAN GOVERN -->
+  <section class="pt-section" id="use-cases" aria-label="Governance Use Cases and Prompt Categories">
   <div class="pt-inner">
     <div class="rv">
       <div class="slabel">// GOVERNANCE_SCOPE</div>
@@ -1603,10 +1641,10 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
 
     </div>
   </div>
-</section>
+  </section>
 
-<!-- WHY THIS EXISTS -->
-<section id="why-this-exists" style="position:relative;z-index:2">
+  <!-- WHY THIS EXISTS -->
+  <section id="why-this-exists" aria-label="Problem Context and Origin Stories" style="position:relative;z-index:2">
   <div class="wrap">
     <div class="testi">
       <div class="testih rv">
@@ -1642,10 +1680,10 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       </div>
     </div>
   </div>
-</section>
+  </section>
 
-<!-- LIVE DASHBOARD PREVIEW -->
-<section class="dash-preview" id="dashboard">
+  <!-- LIVE DASHBOARD PREVIEW -->
+  <section class="dash-preview" id="dashboard" aria-label="Interactive Product Dashboard Preview">
   <div class="dash-preview-inner">
     <div class="dash-preview-head rv">
       <div class="slabel">// LIVE DEMO</div>
@@ -1914,10 +1952,10 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       </div>
     </div>
   </div>
-</section>
+  </section>
 
-<!-- PRICING -->
-<section class="pricing" id="pricing">
+  <!-- PRICING -->
+  <section class="pricing" id="pricing" aria-label="SaaS Pricing Plans">
   <div class="prinr">
     <div class="prih rv">
       <div class="slabel" style="text-align:center">// SAAS_PRICING</div>
@@ -2081,10 +2119,10 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
     </div>
     <p class="rv" style="transition-delay:.28s;text-align:center;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.07em">100 founding teams · hello@promptmatrix.io · Secure Early Access</p>
   </div>
-</section>
+  </section>
 
-<!-- FAQ -->
-<section class="faq" id="faq">
+  <!-- FAQ -->
+  <section class="faq" id="faq" aria-label="Frequently Asked Questions">
   <div class="faq-in">
     <div class="faqh rv">
       <div class="slabel">// FAQ</div>
@@ -2141,29 +2179,19 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="cta rv" id="cta">
-  <div class="slabel" style="text-align:center;margin-bottom:12px">// GET STARTED NOW</div>
-  <h2 class="ctah">Your prompts don't<br>belong in <span class="em"><span class="si">your code.</span></span></h2>
-  <p class="ctab">Start in your browser right now — no install, no account, no card. Every hardcoded prompt is one registration away from being versioned, governed, and instantly updatable.</p>
-  <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;margin-bottom:13px">
-    <span>Browser · SQLite · self-hosted</span>
-    <span>Self-host on your infra</span>
-    <span>Open Source · MIT Licensed</span>
-  </div>
-</section>
-
+  </section>
+</main>
 
 <!-- FOOTER -->
-<footer>
+<footer aria-label="Page Footer">
   <div class="fmain">
     <div>
-      <a class="nlogo" href="#">
+      <a class="nlogo" href="#hero">
         <div class="ngl"><span>PM</span></div>
         <span class="nlt">PromptMatrix</span>
       </a>
       <p class="fabout">Prompt governance for AI builders. Every hardcoded prompt is a liability — PromptMatrix pulls them into a governed registry. Browser, SQLite, or self-hosted. Open source. MIT.</p>
-      <div class="fstatus"><span class="npip"></span>OPEN SOURCE · MIT · FREE TO SELF-HOST</div>
+      <div class="fstatus" aria-label="Status Information"><span class="npip"></span>OPEN SOURCE · MIT · FREE TO SELF-HOST</div>
     </div>
     <div>
       <div class="fcolh">PRODUCT</div>

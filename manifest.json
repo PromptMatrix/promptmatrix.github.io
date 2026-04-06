@@ -5,7 +5,7 @@
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#0a0a0b",
-  "theme_color": "#3b82f6",
+  "theme_color": "#00e676",
   "icons": [
     {
       "src": "https://raw.githubusercontent.com/mizdra/prompt-matrix/main/assets/icon-192.png",
