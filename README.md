@@ -80,6 +80,12 @@ chmod +x start.sh
 ./start.sh
 ```
 
+### Docker (Recommended for Servers)
+PromptMatrix includes a highly optimized, multi-stage Docker build.
+```bash
+docker compose up -d
+```
+
 **Access the Visual Governance Dashboard at:** `http://localhost:8000/dashboard`
 
 ---
@@ -119,6 +125,8 @@ PromptMatrix/
 ├── dashboard.html        # Vue.js governance dashboard (served by FastAPI)
 ├── index.html            # Landing / entry page
 ├── main.py               # FastAPI application entry point
+├── Dockerfile            # Multi-stage optimized container image
+├── docker-compose.yml    # Production-ready compose configuration
 ├── start.sh              # One-click setup for Linux/macOS
 ├── start.bat             # One-click setup for Windows
 ├── .env.example          # Configuration template
