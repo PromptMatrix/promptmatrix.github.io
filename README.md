@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="PromptMatrix.png" alt="PromptMatrix" width="100%">
+  <img src="PromptMatrix.webp" alt="PromptMatrix" width="100%">
 
   <h1>⬡ PromptMatrix</h1>
   <h3>The Governance Engine for AI Systems</h3>

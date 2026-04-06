@@ -17,12 +17,6 @@ class PromptService:
     def __init__(self, db: Session):
         self.db = db
 
-    def _generate_integrity_hash(
-        self, action: str, resource_id: str, ts: datetime
-    ) -> str:
-        """Generate a SHA-256 hash to ensure log integrity."""
-        ctx = f"{action}:{resource_id}:{ts.isoformat()}"
-        return hashlib.sha256(ctx.encode()).hexdigest()
 
     async def submit_for_review(
         self, prompt_id: str, version_id: str, note: str, user: User, member: OrgMember
@@ -94,9 +88,15 @@ class PromptService:
         return v
 
     async def approve_version(
-        self, prompt_id: str, version_id: str, note: str, user: User, member: OrgMember
+        self, prompt_id: str, version_id: str, note: str, user: User, member: OrgMember,
+        quick_approve: bool = False,
     ):
-        """Approve a version, make it live, and notify the requester."""
+        """Approve a version, make it live, and notify the requester.
+
+        Args:
+            quick_approve: If True, accepts both 'draft' and 'pending_review' status.
+                           Only used by the quick-approve endpoint (dev mode only).
+        """
         v = (
             self.db.query(PromptVersion)
             .filter(
@@ -104,9 +104,12 @@ class PromptService:
             )
             .first()
         )
-        if not v or v.status != "pending_review":
+        allowed_statuses = ("draft", "pending_review") if quick_approve else ("pending_review",)
+        if not v or v.status not in allowed_statuses:
+            status_msg = "draft or pending_review" if quick_approve else "pending_review"
             raise HTTPException(
-                status_code=400, detail="Version not found or not in pending_review"
+                status_code=400,
+                detail=f"Version not found or not in {status_msg} status",
             )
 
         prompt = self.db.query(Prompt).filter(Prompt.id == prompt_id).first()
@@ -236,9 +239,11 @@ class PromptService:
         resource_id: str,
         extra: dict = None,
     ):
-        """Create a secure audit log entry."""
-        ts = datetime.now(timezone.utc)
-        log = AuditLog(
+        """Create a secure audit log entry using the centralized AuditService."""
+        from app.services.audit_service import AuditService
+        
+        AuditService.log_action(
+            db=self.db,
             org_id=org_id,
             actor_id=user_id,
             actor_email=user_email,
@@ -246,10 +251,7 @@ class PromptService:
             resource_type=resource_type,
             resource_id=resource_id,
             extra=extra or {},
-            created_at=ts,
-            integrity_hash=self._generate_integrity_hash(action, resource_id, ts),
         )
-        self.db.add(log)
 
     def create_prompt(
         self,

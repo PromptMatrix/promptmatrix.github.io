@@ -68,16 +68,16 @@ async def create_key(
         created_by_id=user.id,
     )
     db.add(api_key)
-    db.add(
-        AuditLog(
-            org_id=member.org_id,
-            actor_id=user.id,
-            actor_email=user.email,
-            action="key.created",
-            resource_type="key",
-            resource_id=api_key.id,
-            extra={"name": body.name, "env": env.name},
-        )
+    from app.services.audit_service import AuditService
+    AuditService.log_action(
+        db=db,
+        org_id=member.org_id,
+        actor_id=user.id,
+        actor_email=user.email,
+        action="key.created",
+        resource_type="key",
+        resource_id=api_key.id,
+        extra={"name": body.name, "env": env.name},
     )
     db.commit()
     return {"key": full_key, "prefix": key_prefix, "id": api_key.id, "message": "Copy"}
@@ -95,16 +95,16 @@ async def revoke_key(
     if not k:
         raise HTTPException(status_code=404, detail="Not found")
     k.is_active = False
-    db.add(
-        AuditLog(
-            org_id=member.org_id,
-            actor_id=user.id,
-            actor_email=user.email,
-            action="key.revoked",
-            resource_type="key",
-            resource_id=key_id,
-            extra={"name": k.name},
-        )
+    from app.services.audit_service import AuditService
+    AuditService.log_action(
+        db=db,
+        org_id=member.org_id,
+        actor_id=user.id,
+        actor_email=user.email,
+        action="key.revoked",
+        resource_type="key",
+        resource_id=key_id,
+        extra={"name": k.name},
     )
     db.commit()
     await invalidate_key_cache(k.key_hash)
@@ -133,16 +133,16 @@ async def rotate_key(
         created_by_id=user.id,
     )
     db.add(new_key)
-    db.add(
-        AuditLog(
-            org_id=member.org_id,
-            actor_id=user.id,
-            actor_email=user.email,
-            action="key.rotated",
-            resource_type="key",
-            resource_id=key_id,
-            extra={"name": old.name},
-        )
+    from app.services.audit_service import AuditService
+    AuditService.log_action(
+        db=db,
+        org_id=member.org_id,
+        actor_id=user.id,
+        actor_email=user.email,
+        action="key.rotated",
+        resource_type="key",
+        resource_id=key_id,
+        extra={"name": old.name},
     )
     old_hash = old.key_hash
     db.commit()

@@ -38,7 +38,7 @@ async def list_audit(
                 "resource_type": l.resource_type,
                 "resource_id": l.resource_id,
                 "actor_email": l.actor_email,
-                "metadata": l.extra or {},
+                "extra": l.extra or {},
                 "created_at": l.created_at.isoformat() if l.created_at else None,
             }
             for l in logs

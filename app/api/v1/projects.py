@@ -194,12 +194,17 @@ async def import_workspace(
                         .first()
                     )
                     if not existing_v:
+                        # Security: whitelist import status — only allow safe states.
+                        # "approved" and "archived" must go through the proper workflow.
+                        raw_status = v_data.get("status", "draft")
+                        safe_status = raw_status if raw_status in ("draft", "pending_review") else "draft"
+
                         new_v = PromptVersion(
                             prompt_id=prompt.id,
                             version_num=v_data["version_num"],
                             content=v_data["content"],
                             commit_message=v_data.get("commit_message", ""),
-                            status=v_data.get("status", "draft"),
+                            status=safe_status,
                             variables=v_data.get("variables", {}),
                             proposed_by_id=user.id,
                             approval_note=v_data.get("approval_note", ""),
@@ -213,16 +218,16 @@ async def import_workspace(
     db.commit()
     from app.models import AuditLog
 
-    db.add(
-        AuditLog(
-            org_id=member.org_id,
-            actor_id=user.id,
-            actor_email=user.email,
-            action="workspace.imported",
-            resource_type="workspace",
-            resource_id=member.org_id,
-            extra={"imported_versions": import_count},
-        )
+    from app.services.audit_service import AuditService
+    AuditService.log_action(
+        db=db,
+        org_id=member.org_id,
+        actor_id=user.id,
+        actor_email=user.email,
+        action="workspace.imported",
+        resource_type="workspace",
+        resource_id=member.org_id,
+        extra={"imported_versions": import_count},
     )
     db.commit()
     return {"message": f"Imported {import_count} versions successfully"}

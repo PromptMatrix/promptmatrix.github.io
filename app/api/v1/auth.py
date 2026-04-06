@@ -126,7 +126,14 @@ async def login(body: LoginIn, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     member = db.query(OrgMember).filter(OrgMember.user_id == user.id).first()
+    if not member:
+        raise HTTPException(
+            status_code=403,
+            detail="User has no organization membership. Contact your administrator.",
+        )
     org = db.query(Organisation).filter(Organisation.id == member.org_id).first()
+    if not org:
+        raise HTTPException(status_code=500, detail="Organization data missing")
 
     tokens = service.get_tokens(user.id, org.id)
     return {

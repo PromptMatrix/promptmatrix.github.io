@@ -31,8 +31,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.core.auth import generate_api_key, hash_password
 from app.database import Base, get_db
-from app.models import (ApiKey, Environment, Organisation, OrgMember, Project,
-                        Prompt, PromptVersion, User)
+from app.models import (ApiKey, AuditLog, Environment, EvalKey, EvalResult,
+                        Organisation, OrgMember, PlanOverride, Project, Prompt,
+                        PromotionRequest, PromptVersion, ServeEvent, User)
 
 # ── Test database — fresh in-memory SQLite ────────────────────────
 
@@ -65,15 +66,21 @@ def _clean_db():
     yield
     db = TestSessionLocal()
     try:
-        # Delete in dependency order
+        # Delete in FK dependency order — children before parents
         for model in [
+            ServeEvent,
+            EvalResult,
+            AuditLog,
+            PromotionRequest,
             PromptVersion,
             Prompt,
             ApiKey,
+            EvalKey,
             Environment,
             Project,
             OrgMember,
             User,
+            PlanOverride,
             Organisation,
         ]:
             db.query(model).delete()
@@ -188,11 +195,21 @@ def seed_approved_prompt(
     return prompt, v
 
 
-def seed_api_key(db, env_id, name="test-key"):
-    """Create and return (full_key_string, ApiKey row)."""
+def seed_api_key(db, env_id, name="test-key", org_id=None, plan="local"):
+    """Create and return (full_key_string, ApiKey row).
+
+    Args:
+        org_id: The org's ID for denormalized rate-limiting lookups.
+        plan: The plan name for denormalized rate-limit tier (local|free|solo|team|scale).
+    """
     full_key, key_hash, key_prefix = generate_api_key("production")
     row = ApiKey(
-        environment_id=env_id, name=name, key_hash=key_hash, key_prefix=key_prefix
+        environment_id=env_id,
+        name=name,
+        key_hash=key_hash,
+        key_prefix=key_prefix,
+        org_id=org_id,
+        plan=plan,
     )
     db.add(row)
     db.commit()
