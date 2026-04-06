@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.auth import (generate_api_key, get_current_user_and_org,
                            require_role)
 from app.database import get_db
-from app.models import ApiKey, AuditLog, Environment
+from app.models import ApiKey, AuditLog, Environment, Project
 from app.serve.cache import invalidate_key_cache
 
 router = APIRouter(prefix="/api/v1/keys", tags=["keys"])
@@ -25,6 +25,17 @@ async def list_keys(
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
+
+    # Verify the environment belongs to the caller's org (IDOR protection)
+    env = (
+        db.query(Environment)
+        .join(Project, Project.id == Environment.project_id)
+        .filter(Environment.id == environment_id, Project.org_id == member.org_id)
+        .first()
+    )
+    if not env:
+        raise HTTPException(status_code=403, detail="Access denied")
+
     keys = (
         db.query(ApiKey)
         .filter(ApiKey.environment_id == environment_id, ApiKey.is_active)
@@ -56,9 +67,15 @@ async def create_key(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    env = db.query(Environment).filter(Environment.id == body.environment_id).first()
+    # Verify env belongs to caller's org (IDOR protection)
+    env = (
+        db.query(Environment)
+        .join(Project, Project.id == Environment.project_id)
+        .filter(Environment.id == body.environment_id, Project.org_id == member.org_id)
+        .first()
+    )
     if not env:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=403, detail="Access denied")
     full_key, key_hash, key_prefix = generate_api_key(env.name)
     api_key = ApiKey(
         environment_id=body.environment_id,
@@ -91,7 +108,13 @@ async def revoke_key(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    k = db.query(ApiKey).filter(ApiKey.id == key_id).first()
+    k = (
+        db.query(ApiKey)
+        .join(Environment, Environment.id == ApiKey.environment_id)
+        .join(Project, Project.id == Environment.project_id)
+        .filter(ApiKey.id == key_id, Project.org_id == member.org_id)
+        .first()
+    )
     if not k:
         raise HTTPException(status_code=404, detail="Not found")
     k.is_active = False
@@ -119,7 +142,13 @@ async def rotate_key(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "engineer")
-    old = db.query(ApiKey).filter(ApiKey.id == key_id).first()
+    old = (
+        db.query(ApiKey)
+        .join(Environment, Environment.id == ApiKey.environment_id)
+        .join(Project, Project.id == Environment.project_id)
+        .filter(ApiKey.id == key_id, Project.org_id == member.org_id)
+        .first()
+    )
     if not old:
         raise HTTPException(status_code=404, detail="Not found")
     env = db.query(Environment).filter(Environment.id == old.environment_id).first()

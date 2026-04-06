@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.core.auth import get_current_user_and_org, require_role
 from app.database import get_db
-from app.models import AuditLog, Environment, Prompt, PromptVersion
+from app.models import AuditLog, Environment, Project, Prompt, PromptVersion
 from app.serve.cache import invalidate_prompt_cache
 from app.services.prompt_service import PromptService
 
@@ -108,6 +108,8 @@ def _serialize_prompt(p: Prompt, version_count: int = None) -> dict:
 @router.get("")
 async def list_prompts(
     environment_id: str,
+    limit: int = 50,
+    offset: int = 0,
     auth=Depends(get_current_user_and_org),
     db: Session = Depends(get_db),
 ):
@@ -121,6 +123,8 @@ async def list_prompts(
         .subquery()
     )
 
+    limit = min(limit, 100) # Strict pagination
+
     prompts = (
         db.query(Prompt)
         .options(
@@ -129,6 +133,8 @@ async def list_prompts(
         )
         .filter(Prompt.environment_id == environment_id)
         .order_by(Prompt.created_at.desc())
+        .offset(offset)
+        .limit(limit)
         .all()
     )
 
@@ -187,12 +193,14 @@ async def get_prompt(
         raise HTTPException(status_code=403, detail="No org")
     prompt = (
         db.query(Prompt)
+        .join(Environment, Environment.id == Prompt.environment_id)
+        .join(Project, Project.id == Environment.project_id)
         .options(
             joinedload(Prompt.versions).joinedload(PromptVersion.proposed_by),
             joinedload(Prompt.versions).joinedload(PromptVersion.approved_by),
             joinedload(Prompt.live_version),
         )
-        .filter(Prompt.id == prompt_id)
+        .filter(Prompt.id == prompt_id, Project.org_id == member.org_id)
         .first()
     )
     if not prompt:
@@ -483,7 +491,13 @@ async def delete_prompt(
     if not member:
         raise HTTPException(status_code=403, detail="No org")
     require_role(member, "admin")
-    prompt = db.query(Prompt).filter(Prompt.id == prompt_id).first()
+    prompt = (
+        db.query(Prompt)
+        .join(Environment, Environment.id == Prompt.environment_id)
+        .join(Project, Project.id == Environment.project_id)
+        .filter(Prompt.id == prompt_id, Project.org_id == member.org_id)
+        .first()
+    )
     if not prompt:
         raise HTTPException(status_code=404, detail="Not found")
     env = db.query(Environment).filter(Environment.id == prompt.environment_id).first()

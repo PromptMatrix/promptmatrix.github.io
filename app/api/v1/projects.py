@@ -5,7 +5,7 @@ Projects + Environments — /api/v1/projects
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.core.auth import get_current_user_and_org
 from app.database import get_db
@@ -22,27 +22,31 @@ async def list_projects(
     if not member:
         raise HTTPException(status_code=403, detail="No org context")
 
-    projects = db.query(Project).filter(Project.org_id == member.org_id).all()
+    projects = (
+        db.query(Project)
+        .options(joinedload(Project.environments))
+        .filter(Project.org_id == member.org_id)
+        .all()
+    )
 
     result = []
     for p in projects:
-        envs = db.query(Environment).filter(Environment.project_id == p.id).all()
         result.append(
             {
                 "id": p.id,
                 "name": p.name,
                 "created_at": p.created_at.isoformat() if p.created_at else None,
-                "environments": [
-                    {
-                        "id": e.id,
-                        "name": e.name,
-                        "display_name": e.display_name,
-                        "color": e.color,
-                        "is_protected": e.is_protected,
-                        "eval_pass_threshold": e.eval_pass_threshold,
-                    }
-                    for e in envs
-                ],
+            "environments": [
+                {
+                    "id": e.id,
+                    "name": e.name,
+                    "display_name": e.display_name,
+                    "color": e.color,
+                    "is_protected": e.is_protected,
+                    "eval_pass_threshold": e.eval_pass_threshold,
+                }
+                for e in p.environments
+            ],
             }
         )
 
@@ -58,7 +62,14 @@ async def export_workspace(
         raise HTTPException(status_code=403, detail="No org context")
 
     # Fetch all data for the organisation
-    projects = db.query(Project).filter(Project.org_id == member.org_id).all()
+    projects = (
+        db.query(Project)
+        .options(
+            joinedload(Project.environments).joinedload(Environment.prompts).joinedload(Prompt.versions)
+        )
+        .filter(Project.org_id == member.org_id)
+        .all()
+    )
 
     export_data = {
         "version": "1.0",
@@ -71,10 +82,8 @@ async def export_workspace(
     }
 
     for p in projects:
-        envs = db.query(Environment).filter(Environment.project_id == p.id).all()
         p_data = {"name": p.name, "environments": []}
-        for e in envs:
-            prompts = db.query(Prompt).filter(Prompt.environment_id == e.id).all()
+        for e in p.environments:
             e_data = {
                 "name": e.name,
                 "display_name": e.display_name,
@@ -83,19 +92,14 @@ async def export_workspace(
                 "eval_pass_threshold": e.eval_pass_threshold,
                 "prompts": [],
             }
-            for pr in prompts:
-                versions = (
-                    db.query(PromptVersion)
-                    .filter(PromptVersion.prompt_id == pr.id)
-                    .all()
-                )
+            for pr in e.prompts:
                 pr_data = {
                     "key": pr.key,
                     "description": pr.description,
                     "tags": pr.tags,
                     "versions": [],
                 }
-                for v in versions:
+                for v in pr.versions:
                     pr_data["versions"].append(
                         {
                             "version_num": v.version_num,

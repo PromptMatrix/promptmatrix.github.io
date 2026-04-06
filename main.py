@@ -42,6 +42,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         response.headers["X-Frame-Options"] = "DENY"
         # Prevent MIME type sniffing
         response.headers["X-Content-Type-Options"] = "nosniff"
+        # Referrer and Permissions policies
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         # HSTS (1 year) - only if not in dev
         if settings.app_env != "development":
             response.headers["Strict-Transport-Security"] = (
@@ -101,7 +104,7 @@ def _seed_local_admin():
             name="PromptMatrix",
             slug=slug,
             plan="local",
-            created_at=datetime.datetime.utcnow(),
+            created_at=datetime.datetime.now(datetime.timezone.utc),
         )
         db.add(org)
         db.flush()
@@ -111,8 +114,23 @@ def _seed_local_admin():
             org_id=org.id,
             user_id=user.id,
             role="owner",
-            joined_at=datetime.datetime.utcnow(),
+            joined_at=datetime.datetime.now(datetime.timezone.utc),
         )
+        db.add(member)
+
+        # We must add an audit log so it doesn't break analytics later
+        from datetime import datetime, timezone
+        from app.models import AuditLog
+        
+        db.add(AuditLog(
+            id=str(uuid.uuid4()),
+            org_id=org.id,
+            actor_id=user.id,
+            actor_email=user.email,
+            action="init.local_admin",
+            resource_type="system",
+            created_at=datetime.now(timezone.utc)
+        ))
         db.add(member)
         db.flush()
 
@@ -121,7 +139,7 @@ def _seed_local_admin():
             id=str(uuid.uuid4()),
             org_id=org.id,
             name="Default Project",
-            created_at=datetime.datetime.utcnow(),
+            created_at=datetime.datetime.now(datetime.timezone.utc),
         )
         db.add(project)
         db.flush()
@@ -140,7 +158,7 @@ def _seed_local_admin():
                     color=color,
                     is_protected=protected,
                     eval_pass_threshold=threshold,
-                    created_at=datetime.datetime.utcnow(),
+                    created_at=datetime.datetime.now(datetime.timezone.utc),
                 )
             )
 
@@ -188,9 +206,9 @@ app = FastAPI(
 
 allowed_origins = [
     settings.app_url,
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
+    "http://localhost:5173",
+    "http://localhost:4173",
+    "http://127.0.0.1:5173",
 ]
 
 app.add_middleware(SecurityMiddleware)

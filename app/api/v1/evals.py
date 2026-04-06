@@ -404,12 +404,14 @@ async def list_providers():
 
 @router.get("/keys")
 async def list_eval_keys(
+    limit: int = 100,
+    offset: int = 0,
     auth=Depends(get_current_user_and_org), db: Session = Depends(get_db)
 ):
     user, member = auth
     if not member:
         raise HTTPException(status_code=403, detail="No org")
-    keys = db.query(EvalKey).filter(EvalKey.org_id == member.org_id).all()
+    keys = db.query(EvalKey).filter(EvalKey.org_id == member.org_id).limit(limit).offset(offset).all()
     return {
         "keys": [
             {
