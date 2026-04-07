@@ -195,12 +195,12 @@ def seed_approved_prompt(
     return prompt, v
 
 
-def seed_api_key(db, env_id, name="test-key", org_id=None, plan="local"):
+def seed_api_key(db, env_id, name="test-key", org_id=None, plan="free"):
     """Create and return (full_key_string, ApiKey row).
 
     Args:
         org_id: The org's ID for denormalized rate-limiting lookups.
-        plan: The plan name for denormalized rate-limit tier (local|free|solo|team|scale).
+        plan: The plan name for denormalized rate-limit tier (free|founder|starter|pro|scale).
     """
     full_key, key_hash, key_prefix = generate_api_key("production")
     row = ApiKey(
