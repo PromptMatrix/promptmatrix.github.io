@@ -25,12 +25,6 @@ class Organisation(Base):
     id = Column(String, primary_key=True, default=_uuid)
     name = Column(String(120), nullable=False)
     slug = Column(String(80), unique=True, nullable=False)
-    plan = Column(String(20), default="free")  # free|founder|starter|pro|scale|enterprise
-    plan_seat_limit = Column(Integer, default=1)
-    plan_prompt_limit = Column(Integer, default=3)
-    plan_rpm_limit = Column(Integer, default=30)
-    lemon_order_id = Column(String(100), nullable=True)
-    billing_email = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=_now)
     updated_at = Column(DateTime, default=_now, onupdate=_now)
     members = relationship(
