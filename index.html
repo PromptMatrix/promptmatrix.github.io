@@ -18,13 +18,13 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PromptMatrix — CI/CD Pipeline Prompt Management Tool">
 <meta name="twitter:description" content="Integrate prompt governance directly into your CI/CD pipeline. Version control, approval workflows, and instant production updates for LLM prompts.">
-<meta name="twitter:image" content="https://promptmatrix.github.io/og-image.png">
-<meta property="og:image" content="https://promptmatrix.github.io/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://promptmatrix.github.io/PromptMatrix.webp">
+<meta property="og:image" content="https://promptmatrix.github.io/PromptMatrix.webp">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="720">
 <meta name="theme-color" content="#000301">
 <link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/PromptMatrix/promptmatrix.github.io/main/assets/icon-192.png">
+<link rel="apple-touch-icon" href="https://promptmatrix.github.io/PromptMatrix.webp">
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -1996,7 +1996,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
               <li>Direct line to the builder</li>
               <li>Shape what gets built next</li>
             </ul>
-            <button class="pbtn am" id="claim-btn" onclick="claimSpot(this)" style="margin-top:24px;font-size:11px;padding:14px">★ GET STARTED — $499 FOUNDING →</button>
+            <button class="pbtn am" id="claim-btn" onclick="openWaitlist('founder')" style="margin-top:24px;font-size:11px;padding:14px">★ GET STARTED — $499 FOUNDING →</button>
             <p style="font-family:var(--mono);font-size:8.5px;color:rgba(255,204,2,.45);letter-spacing:.06em;margin-top:12px;text-align:center">Founding rate · $499 one-time · locked forever · no subscription ever</p>
           </div>
           
@@ -2472,47 +2472,50 @@ function heroJoinWaitlist(){
 }
 
 /* OPEN WAITLIST — for solo/team tiers (pre-launch) */
-function openWaitlist(plan){
-  const base='https://matrixlabs.beehiiv.com/subscribe';
-  const params=new URLSearchParams({utm_source:plan,utm_medium:'pricing',utm_campaign:'cloud_waitlist'});
-  window.open(`${base}?${params}`,'_blank');
-  showToast("You're on the waitlist — we'll notify you when "+plan+" tier launches.");
+function openWaitlist(plan, email){
+  const orgId = localStorage.getItem('pm_org_id') || 'unregistered';
+  const paidTiers = ['founder', 'starter', 'pro', 'pro3', 'scale', 'scale10'];
+  if (paidTiers.includes(plan)) {
+    const variantMap = { 'pro3': 'pro', 'scale10': 'scale' };
+    const slug = variantMap[plan] || plan;
+    window.location.href = `https://matrixlabs.lemonsqueezy.com/checkout/buy/${slug}?custom[org_id]=${orgId}`;
+    return;
+  }
+  if (plan === 'enterprise') {
+    showToast("Opening sales channel...");
+    window.open('mailto:hello@promptmatrix.io?subject=Enterprise Inquiry','_blank');
+    return;
+  }
+  const base = 'https://matrixlabs.beehiiv.com/subscribe';
+  const params = new URLSearchParams({ utm_source: plan, utm_medium: 'landing_page', utm_campaign: 'cloud_waitlist' });
+  if (email) params.set('email', email);
+  window.open(`${base}?${params.toString()}`, '_blank');
+  showToast("You're on the list — we'll be in touch.");
 }
 
-/* EMAIL — generic (pricing section forms) */
-async function submitEmail(id,plan){
-  const input=id?document.getElementById(id):null;
-  const email=input?input.value.trim():'';
-  if(id&&(!email||!email.includes('@'))){
-    if(input){input.style.outline='1px solid rgba(255,82,82,.55)';setTimeout(()=>input.style.outline='',2000)}
+async function submitEmail(id, plan){
+  const input = id ? document.getElementById(id) : null;
+  const email = input ? input.value.trim() : '';
+  if (id && (!email || !email.includes('@'))) {
+    if (input) input.style.outline = '1px solid #ff5252';
     return;
   }
-  const btn=input?input.nextElementSibling:(event&&event.target instanceof HTMLButtonElement?event.target:null);
-  const orig=btn?btn.textContent:'';
-  if(btn){btn.textContent='...';btn.disabled=true;}
-  if(plan==='founding'||plan==='pro'){
-    // Lemon Squeezy payment link
-    window.open('LEMON_SQUEEZY_PAYMENT_LINK_HERE','_blank');
-    if(btn){btn.textContent='OPENING...';setTimeout(()=>{btn.textContent=orig;btn.disabled=false;},2000);}
-    return;
-  } else if(plan==='enterprise'||plan==='team'){
-    window.open('mailto:hello@promptmatrix.io?subject=Enterprise%20%E2%80%94%20PromptMatrix&body=Hi%2C%0A%0AInterested%20in%20PromptMatrix%20for%20our%20team.%0A%0ACompany%3A%20%0ATeam%20size%3A%20%0AUse%20case%3A%20%0A%0AThanks','_blank');
-    showToast("We'll reach out within 48h.");
-  } else if(plan==='waitlist'){
-    const base='https://matrixlabs.beehiiv.com/subscribe';
-    const params=new URLSearchParams({utm_source:'general',utm_medium:'landing_page',utm_campaign:'cloud_waitlist'});
-    if(email)params.set('email',email);
-    window.open(`${base}?${params}`,'_blank');
-    showToast("Subscribed — we'll be in touch.");
-  } else {
-    const base='https://matrixlabs.beehiiv.com/subscribe';
-    const params=new URLSearchParams({utm_source:'cta',utm_medium:'landing_page',utm_campaign:'cloud_waitlist'});
-    if(email)params.set('email',email);
-    window.open(`${base}?${params}`,'_blank');
-    showToast("You're on the list — we'll be in touch.");
-  }
-  if(input)input.value='';
-  if(btn){btn.textContent='NOTED ✓';btn.style.color='var(--g)';setTimeout(()=>{btn.textContent=orig;btn.style.color='';btn.disabled=false;},4000);}
+  openWaitlist(plan, email);
+}
+
+/* NEW: Purchase flow for live tiers */
+function openCheckout(variantId) {
+  const orgId = localStorage.getItem('pm_org_id') || 'unregistered';
+  // Lemon Squeezy Checkout URLs for each variant
+  const base = "https://matrixlabs.lemonsqueezy.com/buy/";
+  const urls = {
+    "founder": "founder", 
+    "starter": "starter",
+    "pro": "pro",
+    "scale": "scale"
+  };
+  const slug = urls[variantId] || "founder";
+  window.location.href = `${base}${slug}?custom[org_id]=${orgId}`;
 }
 
 /* FAQ */
@@ -2582,7 +2585,7 @@ window.addEventListener('scroll',()=>{
     if (isVercel) {
       // ☁️ Managed Mode: Direct to Login
       ctas.forEach(btn => {
-        if (!btn.href.includes('github.com')) {
+        if (!btn.href.includes('github.com') && !btn.classList.contains('pbtn')) {
           btn.textContent = "LOGIN / ACCESS";
           btn.href = "/dashboard";
         }
@@ -2591,13 +2594,18 @@ window.addEventListener('scroll',()=>{
         if (!btn.classList.contains('pbtn')) btn.style.display = 'none';
       });
     } else if (isGithub) {
-      // 🛠 OSS Mode: Direct to GitHub Engine
-      ctas.forEach(btn => {
-        if (!btn.href.includes('github.com')) {
-          btn.textContent = "DOWNLOAD OSS";
-          btn.href = "https://github.com/PromptMatrix/promptmatrix.github.io";
-        }
-      });
+      // 🛠 OSS Mode: Point only Hero/Docs to GitHub, keep Pricing directed to Cloud
+      const heroCta = document.querySelector('.hero .btn-primary');
+      if (heroCta) {
+        heroCta.textContent = "DOWNLOAD OSS";
+        heroCta.href = "https://github.com/PromptMatrix/promptmatrix.github.io";
+      }
+      
+      const mobCta = document.querySelector('.mob-cta');
+      if (mobCta) {
+        mobCta.textContent = "GITHUB OSS";
+        mobCta.href = "https://github.com/PromptMatrix/promptmatrix.github.io";
+      }
     }
   })();
 </script>
