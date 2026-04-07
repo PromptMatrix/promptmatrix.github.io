@@ -15,7 +15,6 @@ This project uses [Semantic Versioning](https://semver.org/).
 - **Serve Events** (`serve_events` table) — telemetry logging for every `/pm/serve/` call. Tracks latency, cache hit, unfilled variables, tokens used.
 - **Eval Results** (`eval_results` table) — persistent storage for LLM judge evaluation results.
 - **Promotion Requests** (`promotion_requests` table) — formal audit trail for environment-to-environment prompt promotions.
-- **Plan Overrides** (`plan_overrides` table) — per-org rate/seat/prompt limit overrides for the cloud tier.
 - `eval_required` flag on environments — gate promotion until an eval passes.
 - `target_model` and `target_provider` on prompt versions — per-version model targeting.
 - `override_eval` flag on prompt versions — skip eval gate for specific versions.
@@ -23,7 +22,6 @@ This project uses [Semantic Versioning](https://semver.org/).
 - `invited_by_id` on org members.
 - `last_login_at` on users.
 - `description` field on projects with uniqueness constraint `(org_id, name)`.
-- Billing fields on organisations: `plan_seat_limit`, `plan_prompt_limit`, `plan_rpm_limit`, `lemon_order_id`, `billing_email`.
 - `version` counter on prompts for optimistic locking.
 - Full `PromptService` service layer with isolated, audited, testable workflow operations.
 - Paginated approval queue (`GET /api/v1/approvals?limit=20&offset=0`).
