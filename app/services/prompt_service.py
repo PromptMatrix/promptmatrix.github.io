@@ -74,13 +74,10 @@ class PromptService:
 
             for eng in engineers:
                 await send_approval_needed(
-                    approver_email=eng.email,
-                    requester_name=user.full_name or user.email,
+                    email=eng.email,
                     prompt_key=prompt.key if prompt else version_id,
-                    version_num=v.version_num,
                     env_name=_env_name,
-                    note=note,
-                    dashboard_url=settings.app_url,
+                    submitter=user.full_name or user.email,
                 )
         except Exception:
             pass  # Don't fail core logic on email error
