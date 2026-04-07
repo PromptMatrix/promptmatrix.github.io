@@ -108,7 +108,7 @@ docker compose up -d
 
 ```bash
 git clone https://github.com/jachinsaikiasonowal/promptmatrix.git
-cd promptmatrix.github.io
+cd promptmatrix
 
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
