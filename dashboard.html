@@ -8,18 +8,18 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --g:#00E676;--g2:#00C853;--g3:rgba(0,230,118,.07);--g4:rgba(0,230,118,.13);
-  --bg:#060806;--bg2:#0A0C0A;--bg3:#0E110E;--bg4:#131613;
-  --b:#161A16;--b2:#1E231E;--b3:#262B26;
-  --t:#FFFFFF;--t2:#E0E0E0;--t3:#B0B0B0;--t4:#808080;
-  --r:#FF4444;--r2:rgba(255,68,68,.12);
-  --y:#FFD700;--y2:rgba(255,215,0,.12);
-  --c:#00E5FF;--c2:rgba(0,229,255,.1);
-  --p:#B388FF;--p2:rgba(179,136,255,.1);
+  --g:#00e676;--g2:#00c853;--g3:rgba(0,230,118,.07);--g4:rgba(0,230,118,.13);
+  --bg:#060806;--bg2:#0a0c0a;--bg3:#0e110e;--bg4:#131613;
+  --b:#161a16;--b2:#1e231e;--b3:#262b26;
+  --t:#c8d4c8;--t2:#6a7a6a;--t3:#2e3a2e;--t4:#3e4e3e;
+  --r:#ff4444;--r2:rgba(255,68,68,.12);
+  --y:#ffd700;--y2:rgba(255,215,0,.12);
+  --c:#00e5ff;--c2:rgba(0,229,255,.1);
+  --p:#b388ff;--p2:rgba(179,136,255,.1);
   --f:'JetBrains Mono',monospace;
   --rad:0px;
 }
-html,body{height:100%;background:var(--bg);color:var(--t);font-family:var(--f);font-size:13.5px;overflow:hidden;line-height:1.5}
+html,body{height:100%;background:var(--bg);color:var(--t);font-family:var(--f);font-size:12px;overflow:hidden}
 canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 .scanlines{position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);opacity:.6}
 .shell{position:relative;z-index:1;display:flex;height:100vh;overflow:hidden}
@@ -60,7 +60,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
   flex:1;padding:10px;text-align:center;font-size:10px;letter-spacing:.08em;
   cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;
   transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;
-  font-family:var(--font);
+  font-family:var(--f);
 }
 .auth-tab.active{color:var(--g);border-bottom-color:var(--g)}
 .auth-body{padding:24px 28px}
@@ -68,20 +68,20 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 .auth-field label{display:block;font-size:9px;color:var(--t3);letter-spacing:.1em;margin-bottom:5px}
 .auth-field input{
   width:100%;background:var(--bg3);border:1px solid var(--b2);
-  color:var(--t);font-family:var(--font);font-size:11px;
+  color:var(--t);font-family:var(--f);font-size:11px;
   padding:8px 10px;outline:none;transition:border-color .15s;
 }
 .auth-field input:focus{border-color:var(--g)}
 .auth-btn{
-  width:100%;background:var(--g);color:#000;font-family:var(--font);
+  width:100%;background:var(--g);color:#000;font-family:var(--f);
   font-size:10px;font-weight:600;letter-spacing:.1em;padding:10px;
   border:none;cursor:pointer;transition:background .15s;
 }
-.auth-btn:hover{background:var(--g)}
+.auth-btn:hover{background:var(--g2)}
 .auth-btn:disabled{opacity:.5;cursor:not-allowed}
 .auth-err{
   font-size:9px;color:var(--r);margin-top:10px;
-  padding:6px 8px;background:rgba(255,61,0,.12);border-left:2px solid var(--r);
+  padding:6px 8px;background:var(--r2);border-left:2px solid var(--r);
   display:none;
 }
 .auth-err.show{display:block}
@@ -96,7 +96,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 .logo{padding:12px 10px;border-bottom:1px solid var(--b2);display:flex;align-items:center;gap:8px;min-height:46px;overflow:hidden}
 .logo-mark{color:var(--g);font-size:12px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
 .logo-mark em{color:var(--t3);font-style:normal;font-size:9px;margin-left:3px}
-.sb-tog{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-family:var(--font);font-size:14px;flex-shrink:0;line-height:1;padding:0 2px;transition:color .15s}
+.sb-tog{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-family:var(--f);font-size:14px;flex-shrink:0;line-height:1;padding:0 2px;transition:color .15s}
 .sb-tog:hover{color:var(--g)}
 .nav{flex:1;padding:6px 3px;overflow-y:auto;overflow-x:hidden}
 .nav::-webkit-scrollbar{width:2px}
@@ -105,7 +105,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 .col .ns{opacity:0;pointer-events:none}
 .ni{display:flex;align-items:center;gap:7px;padding:5px 7px;cursor:pointer;color:var(--t2);border-left:2px solid transparent;margin-bottom:1px;white-space:nowrap;overflow:hidden;transition:color .12s,background .12s,border-color .12s;user-select:none}
 .ni:hover{color:var(--t);background:rgba(255,255,255,.018)}
-.ni.on{color:var(--g);border-left-color:var(--g);background:rgba(0,230,118,.07)}
+.ni.on{color:var(--g);border-left-color:var(--g);background:var(--g3)}
 .ni .ic{font-size:11px;width:14px;text-align:center;flex-shrink:0}
 .ni .lb{overflow:hidden;transition:max-width .15s,opacity .15s;font-size:11px}
 .col .ni .lb{max-width:0;opacity:0}
@@ -114,11 +114,19 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 .sf{padding:6px;border-top:1px solid var(--b2)}
 .uc{display:flex;align-items:center;gap:6px;padding:6px 7px;border:1px solid var(--b2);cursor:pointer;background:var(--bg2);overflow:hidden;transition:background .12s}
 .uc:hover{background:var(--bg3)}
-.av{width:24px;height:24px;background:rgba(0,230,118,.07);border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g);flex-shrink:0;font-weight:600}
+.av{width:24px;height:24px;background:var(--g3);border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g);flex-shrink:0;font-weight:600}
 .ui{overflow:hidden;flex:1}
 .un{font-size:10px;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .up{font-size:8px;color:var(--t3)}
 .col .ui{display:none}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:var(--r);flex-shrink:0}
+.sb-dot.ok{background:var(--g)}
+.sb-clock{font-size:8px;color:var(--t3);padding:4px 7px;letter-spacing:.04em}
+.col .sb-clock{display:none}
+.sb-info{font-size:8px;color:var(--t3);padding:2px 7px;letter-spacing:.04em;white-space:nowrap;overflow:hidden}
+.col .sb-info{display:none}
+.sb-mode{font-size:8px;color:var(--y);padding:0 7px 4px;letter-spacing:.04em}
+.col .sb-mode{display:none}
 
 /* ══ MAIN ══ */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
@@ -129,7 +137,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 .lb-live .dot{width:5px;height:5px;border-radius:50%;background:var(--r)}
 .lb-live .dot.ok{background:var(--g)}
 .top-r{display:flex;gap:6px;align-items:center}
-.top-btn{padding:3px 8px;font-family:var(--font);font-size:9px;background:var(--bg3);border:1px solid var(--b2);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s}
+.top-btn{padding:3px 8px;font-family:var(--f);font-size:9px;background:var(--bg3);border:1px solid var(--b2);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s}
 .top-btn:hover{border-color:var(--g);color:var(--g)}
 
 /* ENV SELECTOR */
@@ -140,48 +148,109 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 }
 .env-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .env-sel select{
-  background:none;border:none;color:var(--t2);font-family:var(--font);
+  background:none;border:none;color:var(--t2);font-family:var(--f);
   font-size:9px;outline:none;cursor:pointer;padding:0;
 }
 
-/* ══ COMPONENTS ══ */
-.btn {
-  font-family: var(--font);
-  background: var(--bg3);
-  border: 1px solid var(--b2);
-  color: var(--t2);
-  padding: 7px 15px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  line-height: 1;
-}
-.btn:hover { background: var(--b1); color: var(--t); transform: translateY(-1px); box-shadow: 0 4px 12px var(--sh); }
-.btn.bp { background: var(--c); color: #000 !important; border-color: var(--c); }
-.btn.bp:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.btn.br { border-color: var(--r); color: var(--r); }
-.btn.bxs { padding: 5px 10px; font-size: 10px; }
-
 /* ══ CONTENT PANES ══ */
 .cnt{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.cnt::-webkit-scrollbar{width:2px}
+.cnt::-webkit-scrollbar-thumb{background:var(--b2)}
 .pane{display:none;flex-direction:column;gap:10px}
 .pane.on{display:flex}
 
-/* ══ MODAL ══ */
+/* ══ COMPONENTS ══ */
+.row{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.row-end{margin-left:auto;display:flex;gap:6px;align-items:center}
+.ph{font-size:10px;letter-spacing:.1em;color:var(--t2);font-weight:500}
+.ph span{color:var(--g)}
+.ps2{font-size:8px;color:var(--t3);margin-top:2px;letter-spacing:.04em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.card{background:var(--bg2);border:1px solid var(--b2);padding:10px 12px}
+.card-title{font-size:9px;letter-spacing:.12em;color:var(--t2);margin-bottom:8px;font-weight:500}
+.card-sub{font-size:9px;color:var(--t3);line-height:1.6;margin-top:4px}
+.mc{background:var(--bg2);border:1px solid var(--b2);padding:10px 12px}
+.ml{font-size:8px;color:var(--t3);letter-spacing:.1em;margin-bottom:4px}
+.mv{font-size:22px;font-weight:600;color:var(--t);letter-spacing:.02em;line-height:1}
+.mch{font-size:8px;margin-top:3px;letter-spacing:.05em}
+.mch.up{color:var(--g)}.mch.ne{color:var(--t3)}.mch.dn{color:var(--r)}
+.btn{padding:4px 10px;font-family:var(--f);font-size:9px;border:1px solid var(--b2);background:var(--bg3);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s;white-space:nowrap}
+.btn:hover{border-color:var(--g);color:var(--g)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.bp{background:var(--g3);border-color:var(--g);color:var(--g)}
+.btn.bp:hover{background:var(--g4)}
+.btn.br{border-color:rgba(255,68,68,.3);color:var(--r)}
+.btn.bg2b{border-color:var(--b3);color:var(--t3)}
+.bxs{font-size:8px;padding:3px 8px}
+.tag{font-size:8px;padding:1px 5px;border:1px solid var(--b2);color:var(--t3);letter-spacing:.05em}
+.tag.tg{border-color:rgba(0,230,118,.3);color:var(--g);background:var(--g3)}
+.tag.tc{border-color:rgba(0,229,255,.3);color:var(--c)}
+.tag.ty{border-color:rgba(255,215,0,.3);color:var(--y);background:var(--y2)}
+.tag.tp{border-color:rgba(179,136,255,.3);color:var(--p)}
+.tag.tr{border-color:rgba(255,68,68,.3);color:var(--r);background:var(--r2)}
+.tag.tn{color:var(--t3)}
+.empty{font-size:9px;color:var(--t3);letter-spacing:.06em;padding:20px 0;text-align:center;border:1px dashed var(--b2)}
+.vl{display:flex;flex-direction:column;gap:4px}
+.vi{padding:7px 10px;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;gap:8px;cursor:pointer;transition:border-color .12s}
+.vi:hover{border-color:var(--g)}
+.vi-key{font-size:10px;color:var(--t);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vi-meta{font-size:8px;color:var(--t3);letter-spacing:.04em;white-space:nowrap}
+.fg{margin-bottom:10px}
+.fg label{display:block;font-size:8px;color:var(--t3);letter-spacing:.1em;margin-bottom:4px}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:11px;padding:6px 8px;outline:none;resize:vertical;transition:border-color .15s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--g)}
+.fg textarea{min-height:120px;line-height:1.6}
+.fg select option{background:var(--bg3)}
+
+/* notif */
+#notif{position:fixed;bottom:16px;right:16px;z-index:9998;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.nt{padding:8px 12px;background:var(--bg2);border:1px solid var(--b2);font-size:10px;color:var(--t);letter-spacing:.04em;max-width:320px;opacity:0;transform:translateY(8px);transition:all .2s;border-left:3px solid var(--g)}
+.nt.show{opacity:1;transform:none}
+.nt.err{border-left-color:var(--r);color:var(--r)}
+.nt.warn{border-left-color:var(--y);color:var(--y)}
+
+/* version diff */
+.diff-old{background:rgba(255,68,68,.08);border-left:2px solid var(--r);padding:8px;font-size:10px;color:var(--t2);white-space:pre-wrap;word-break:break-all;line-height:1.7;margin-bottom:4px;max-height:200px;overflow-y:auto}
+.diff-new{background:var(--g3);border-left:2px solid var(--g);padding:8px;font-size:10px;color:var(--t);white-space:pre-wrap;word-break:break-all;line-height:1.7;max-height:200px;overflow-y:auto}
+
+/* score ring */
+.score-ring{position:relative;width:40px;height:40px;flex-shrink:0}
+.score-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.score-ring .sr-bg{fill:none;stroke:var(--b2);stroke-width:3}
+.score-ring .sr-fg{fill:none;stroke:var(--g);stroke-width:3;stroke-linecap:square;transition:stroke-dashoffset .6s ease}
+.score-ring .sr-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--t)}
+
+/* modal */
 #modal-overlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
 #modal-overlay.show{display:flex}
 .modal{background:var(--bg2);border:1px solid var(--b2);width:90%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
 .modal-hdr{padding:12px 16px;border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between}
 .modal-title{font-size:10px;letter-spacing:.1em;color:var(--t);font-weight:500}
-.modal-close{background:none;border:none;color:var(--t3);font-size:14px;cursor:pointer;font-family:var(--font)}
+.modal-close{background:none;border:none;color:var(--t3);font-size:14px;cursor:pointer;font-family:var(--f)}
 .modal-close:hover{color:var(--r)}
 .modal-body{padding:16px;overflow-y:auto;flex:1}
 .modal-foot{padding:10px 16px;border-top:1px solid var(--b2);display:flex;gap:8px;justify-content:flex-end}
+
+/* spinner */
+.spin{display:inline-block;width:10px;height:10px;border:1.5px solid var(--b3);border-top-color:var(--g);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* loading skeleton */
+.skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--bg3) 50%,var(--bg2) 75%);background-size:200%;animation:skel 1.2s infinite;height:28px;margin-bottom:4px}
+@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* code block */
+.codeblk{background:var(--bg3);border:1px solid var(--b2);padding:10px 12px;font-size:10px;line-height:1.8;overflow-x:auto;white-space:pre}
+.codeblk .kw{color:var(--c)} .codeblk .st{color:var(--g)} .codeblk .cm{color:var(--t3)} .codeblk .va{color:var(--y)} .codeblk .fn{color:var(--p)}
+
+/* eval criteria bars */
+.crit-bar{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.crit-label{font-size:9px;color:var(--t3);width:110px;flex-shrink:0;letter-spacing:.04em}
+.crit-track{flex:1;height:3px;background:var(--b2);overflow:hidden}
+.crit-fill{height:100%;background:var(--g);transition:width .5s ease}
+.crit-val{font-size:9px;color:var(--t2);width:28px;text-align:right;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -195,23 +264,25 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
   <div class="boot-status" id="boot-status">CONNECTING...</div>
 </div>
 
-<!-- ══ AUTH OVERLAY ══ -->
+<!-- ══ AUTH OVERLAY (shown only when auth is required — i.e. production mode) ══ -->
 <div id="auth-overlay" class="hidden">
   <div class="auth-box">
     <div class="auth-header">
-      <div class="auth-logo">PROMPT<em>MATRIX</em></div>
+      <div class="auth-logo">PROMPT<em>MATRIX</em> <span style="font-size:9px;color:var(--t3);margin-left:8px;letter-spacing:.04em">// PROMPT GOVERNANCE FOR AI APPLICATIONS</span></div>
     </div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="authTab('login')">SIGN_IN</button>
       <button class="auth-tab" onclick="authTab('register')">CREATE_ACCOUNT</button>
     </div>
     <div class="auth-body">
+      <!-- LOGIN -->
       <div id="auth-login">
         <div class="auth-field"><label>EMAIL</label><input type="email" id="a-email" placeholder="you@company.com" autocomplete="email"></div>
         <div class="auth-field"><label>PASSWORD</label><input type="password" id="a-pass" placeholder="••••••••" autocomplete="current-password"></div>
         <div class="auth-err" id="auth-err-login"></div>
         <button class="auth-btn" onclick="doLogin()" id="login-btn">SIGN_IN →</button>
       </div>
+      <!-- REGISTER -->
       <div id="auth-register" style="display:none">
         <div class="auth-field"><label>FULL NAME</label><input type="text" id="r-name" placeholder="Alex Chen" autocomplete="name"></div>
         <div class="auth-field"><label>EMAIL</label><input type="email" id="r-email" placeholder="you@company.com" autocomplete="email"></div>
@@ -220,541 +291,452 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
         <button class="auth-btn" onclick="doRegister()" id="reg-btn">CREATE_ACCOUNT →</button>
       </div>
     </div>
+    <div class="auth-footer">
+      <span style="color:var(--y)">⚠ Auth is active (APP_ENV=production)</span> ·
+      <a href="https://github.com/PromptMatrix/PromptMatrix" style="color:var(--g);text-decoration:none">github.com/PromptMatrix/PromptMatrix</a>
+    </div>
   </div>
 </div>
 
+<!-- ══ MODAL ══ -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-title">MODAL</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot" id="modal-foot"></div>
+  </div>
+</div>
+
+<!-- ══ NOTIF ══ -->
+<div id="notif"></div>
+
 <!-- ══ SHELL ══ -->
 <div class="shell" id="shell" style="display:none">
+
+  <!-- SIDEBAR -->
   <div class="sb" id="sb">
     <div class="logo">
       <div class="logo-mark" id="logo-text">PROMPT<em>MATRIX</em></div>
       <button class="sb-tog" id="sb-tog" onclick="toggleSb()">‹</button>
     </div>
     <div class="nav">
-      <!-- Nav items -->
+      <div class="ns">WORKSPACE</div>
+      <div class="ni on" onclick="pg('dash')" id="ni-dash"><span class="ic">◎</span><span class="lb">Dashboard</span><span class="bx" id="bx-alerts">0</span></div>
+      <div class="ni" onclick="pg('prompts')" id="ni-prompts"><span class="ic">▦</span><span class="lb">Prompts</span><span class="bx" id="bx-prompts">0</span></div>
+      <div class="ni" onclick="pg('editor')" id="ni-editor"><span class="ic">✦</span><span class="lb">Editor</span></div>
+      <div class="ni" onclick="pg('approvals')" id="ni-approvals"><span class="ic">◉</span><span class="lb">Approvals</span><span class="bx" id="bx-approvals">0</span></div>
+      <div class="ni" onclick="pg('evals')" id="ni-evals"><span class="ic">◈</span><span class="lb">Evaluations</span></div>
+      <div class="ni" onclick="pg('versions')" id="ni-versions"><span class="ic">⑂</span><span class="lb">History</span></div>
+      <div class="ns">INFRASTRUCTURE</div>
+      <div class="ni" onclick="pg('keys')" id="ni-keys"><span class="ic">⌘</span><span class="lb">API Keys</span></div>
+      <div class="ni" onclick="pg('environments')" id="ni-environments"><span class="ic">◌</span><span class="lb">Environments</span></div>
+      <div class="ni" onclick="pg('audit')" id="ni-audit"><span class="ic">≡</span><span class="lb">Audit Log</span></div>
+      <div class="ns">INTEGRATIONS</div>
+      <div class="ni" onclick="pg('integrate')" id="ni-integrate"><span class="ic">⊕</span><span class="lb">Connect</span></div>
+      <div class="ns">ACCOUNT</div>
+      <div class="ni" onclick="pg('settings')" id="ni-settings"><span class="ic">⚙</span><span class="lb">Settings</span></div>
     </div>
     <div class="sf">
-        <div id="sb-mode" style="margin-top:20px; font-size:9px; color:var(--t3); letter-spacing:0.1em; border:1px solid var(--b2); padding:8px; border-radius:3px; background:var(--bg3); display:flex; align-items:center; gap:6px;">
-          <div class="dot ok pulse" style="width:6px; height:6px;"></div>
-          GOVERNANCE_MODE: LOCAL
+      <div class="uc" onclick="pg('settings')">
+        <div class="av" id="sb-av">?</div>
+        <div class="ui">
+          <div class="un" id="sb-name">loading...</div>
+          <div class="up" id="sb-plan">● LOCAL</div>
         </div>
-        <style>
-          @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
-          .pulse { animation: pulse 2.5s infinite ease-in-out; }
-        </style>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;padding:4px 7px;margin-top:4px">
+        <div class="sb-dot" id="sb-dot"></div>
+        <div class="sb-clock" id="sb-clock">--:--:--</div>
+        <div class="sb-mode" id="sb-mode">LOCAL</div>
+      </div>
+      <div class="sb-info" id="sb-org">loading workspace...</div>
     </div>
   </div>
 
+  <!-- MAIN -->
   <div class="main">
     <div class="top">
       <div class="bc">PM / <span id="top-bc">DASHBOARD</span></div>
+      <!-- Environment selector -->
+      <div class="env-sel" id="env-sel">
+        <div class="env-dot" id="env-dot" style="background:var(--r)"></div>
+        <select id="env-select" onchange="switchEnv(this.value)">
+          <option value="">loading...</option>
+        </select>
+      </div>
+      <div class="lb-live"><span class="dot" id="top-dot"></span><span id="server-status">CONNECTING</span></div>
+      <div class="top-r">
+        <button class="top-btn" onclick="openNewPromptModal()">+ NEW PROMPT</button>
+        <button class="top-btn" onclick="doLogout()" style="color:var(--t3)">LOGOUT</button>
+      </div>
     </div>
     <div class="cnt" id="cnt">
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="pane on" id="pane-dash">
+        <div class="row">
+          <div><div class="ph">SYS: <span>DASHBOARD</span></div><div class="ps2" id="dash-org-line">loading workspace...</div></div>
+          <div class="row-end">
+            <button class="btn bp bxs" onclick="loadDash()">↻ REFRESH</button>
+          </div>
+        </div>
+        <div class="g4">
+          <div class="mc"><div class="ml">TOTAL_PROMPTS</div><div class="mv" id="dm-total">—</div><div class="mch ne" id="dm-total-ch">this environment</div></div>
+          <div class="mc"><div class="ml">LIVE_IN_PROD</div><div class="mv" id="dm-prod">—</div><div class="mch up">approved versions</div></div>
+          <div class="mc"><div class="ml">PENDING_REVIEW</div><div class="mv" id="dm-pending">—</div><div class="mch ne" id="dm-pend-ch">awaiting engineer</div></div>
+          <div class="mc"><div class="ml">LOCAL_MODE</div><div class="mv" id="dm-members">ON</div><div class="mch ne">self-hosted</div></div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">RECENT PROMPTS</div>
+            <div class="vl" id="dash-recent"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">PENDING APPROVALS</div>
+            <div class="vl" id="dash-approvals"><div class="skel"></div><div class="skel"></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">QUICK_START</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="openNewPromptModal()">
+              <div style="font-size:16px;margin-bottom:6px">✦</div>
+              <div style="font-size:9px;color:var(--g);letter-spacing:.06em;margin-bottom:3px">CREATE PROMPT</div>
+              <div style="font-size:8px;color:var(--t3);line-height:1.5">Name your prompt, write the content, save as draft</div>
+            </div>
+            <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="pg('keys')">
+              <div style="font-size:16px;margin-bottom:6px">⌘</div>
+              <div style="font-size:9px;color:var(--c);letter-spacing:.06em;margin-bottom:3px">GET API KEY</div>
+              <div style="font-size:8px;color:var(--t3);line-height:1.5">Create a serve key for your agents and workflows</div>
+            </div>
+            <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="pg('integrate')">
+              <div style="font-size:16px;margin-bottom:6px">⊕</div>
+              <div style="font-size:9px;color:var(--p);letter-spacing:.06em;margin-bottom:3px">CONNECT AGENT</div>
+              <div style="font-size:8px;color:var(--t3);line-height:1.5">See integration code for n8n, Python, Node, curl</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PROMPTS REGISTRY ══ -->
+      <div class="pane" id="pane-prompts">
+        <div class="row">
+          <div><div class="ph">▦ <span>PROMPT_REGISTRY</span></div><div class="ps2">all prompts in this environment · click to open editor</div></div>
+          <div class="row-end">
+            <input id="preg-search" placeholder="search keys..." style="background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:10px;padding:4px 8px;outline:none;width:160px" oninput="filterRegistry(this.value)">
+            <button class="btn bp bxs" onclick="openNewPromptModal()">+ NEW</button>
+          </div>
+        </div>
+        <div class="vl" id="registry-list">
+          <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+        </div>
+        <div class="empty" id="registry-empty" style="display:none">// no prompts yet · create your first prompt with + NEW</div>
+      </div>
+
+      <!-- ══ EDITOR ══ -->
+      <div class="pane" id="pane-editor">
+        <div class="row">
+          <div><div class="ph">✦ <span>PROMPT_EDITOR</span></div><div class="ps2" id="editor-meta">select a prompt from Registry</div></div>
+          <div class="row-end">
+            <button class="btn bxs bg2b" onclick="pg('prompts')">← BACK</button>
+            <button class="btn bxs" onclick="saveAsDraft()" id="btn-draft">SAVE DRAFT</button>
+            <button class="btn bp bxs" onclick="submitForReview()" id="btn-submit">SUBMIT FOR REVIEW</button>
+          </div>
+        </div>
+        <div class="g2" style="align-items:start">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="card">
+              <div class="fg">
+                <label>PROMPT KEY</label>
+                <input type="text" id="e-key" placeholder="onboarding.email · data.cleaning.prompt · assistant.system">
+              </div>
+              <div class="fg">
+                <label>DESCRIPTION (optional)</label>
+                <input type="text" id="e-desc" placeholder="What this prompt does">
+              </div>
+              <div class="fg">
+                <label>CONTENT — the actual prompt text</label>
+                <textarea id="e-content" rows="12" placeholder="Govern agents, hardcoded strings, system prompts like:&#10;&#10;You are an elite, multidisciplinary AGI-level operator embodying the combined roles of Cognitive Architect, Game Theorist, System Designer...&#10;&#10;Use {{variable}} for dynamic values."></textarea>
+              </div>
+              <div class="fg">
+                <label>COMMIT MESSAGE</label>
+                <input type="text" id="e-commit" placeholder="What changed and why">
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="card">
+              <div class="card-title">DETECTED VARIABLES</div>
+              <div id="e-vars" style="font-size:9px;color:var(--t3);line-height:1.8">Write {{variable}} in your prompt to define dynamic values. They appear here automatically.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">VERSION HISTORY</div>
+              <div class="vl" id="e-versions"><div style="font-size:9px;color:var(--t3)">Select a prompt to see version history</div></div>
+            </div>
+            <div class="card" id="eval-result-card" style="display:none">
+              <div class="card-title">LATEST EVAL RESULT</div>
+              <div id="eval-result-body"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ APPROVALS ══ -->
+      <div class="pane" id="pane-approvals">
+        <div class="row">
+          <div><div class="ph">◉ <span>APPROVAL_QUEUE</span></div><div class="ps2">versions awaiting your review · engineer+ role required to approve</div></div>
+          <div class="row-end">
+            <button class="btn bxs bg2b" onclick="loadApprovals()">↻ REFRESH</button>
+          </div>
+        </div>
+        <div id="approval-list"><div class="skel"></div><div class="skel"></div></div>
+        <div class="empty" id="approvals-empty" style="display:none">// no pending proposals · all clear ✓</div>
+      </div>
+
+      <!-- ══ EVALUATIONS ══ -->
+      <div class="pane" id="pane-evals">
+        <div class="row">
+          <div><div class="ph">◈ <span>EVALUATIONS</span></div><div class="ps2">LLM-as-judge · test your prompts before approving</div></div>
+        </div>
+        <div class="g2" style="align-items:start">
+          <div class="card">
+            <div class="card-title">RUN EVAL</div>
+            <div class="fg">
+              <label>SELECT PROMPT VERSION</label>
+              <select id="ev-version"><option value="">— select version —</option></select>
+            </div>
+            <div class="fg">
+              <label>JUDGE MODEL PROVIDER</label>
+              <select id="ev-provider" onchange="updateModelList()">
+                <option value="anthropic">Anthropic (Claude)</option>
+                <option value="openai">OpenAI (GPT)</option>
+                <option value="google">Google (Gemini)</option>
+                <option value="groq">Groq (Llama)</option>
+                <option value="mistral">Mistral</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>MODEL</label>
+              <select id="ev-model">
+                <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
+                <option value="claude-haiku-4-5-20251001">claude-haiku-4-5-20251001 (fast)</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>YOUR API KEY — used once, never stored</label>
+              <input type="password" id="ev-key" placeholder="sk-... or use saved team key below">
+            </div>
+            <div class="fg">
+              <label>TEST INPUT (what a user would send)</label>
+              <textarea id="ev-input" rows="3" placeholder="What are your capabilities?"></textarea>
+            </div>
+            <div style="display:flex;gap:6px">
+              <button class="btn bp" onclick="runEval()" id="eval-btn">◈ RUN EVAL</button>
+              <button class="btn" onclick="runRuleBasedEval()">⚡ QUICK CHECK (no key needed)</button>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">SAVED LLM KEYS</div>
+              <div id="team-keys-list"><div style="font-size:9px;color:var(--t3)">No saved keys. Add one to run evals without pasting keys each time.</div></div>
+              <button class="btn bxs" style="margin-top:8px" onclick="openSaveKeyModal()">+ SAVE KEY</button>
+            </div>
+            <div class="card" id="eval-output" style="display:none">
+              <div class="card-title">EVAL RESULT</div>
+              <div id="eval-output-body"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ HISTORY ══ -->
+      <div class="pane" id="pane-versions">
+        <div class="row">
+          <div><div class="ph">⑂ <span>VERSION_HISTORY</span></div><div class="ps2">complete audit trail · every version ever proposed</div></div>
+        </div>
+        <div class="card">
+          <div class="fg">
+            <label>SELECT PROMPT TO VIEW HISTORY</label>
+            <select id="hist-select" onchange="loadVersionHistory(this.value)">
+              <option value="">— select prompt —</option>
+            </select>
+          </div>
+        </div>
+        <div id="hist-list"></div>
+      </div>
+
+      <!-- ══ API KEYS ══ -->
+      <div class="pane" id="pane-keys">
+        <div class="row">
+          <div><div class="ph">⌘ <span>API_KEYS</span></div><div class="ps2">serve keys for your agents · each key tied to one environment</div></div>
+          <div class="row-end">
+            <button class="btn bp bxs" onclick="openCreateKeyModal()">+ CREATE KEY</button>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">HOW AGENTS USE THESE KEYS</div>
+          <div class="codeblk"><span class="cm"># Python / any HTTP client</span>
+<span class="cm"># Replace pm_live_xxxx with your actual key</span>
+r = requests.get(
+    <span class="st">"http://localhost:8000/pm/serve/<span class="va">your.prompt.key</span>"</span>,
+    headers={<span class="st">"Authorization"</span>: <span class="st">"Bearer <span class="va">pm_live_xxxx</span>"</span>},
+    timeout=<span class="va">2</span>
+)
+system_prompt = r.text  <span class="cm"># returns the approved content</span></div>
+        </div>
+        <div class="vl" id="keys-list"><div class="skel"></div><div class="skel"></div></div>
+        <div class="empty" id="keys-empty" style="display:none">// no API keys yet · create one to connect your agents</div>
+      </div>
+
+      <!-- ══ ENVIRONMENTS ══ -->
+      <div class="pane" id="pane-environments">
+        <div class="row">
+          <div><div class="ph">◌ <span>ENVIRONMENTS</span></div><div class="ps2">dev → staging → production · each environment has its own prompts and keys</div></div>
+        </div>
+        <div class="vl" id="env-list"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+      </div>
+
+      <!-- ══ AUDIT LOG ══ -->
+      <div class="pane" id="pane-audit">
+        <div class="row">
+          <div><div class="ph">≡ <span>AUDIT_LOG</span></div><div class="ps2">every action · append-only · who did what and when</div></div>
+          <div class="row-end">
+            <select id="audit-filter" onchange="loadAudit()" style="background:var(--bg3);border:1px solid var(--b2);color:var(--t2);font-family:var(--f);font-size:9px;padding:3px 6px;outline:none">
+              <option value="">ALL ACTIONS</option>
+              <option value="version">versions</option>
+              <option value="prompt">prompts</option>
+              <option value="member">members</option>
+              <option value="key">api keys</option>
+            </select>
+          </div>
+        </div>
+        <div id="audit-list"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+      </div>
+
+      <!-- ══ INTEGRATIONS ══ -->
+      <div class="pane" id="pane-integrate">
+        <div class="row">
+          <div><div class="ph">⊕ <span>INTEGRATIONS</span></div><div class="ps2">connect your agents · copy integration code</div></div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">PYTHON</div>
+            <div class="codeblk"><span class="kw">import</span> requests
+
+<span class="fn">def</span> <span class="va">get_prompt</span>(key, vars={}):
+    url = <span class="st">f"http://localhost:8000/pm/serve/{key}"</span>
+    <span class="kw">if</span> vars:
+        url += <span class="st">"?vars="</span> + <span class="st">","</span>.join(
+            <span class="st">f"{k}={v}"</span> <span class="kw">for</span> k,v <span class="kw">in</span> vars.items()
+        )
+    r = requests.get(url, headers={
+        <span class="st">"Authorization"</span>: <span class="st">"Bearer YOUR_KEY"</span>
+    }, timeout=<span class="va">2</span>)
+    <span class="kw">return</span> r.text <span class="kw">if</span> r.ok <span class="kw">else</span> <span class="st">"[fallback prompt]"</span>
+
+<span class="cm"># Usage</span>
+system = get_prompt(<span class="st">"assistant.system"</span>)
+system = get_prompt(<span class="st">"email.writer"</span>, {<span class="st">"tone"</span>: <span class="st">"formal"</span>})</div>
+          </div>
+          <div class="card">
+            <div class="card-title">n8n / MAKE / ZAPIER</div>
+            <div style="font-size:10px;color:var(--t2);line-height:1.8;margin-bottom:10px">Add an HTTP Request node before your AI node:</div>
+            <div class="codeblk">Method:  GET
+URL:     http://localhost:8000
+         /pm/serve/{{$vars.promptKey}}
+Headers:
+  Authorization: Bearer YOUR_KEY
+
+<span class="cm"># Output maps to system prompt input</span>
+<span class="cm"># of your OpenAI / Claude / Gemini node</span></div>
+          </div>
+          <div class="card">
+            <div class="card-title">JAVASCRIPT / NODE</div>
+            <div class="codeblk"><span class="kw">const</span> <span class="va">getPrompt</span> = <span class="kw">async</span> (key, vars={}) => {
+  <span class="kw">const</span> q = <span class="va">Object</span>.entries(vars)
+    .map(([k,v]) => <span class="st">`${k}=${v}`</span>).join(<span class="st">","</span>)
+  <span class="kw">const</span> url = <span class="st">`http://localhost:8000</span>
+<span class="st">    /pm/serve/${key}${q ? "?vars="+q : ""}`</span>
+  <span class="kw">const</span> r = <span class="kw">await</span> fetch(url, {
+    headers: { Authorization: <span class="st">"Bearer YOUR_KEY"</span> }
+  })
+  <span class="kw">return</span> r.ok ? r.text() : <span class="st">"[fallback]"</span>
+}</div>
+          </div>
+          <div class="card">
+            <div class="card-title">CURL</div>
+            <div class="codeblk"><span class="cm"># Plain text response</span>
+curl http://localhost:8000 \
+  /pm/serve/assistant.system \
+  -H <span class="st">"Authorization: Bearer YOUR_KEY"</span>
+
+<span class="cm"># JSON response (with metadata)</span>
+curl <span class="st">"...?format=json"</span> \
+  -H <span class="st">"Authorization: Bearer YOUR_KEY"</span>
+
+<span class="cm"># With variable substitution</span>
+curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
+  -H <span class="st">"Authorization: Bearer YOUR_KEY"</span></div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- ══ SETTINGS ══ -->
+      <div class="pane" id="pane-settings">
+        <div class="row">
+          <div><div class="ph">⚙ <span>SETTINGS</span></div><div class="ps2">workspace · account · danger zone</div></div>
+        </div>
+        <div class="g2" style="align-items:start">
+          <div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">WORKSPACE</div>
+              <div style="font-size:9px;color:var(--t3);margin-bottom:10px;line-height:1.8">
+                <div>Org: <span style="color:var(--t)" id="set-org-name">—</span></div>
+                <div>Plan: <span style="color:var(--g)" id="set-plan">—</span></div>
+                <div>Slug: <span style="color:var(--t2)" id="set-slug">—</span></div>
+              </div>
+            </div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">SERVE ENDPOINT</div>
+              <div style="font-size:9px;color:var(--t3);margin-bottom:8px">Your agents call this endpoint. Replace <span style="color:var(--y)">{key}</span> with your prompt key.</div>
+              <div class="codeblk" style="font-size:9px" id="settings-serve-url">loading...</div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">ACCOUNT</div>
+              <div id="set-user-info" style="font-size:9px;color:var(--t3);line-height:2;margin-bottom:10px"></div>
+            </div>
+            <div class="card" style="margin-bottom:8px">
+              <div class="card-title">DATA PORTABILITY</div>
+              <div style="font-size:9px;color:var(--t3);line-height:1.6;margin-bottom:12px">
+                Export your entire registry (prompts, versions, environments) as a JSON file. Use this for backups or to migrate to a self-hosted instance.
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn bxs" onclick="exportWorkspace()">⇩ EXPORT JSON</button>
+                <label class="btn bxs" style="cursor:pointer;display:inline-block">
+                  ⇧ IMPORT JSON
+                  <input type="file" id="import-file" style="display:none" onchange="importWorkspace(this)">
+                </label>
+              </div>
+            </div>
+            <div class="card" style="border-color:rgba(255,68,68,.2)">
+              <div class="card-title" style="color:var(--r)">DANGER ZONE</div>
+              <button class="btn br bxs" onclick="doLogout()">SIGN OUT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end cnt -->
+  </div><!-- end main -->
+</div><!-- end shell -->
+
 <script src="/dashboard.js"></script>
-</body>
-</html>
-
-// ══════════════════════════════════════════════════════════════════════
-// EVALUATIONS
-// ══════════════════════════════════════════════════════════════════════
-const MODEL_MAP = {
-  anthropic: ['claude-sonnet-4-6','claude-haiku-4-5-20251001','claude-opus-4-6'],
-  openai:    ['gpt-4o','gpt-4o-mini','gpt-4-turbo'],
-  google:    ['gemini-2.0-flash','gemini-1.5-pro','gemini-1.5-flash'],
-  groq:      ['llama-3.3-70b-versatile','llama-3.1-8b-instant','mixtral-8x7b-32768'],
-  mistral:   ['mistral-small-latest','mistral-medium-latest','open-mistral-7b'],
-};
-
-function updateModelList(){
-  const provider = document.getElementById('ev-provider').value;
-  const sel = document.getElementById('ev-model');
-  sel.innerHTML = (MODEL_MAP[provider]||[]).map(m=>`<option value="${m}">${m}</option>`).join('');
-}
-
-function populatePromptSelectors(){
-  const selectors = ['ev-version','hist-select'];
-  selectors.forEach(id=>{
-    const sel = document.getElementById(id);
-    if(!sel) return;
-    const current = sel.value;
-    // For ev-version we need versions not prompts — populate with prompt names
-    if(id==='ev-version'){
-      sel.innerHTML = '<option value="">— select prompt version —</option>' +
-        S.prompts.map(p=>{
-          const live = p.live_version;
-          if(!live) return '';
-          return `<option value="${live.id}">${p.key} (v${live.version_num} ${live.status})</option>`;
-        }).filter(Boolean).join('');
-    } else {
-      sel.innerHTML = '<option value="">— select prompt —</option>' +
-        S.prompts.map(p=>`<option value="${p.id}">${p.key}</option>`).join('');
-    }
-    if(current) sel.value=current;
-  });
-}
-
-async function runEval(){
-  const versionId = document.getElementById('ev-version').value;
-  const provider  = document.getElementById('ev-provider').value;
-  const model     = document.getElementById('ev-model').value;
-  const apiKey    = document.getElementById('ev-key').value.trim();
-  const testInput = document.getElementById('ev-input').value.trim();
-  if(!versionId){ notif('Select a version first','warn'); return; }
-  if(!apiKey){ notif('Enter your API key to run LLM eval','warn'); return; }
-  const btn = document.getElementById('eval-btn');
-  btn.disabled=true; btn.innerHTML='<span class="spin"></span> EVALUATING...';
-  const data = await api('POST', '/api/v1/evals/run', {
-    version_id: versionId, provider, model, api_key: apiKey,
-    test_input: testInput, eval_type: 'llm_judge'
-  });
-  btn.disabled=false; btn.textContent='◈ RUN EVAL';
-  if(data) renderEvalResult(data);
-}
-
-async function runRuleBasedEval(){
-  const versionId = document.getElementById('ev-version').value;
-  if(!versionId){ notif('Select a version first','warn'); return; }
-  const data = await api('POST', '/api/v1/evals/run', {
-    version_id: versionId, provider: 'rule_based',
-    model: 'rule_based', api_key: 'none',
-    test_input: '', eval_type: 'rule_based'
-  });
-  if(data) renderEvalResult(data);
-}
-
-function renderEvalResult(data){
-  const card = document.getElementById('eval-output');
-  const body = document.getElementById('eval-output-body');
-  if(!card||!body) return;
-  card.style.display='';
-  const score = data.overall_score||0;
-  const color = score>=8.5?'var(--g)':score>=7?'var(--y)':'var(--r)';
-  const criteria = data.criteria||{};
-  body.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-      <div style="font-size:36px;font-weight:600;color:${color}">${score.toFixed(1)}</div>
-      <div>
-        <div style="font-size:10px;color:${data.passed?'var(--g)':'var(--r)'}">
-          ${data.passed?'✓ PASSED':'✗ FAILED'}</div>
-        <div style="font-size:8px;color:var(--t3)">threshold: ${data.threshold||7} · ${data.duration_ms}ms</div>
-        ${data.provider?`<div style="font-size:8px;color:var(--t3)">${data.provider}/${data.model||''} · in:${data.tokens_in||0} out:${data.tokens_out||0} tok</div>`:''}
-      </div>
-    </div>
-    ${Object.entries(criteria).map(([k,v])=>`
-      <div class="crit-bar">
-        <div class="crit-label">${k.replace(/_/g,' ')}</div>
-        <div class="crit-track"><div class="crit-fill" style="width:${(v/10)*100}%;background:${v>=8?'var(--g)':v>=6?'var(--y)':'var(--r)'}"></div></div>
-        <div class="crit-val">${v}</div>
-      </div>`).join('')}
-    ${data.strengths?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--g);letter-spacing:.08em;margin-bottom:4px">STRENGTHS</div>${data.strengths.map(s=>`<div style="font-size:9px;color:var(--t3);margin-bottom:2px">✓ ${s}</div>`).join('')}</div>`:''}
-    ${data.issues?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--r);letter-spacing:.08em;margin-bottom:4px">ISSUES</div>${data.issues.map(i=>`<div style="font-size:9px;color:var(--t3);margin-bottom:2px">⚠ ${i}</div>`).join('')}</div>`:''}
-    ${data.suggestions?.length?`<div style="margin-top:8px"><div style="font-size:8px;color:var(--y);letter-spacing:.08em;margin-bottom:4px">SUGGESTIONS</div>${data.suggestions.map(s=>`<div style="font-size:9px;color:var(--t3);margin-bottom:3px;padding:4px 6px;background:var(--bg3);border-left:2px solid var(--y)">→ ${s}</div>`).join('')}</div>`:''}`;
-}
-
-async function loadTeamKeys(){
-  const data = await api('GET', '/api/v1/evals/keys');
-  if(!data) return;
-  const list = document.getElementById('team-keys-list');
-  if(!list) return;
-  const keys = data.keys||[];
-  if(!keys.length){ list.innerHTML='<div style="font-size:9px;color:var(--t3)">No saved keys.</div>'; return; }
-  list.innerHTML = keys.map(k=>`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;padding:5px 7px;background:var(--bg3);border:1px solid var(--b2)">
-      <div style="font-size:9px;color:var(--y);width:70px">${k.provider}</div>
-      <div style="font-size:9px;color:var(--t3);flex:1">${k.hint}</div>
-      <div style="font-size:8px;color:var(--t3)">${k.label}</div>
-      <button class="btn br bxs" style="font-size:7px" onclick="deleteTeamKey('${k.id}')">✕</button>
-    </div>`).join('');
-}
-
-function openSaveKeyModal(){
-  openModal('SAVE_TEAM_LLM_KEY', `
-    <div class="fg"><label>PROVIDER</label>
-    <select id="sk-prov"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="google">Google</option><option value="groq">Groq</option><option value="mistral">Mistral</option></select></div>
-    <div class="fg"><label>API KEY — stored encrypted (AES-256), never shown again</label><input type="password" id="sk-key" placeholder="sk-..."></div>
-    <div class="fg"><label>LABEL (optional)</label><input type="text" id="sk-label" placeholder="Team OpenAI key"></div>
-    <div style="font-size:8px;color:var(--t3);line-height:1.7;padding:8px;background:var(--bg3);border:1px solid var(--b2)">Your key is encrypted with AES-256-GCM before storage. Only decrypted in server memory during eval runs. Never logged or returned via API.</div>`,
-    [{label:'SAVE ENCRYPTED KEY', fn:'saveTeamKey()'}]
-  );
-}
-
-async function saveTeamKey(){
-  const provider = document.getElementById('sk-prov').value;
-  const apiKey   = document.getElementById('sk-key').value.trim();
-  const label    = document.getElementById('sk-label').value.trim();
-  if(!apiKey){ notif('Enter an API key','warn'); return; }
-  const data = await api('POST', '/api/v1/evals/keys', {provider, api_key:apiKey, label});
-  if(data){ notif('Key saved (encrypted) ✓'); closeModal(); loadTeamKeys(); }
-}
-
-async function deleteTeamKey(id){
-  if(!confirm('Remove this key?')) return;
-  const data = await api('DELETE', `/api/v1/evals/keys/${id}`);
-  if(data){ notif('Key removed'); loadTeamKeys(); }
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// VERSION HISTORY
-// ══════════════════════════════════════════════════════════════════════
-async function loadVersionHistory(promptId){
-  if(!promptId) return;
-  const data = await api('GET', `/api/v1/prompts/${promptId}`);
-  if(!data) return;
-  const versions = data.versions||[];
-  const el = document.getElementById('hist-list');
-  if(!el) return;
-  if(!versions.length){ el.innerHTML='<div class="empty">no versions yet</div>'; return; }
-  const liveId = data.prompt?.live_version?.id;
-  el.innerHTML = [...versions].reverse().map(v => {
-    const isLive = v.id===liveId;
-    const statusMap = {approved:'tg',pending_review:'ty',draft:'tn',rejected:'tr',archived:'tn'};
-    return `
-      <div style="background:var(--bg2);border:1px solid ${isLive?'rgba(0,230,118,.3)':'var(--b2)'};margin-bottom:4px;overflow:hidden">
-        <div style="padding:8px 12px;display:flex;align-items:center;gap:8px">
-          <div style="font-size:11px;color:${isLive?'var(--g)':'var(--t2)'}">v${v.version_num}</div>
-          <div style="flex:1;font-size:9px;color:var(--t3)">${v.commit_message||'no message'}</div>
-          <span class="tag ${statusMap[v.status]||'tn'}">${v.status}</span>
-          ${isLive?'<span style="font-size:8px;color:var(--g)">← LIVE</span>':''}
-          ${v.last_eval_score!=null?`<span style="font-size:8px;color:${v.last_eval_score>=8?'var(--g)':v.last_eval_score>=7?'var(--y)':'var(--r)'}">eval:${v.last_eval_score.toFixed(1)}</span>`:''}
-          <div style="font-size:8px;color:var(--t3)">${(v.created_at||'').slice(0,10)}</div>
-          ${v.status==='approved'&&!isLive?`<button class="btn bxs" onclick="rollbackTo('${data.prompt.id}','${v.id}',${v.version_num})">↩ ROLLBACK</button>`:''}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-async function rollbackTo(promptId, versionId, vnum){
-  if(!confirm(`Rollback to v${vnum}? This creates a new approved version with that content.`)) return;
-  const data = await api('POST', `/api/v1/prompts/${promptId}/versions/${versionId}/rollback`);
-  if(data){ notif(data.message||'Rolled back ✓'); loadVersionHistory(promptId); loadDash(); }
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// API KEYS
-// ══════════════════════════════════════════════════════════════════════
-async function loadKeys(){
-  if(!S.env) return;
-  const data = await api('GET', `/api/v1/keys?environment_id=${S.env.id}`);
-  if(!data) return;
-  const keys = data.keys||[];
-  const list = document.getElementById('keys-list');
-  const empty = document.getElementById('keys-empty');
-  if(!keys.length){ list.innerHTML=''; empty.style.display=''; return; }
-  empty.style.display='none';
-  list.innerHTML = keys.map(k=>`
-    <div style="background:var(--bg2);border:1px solid var(--b2);padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:10px">
-      <div style="flex:1">
-        <div style="font-size:10px;color:var(--t)">${k.name}</div>
-        <div style="font-size:9px;color:var(--c);margin-top:2px;letter-spacing:.04em">${k.prefix}••••••••</div>
-        <div style="font-size:8px;color:var(--t3);margin-top:2px">
-          env: ${S.env?.name} · created ${(k.created_at||'').slice(0,10)} · last used: ${k.last_used_at?(k.last_used_at.slice(0,10)):'never'}
-        </div>
-      </div>
-      <button class="btn bxs" onclick="rotateKey('${k.id}','${k.name}')">↻ ROTATE</button>
-      <button class="btn br bxs" onclick="revokeKey('${k.id}','${k.name}')">✕ REVOKE</button>
-    </div>`).join('');
-}
-
-function openCreateKeyModal(){
-  if(!S.env){ notif('Select an environment first','warn'); return; }
-  openModal('CREATE_API_KEY', `
-    <div style="font-size:9px;color:var(--t3);margin-bottom:12px;line-height:1.7;padding:8px;background:var(--bg3);border-left:2px solid var(--y)">
-      ⚠ The full API key is shown ONCE on creation. Copy and store it securely. It cannot be recovered — only rotated.
-    </div>
-    <div class="fg"><label>KEY NAME</label><input type="text" id="ck-name" placeholder="n8n production · RADAR agent · chatbot key"></div>
-    <div style="font-size:9px;color:var(--t3)">Environment: <span style="color:${S.env.color}">${S.env.name}</span></div>`,
-    [{label:'CREATE KEY', fn:'createKey()'}]
-  );
-}
-
-async function createKey(){
-  const name = document.getElementById('ck-name')?.value.trim();
-  if(!name){ notif('Enter a key name','warn'); return; }
-  const data = await api('POST', '/api/v1/keys', {environment_id: S.env.id, name});
-  if(!data) return;
-  closeModal();
-  // Show the key — ONCE
-  openModal('YOUR_API_KEY', `
-    <div style="font-size:9px;color:var(--y);background:var(--y2);border:1px solid rgba(255,215,0,.3);padding:10px;margin-bottom:12px;letter-spacing:.04em;line-height:1.7">
-      ⚠ This key is shown ONCE. Copy it now. It cannot be retrieved again — only rotated.
-    </div>
-    <div class="fg"><label>FULL API KEY — COPY NOW</label>
-    <input type="text" value="${data.key}" readonly onclick="this.select()" style="color:var(--g);font-size:11px;cursor:pointer;letter-spacing:.04em">
-    </div>
-    <div style="font-size:9px;color:var(--t3);margin-top:8px">Add to your agent:<br>
-    <span style="color:var(--c)">Authorization: Bearer ${data.key}</span></div>`,
-    [{label:'I COPIED IT', fn:'closeModal();loadKeys()'}]
-  );
-}
-
-async function revokeKey(id, name){
-  if(!confirm(`Revoke key "${name}"? Agents using it will get 401 immediately.`)) return;
-  const data = await api('DELETE', `/api/v1/keys/${id}`);
-  if(data){ notif(data.message); loadKeys(); }
-}
-
-async function rotateKey(id, name){
-  if(!confirm(`Rotate key "${name}"? Old key stops working immediately. You'll get a new key to copy.`)) return;
-  const data = await api('POST', `/api/v1/keys/${id}/rotate`);
-  if(!data) return;
-  openModal('ROTATED_KEY', `
-    <div style="font-size:9px;color:var(--y);background:var(--y2);border:1px solid rgba(255,215,0,.3);padding:10px;margin-bottom:12px">
-      Old key revoked. Copy your new key now.
-    </div>
-    <div class="fg"><label>NEW API KEY</label>
-    <input type="text" value="${data.key}" readonly onclick="this.select()" style="color:var(--g);font-size:11px;cursor:pointer"></div>`,
-    [{label:'I COPIED IT', fn:'closeModal();loadKeys()'}]
-  );
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// ENVIRONMENTS
-// ══════════════════════════════════════════════════════════════════════
-function renderEnvList(){
-  const el = document.getElementById('env-list');
-  if(!el) return;
-  if(!S.envs.length){ el.innerHTML='<div class="empty">no environments</div>'; return; }
-  el.innerHTML = S.envs.map(e => `
-    <div style="background:var(--bg2);border:1px solid var(--b2);padding:12px;margin-bottom:4px;display:flex;align-items:center;gap:12px;border-left:3px solid ${e.color||'#888'}">
-      <div style="flex:1">
-        <div style="font-size:11px;color:var(--t);font-weight:500">${e.display_name||e.name}</div>
-        <div style="font-size:8px;color:var(--t3);margin-top:4px;line-height:1.8">
-          ${e.is_protected?'🔒 Protected (approval required)':'🔓 Open (auto-approve in dev)'}
-          · Eval threshold: <span style="color:var(--y)">${e.eval_pass_threshold}</span>/10
-          ${e.promotion_source_id?'· Promotions only from staging':''}
-        </div>
-      </div>
-      <div style="text-align:right">
-        <button class="btn bxs" onclick="switchEnv('${e.id}');pg('prompts')">VIEW PROMPTS →</button>
-      </div>
-    </div>`).join('');
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// AUDIT LOG
-// ══════════════════════════════════════════════════════════════════════
-async function loadAudit(){
-  const filter = document.getElementById('audit-filter')?.value||'';
-  // BUG-04 FIX: correctly build query string (?resource_type= or ?limit=)
-  const params = filter ? `?resource_type=${encodeURIComponent(filter)}&limit=50` : '?limit=50';
-  const data = await api('GET', `/api/v1/audit${params}`);
-  if(!data) return;
-  const logs = data.logs||[];
-  const el = document.getElementById('audit-list');
-  if(!el) return;
-  if(!logs.length){ el.innerHTML='<div class="empty">no audit logs yet</div>'; return; }
-  const actionColor = a => a.includes('approved')?'var(--g)':a.includes('rejected')?'var(--r)':a.includes('created')?'var(--c)':'var(--t3)';
-  el.innerHTML = logs.map(l=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:var(--bg2);border:1px solid var(--b2);margin-bottom:3px">
-      <div style="font-size:9px;color:${actionColor(l.action)};width:160px;flex-shrink:0;letter-spacing:.04em">${l.action}</div>
-      <div style="font-size:8px;color:var(--t3);width:80px;flex-shrink:0">${l.resource_type}</div>
-      <div style="font-size:8px;color:var(--t2);flex:1">${l.actor_email||'system'}</div>
-      <div style="font-size:8px;color:var(--t3)">${(l.created_at||'').slice(0,16)}</div>
-    </div>`).join('');
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// NEW PROMPT MODAL
-// ══════════════════════════════════════════════════════════════════════
-function openNewPromptModal(){
-  openModal('NEW_PROMPT', `
-    <div class="fg"><label>PROMPT KEY — dot notation, lowercase</label>
-    <input type="text" id="np-key" placeholder="onboarding.email · data.cleaning.prompt · assistant.system"></div>
-    <div class="fg"><label>INITIAL CONTENT</label>
-    <textarea id="np-content" rows="8" placeholder="You are a helpful assistant...&#10;&#10;Use {{variable}} for dynamic values."></textarea></div>
-    <div class="fg"><label>DESCRIPTION (optional)</label>
-    <input type="text" id="np-desc" placeholder="What this prompt does"></div>`,
-    [{label:'CREATE & OPEN EDITOR', fn:'createAndOpen()'}]
-  );
-}
-
-async function createAndOpen(){
-  const key     = document.getElementById('np-key')?.value.trim();
-  const content = document.getElementById('np-content')?.value.trim();
-  const desc    = document.getElementById('np-desc')?.value.trim();
-  if(!key||!content){ notif('Key and content required','warn'); return; }
-  if(!S.env){ notif('Select an environment first','warn'); return; }
-  const data = await api('POST', '/api/v1/prompts', {
-    environment_id: S.env.id, key, content,
-    description: desc, commit_message: 'Initial version'
-  });
-  if(data){
-    notif('Prompt created ✓');
-    S.prompts.push(data.prompt);
-    closeModal();
-    openPromptEditor(data.prompt.id);
-  }
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// MODAL ENGINE
-// ══════════════════════════════════════════════════════════════════════
-function openModal(title, bodyHtml, actions=[]){
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-body').innerHTML = bodyHtml;
-  document.getElementById('modal-foot').innerHTML = actions.map(a=>
-    `<button class="btn bp" onclick="${a.fn}">${a.label}</button>`
-  ).join('') + '<button class="btn" onclick="closeModal()">CANCEL</button>';
-  document.getElementById('modal-overlay').classList.add('show');
-  // Focus first input
-  setTimeout(()=>{
-    const first = document.querySelector('#modal-body input,#modal-body textarea');
-    if(first) first.focus();
-  },80);
-}
-
-function closeModal(e){
-  if(e && e.target !== document.getElementById('modal-overlay')) return;
-  document.getElementById('modal-overlay').classList.remove('show');
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// NAVIGATION
-// ══════════════════════════════════════════════════════════════════════
-const PAGE_LOAD = {
-  prompts:      loadRegistry,
-  approvals:    loadApprovals,
-  evals:        ()=>{loadTeamKeys();populatePromptSelectors();},
-  versions:     ()=>populatePromptSelectors(),
-  keys:         loadKeys,
-  environments: renderEnvList,
-  audit:        loadAudit,
-};
-const TITLES = {
-  dash:'DASHBOARD',prompts:'PROMPT_REGISTRY',editor:'PROMPT_EDITOR',
-  approvals:'APPROVAL_QUEUE',evals:'EVALUATIONS',versions:'VERSION_HISTORY',
-  keys:'API_KEYS',environments:'ENVIRONMENTS',audit:'AUDIT_LOG',
-  integrate:'INTEGRATIONS',settings:'SETTINGS',
-};
-
-function pg(name){
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
-  const pane = document.getElementById('pane-'+name);
-  const ni   = document.getElementById('ni-'+name);
-  if(pane) pane.classList.add('on');
-  if(ni)   ni.classList.add('on');
-  setText('top-bc', TITLES[name]||name.toUpperCase());
-  if(PAGE_LOAD[name]) PAGE_LOAD[name]();
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// SIDEBAR TOGGLE
-// ══════════════════════════════════════════════════════════════════════
-let sbOpen=true;
-function toggleSb(){
-  sbOpen=!sbOpen;
-  const sb=document.getElementById('sb');
-  const tog=document.getElementById('sb-tog');
-  const lt=document.getElementById('logo-text');
-  sb.classList.toggle('col',!sbOpen);
-  if(tog) tog.textContent=sbOpen?'‹':'›';
-  if(lt)  lt.style.opacity=sbOpen?'1':'0';
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// NOTIFICATIONS
-// ══════════════════════════════════════════════════════════════════════
-function notif(msg, type='ok'){
-  const wrap=document.getElementById('notif');
-  const el=document.createElement('div');
-  el.className='nt'+(type==='err'?' err':type==='warn'?' warn':'');
-  el.textContent=msg;
-  wrap.appendChild(el);
-  requestAnimationFrame(()=>el.classList.add('show'));
-  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),250);},3200);
-}
-
-// ══════════════════════════════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════════════════════════════
-function setText(id,val){ const el=document.getElementById(id); if(el) el.textContent=val; }
-function updateBadge(id,n){ const el=document.getElementById(id); if(el) el.textContent=n||''; }
-function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// ══════════════════════════════════════════════════════════════════════
-// KEYBOARD SHORTCUTS
-// ══════════════════════════════════════════════════════════════════════
-// BUG-05 FIX: check .hidden class, not style.display (auth overlay uses classList)
-document.addEventListener('keydown', e => {
-  if(e.key==='Escape') closeModal();
-  const overlay = document.getElementById('auth-overlay');
-  if(e.key==='Enter' && overlay && !overlay.classList.contains('hidden')){
-    const loginPanel = document.getElementById('auth-login');
-    if(loginPanel && loginPanel.style.display !== 'none') doLogin();
-  }
-});
-// Quick-approve from editor — sends to new /quick-approve endpoint
-async function quickApprove(promptId, versionId){
-  if(!promptId||!versionId){ notif('No version selected','warn'); return; }
-  const data = await api('POST', `/api/v1/prompts/${promptId}/versions/${versionId}/quick-approve`, {});
-  if(data){
-    notif(`⚡ Live — ${data.version?.version_num ? 'v'+data.version.version_num : ''} approved instantly`);
-    openPromptEditor(promptId);
-    loadDash();
-  }
-}
-// ══════════════════════════════════════════════════════════════════════
-// EXPORT / IMPORT
-// ══════════════════════════════════════════════════════════════════════
-async function exportWorkspace(){
-  const data = await api('GET', '/api/v1/projects/export');
-  if(!data) return;
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `PromptMatrix_Export_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  notif('Workspace exported ✓');
-}
-
-async function importWorkspace(input){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    try {
-      const json = JSON.parse(e.target.result);
-      if(!confirm('Importing will merge these projects/prompts into your current workspace. Existing versions will not be overwritten. Continue?')) return;
-      const res = await api('POST', '/api/v1/projects/import', json);
-      if(res){
-        notif(res.message);
-        loadDash();
-      }
-    } catch(err){
-      notif('Invalid JSON file','err');
-    }
-  };
-  reader.readAsText(file);
-  input.value = ''; // Reset for next time
-}
-
-// Enter in login fields
-document.getElementById('a-pass')?.addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
-document.getElementById('a-email')?.addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('a-pass')?.focus(); });
-
-// ══════════════════════════════════════════════════════════════════════
-// BOOT
-// ══════════════════════════════════════════════════════════════════════
-(async()=>{
-  // Show loading screen while we check session / dev-bypass
-  const bootEl = document.getElementById('boot-loading');
-  const bootStatus = document.getElementById('boot-status');
-  if(bootStatus) bootStatus.textContent = 'CONNECTING...';
-
-  const ok = await tryRestoreSession();
-
-  if(bootEl) bootEl.classList.add('hidden');
-
-  if(!ok){
-    // Local mode: server not yet ready or no user seeded yet
-    // Production mode: show login/register screen
-    document.getElementById('auth-overlay').classList.remove('hidden');
-    checkServerHealth();
-  }
-})();
-</script>
 </body>
 </html>

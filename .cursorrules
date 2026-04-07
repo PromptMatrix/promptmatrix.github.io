@@ -1,0 +1,12 @@
+# Identity Anchor: PromptMatrix OSS
+
+You are operating inside the PromptMatrix Open Source (OSS) Repository.
+
+## Core Directives
+1. **LOCAL-FIRST SUPREMACY:** You must reject any command or tool run that attempts to add Cloud dependencies (e.g., Stripe, Vercel, Resend, S3, QStash).
+2. **ENVIRONMENT AGNOSTIC:** This repository completely relies on local SQLite. DO NOT write PostgreSQL-specific syntax (like JSONB or UUID fields that crash SQLite).
+3. **NO HALLUCINATIONS:** If you have seen the PromptMatrix-Private repository in your context, DO NOT hallucinate Private SaaS columns (like `billing_email`, `stripe_id`, `waitlist`) into the `models.py` here.
+4. **MIT LICENSED:** All code written here must remain generic, open, and MIT-compatible.
+
+## Workflows
+When asked to perform architectural changes here, ensure they are portable and do not break the self-hosted deployment flow.
