@@ -155,6 +155,10 @@ async function initApp(){
   await loadDash();
   checkServerHealth();
   setInterval(checkServerHealth, 30000);
+  
+  // Real-time Intelligence Engine
+  const editor = document.getElementById('e-content');
+  if(editor) editor.addEventListener('input', () => { detectVars(); updateIntel(); });
 }
 
 function updateSidebar(){
@@ -244,6 +248,10 @@ async function loadDash(){
     updateBadge('bx-approvals', pending.length);
     renderDashApprovals(pending.slice(0,3));
   }
+  
+  // 💰 Estimated ROI (Zero-Cost Metric)
+  const savings = (S.prompts || []).reduce((acc, p) => acc + 12.50 + ((p.version_count||0) * 2.50), 0);
+  setText('dm-savings', `$${savings.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`);
 }
 
 function renderRecentPrompts(prompts){
@@ -324,18 +332,20 @@ async function openPromptEditor(promptId){
   renderVersionHistory(versions, p.live_version?.id);
   detectVars();
   if(live && live.last_eval_score) showInlineEval(live);
+  updateIntel();
 }
 
 function detectVars(){
   const content = document.getElementById('e-content').value;
   const vars = [...new Set((content.match(/\{\{[\w_]+\}\}/g)||[]))];
   const el = document.getElementById('e-vars');
-  if(!vars.length){ el.textContent='Write {{variable}} in your prompt content.'; return; }
+  if(!vars.length){ el.textContent='Write {{variable}} in your prompt content.'; updateIntel(); return; }
   el.innerHTML = vars.map(v => `
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
       <span style="color:var(--y);font-size:11px">${v}</span>
       <span style="font-size:10px;color:var(--t3)">→ pass as ?vars=${v.replace(/[{}]/g,'')}=value</span>
     </div>`).join('');
+  updateIntel();
 }
 
 function renderVersionHistory(versions, liveId){
@@ -366,7 +376,32 @@ function loadVersionIntoEditor(versionId){
   document.getElementById('e-content').value = v.content||'';
   document.getElementById('e-commit').value  = `Based on v${v.version_num}`;
   detectVars();
+  updateIntel();
   notif(`Loaded v${v.version_num} into editor`);
+}
+
+function updateIntel(){
+  const content = document.getElementById('e-content').value;
+  const chars = content.length;
+  const vars  = (content.match(/\{\{[\w_]+\}\}/g)||[]).length;
+  const complexity = Math.min(10, (vars / Math.max(1, chars)) * 1000).toFixed(1);
+  
+  let grade = 'A+';
+  if(chars > 2000) grade = 'B';
+  if(chars > 5000) grade = 'C';
+  if(vars > 10)    grade = 'S'; // Complex/Sophisticated
+  if(chars < 50)   grade = 'D'; // Too short
+  
+  const compEl = document.getElementById('intel-complexity');
+  const charEl = document.getElementById('intel-chars');
+  const gradEl = document.getElementById('intel-grade');
+  
+  if(compEl) compEl.textContent = complexity;
+  if(charEl) charEl.textContent = chars;
+  if(gradEl){
+    gradEl.textContent = grade;
+    gradEl.style.color = (grade==='A+'||grade==='S') ? 'var(--g)' : (grade==='B') ? 'var(--y)' : 'var(--r)';
+  }
 }
 
 async function saveAsDraft(){

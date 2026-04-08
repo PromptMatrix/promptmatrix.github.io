@@ -91,7 +91,7 @@ async def register(body: RegisterIn, db: Session = Depends(get_db)):
     db.flush()
 
     org = Organisation(
-        name="PromptMatrix", slug=_unique_slug("promptmatrix", db), plan="local"
+        name="PromptMatrix", slug=_unique_slug("promptmatrix", db)
     )
     db.add(org)
     db.flush()

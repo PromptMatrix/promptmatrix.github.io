@@ -32,7 +32,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.core.auth import generate_api_key, hash_password
 from app.database import Base, get_db
 from app.models import (ApiKey, AuditLog, Environment, EvalKey, EvalResult,
-                        Organisation, OrgMember, PlanOverride, Project, Prompt,
+                        Organisation, OrgMember, Project, Prompt,
                         PromotionRequest, PromptVersion, ServeEvent, User)
 
 # ── Test database — fresh in-memory SQLite ────────────────────────
@@ -80,7 +80,6 @@ def _clean_db():
             Project,
             OrgMember,
             User,
-            PlanOverride,
             Organisation,
         ]:
             db.query(model).delete()
@@ -138,7 +137,7 @@ def seed_org_user(db, email="owner@test.com", role="owner", plan="local"):
         slug = f"{slug_base}-{i}"
         i += 1
 
-    org = Organisation(name=f"{email}'s Org", slug=slug, plan=plan)
+    org = Organisation(name=f"{email}'s Org", slug=slug)
     db.add(org)
     db.flush()
 

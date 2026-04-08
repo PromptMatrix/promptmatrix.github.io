@@ -47,28 +47,10 @@
   "offers": [
     {
       "@type": "Offer",
-      "name": "Founding Seat",
-      "price": "499.00",
+      "name": "Community Edition",
+      "price": "0.00",
       "priceCurrency": "USD",
-      "description": "Lifetime access to Scale tier with white-glove onboarding."
-    },
-    {
-      "@type": "Offer",
-      "name": "Starter",
-      "price": "16.00",
-      "priceCurrency": "USD"
-    },
-    {
-      "@type": "Offer",
-      "name": "Pro",
-      "price": "39.00",
-      "priceCurrency": "USD"
-    },
-    {
-      "@type": "Offer",
-      "name": "Scale",
-      "price": "79.00",
-      "priceCurrency": "USD"
+      "description": "Free, open-source, and self-hosted prompt governance."
     }
   ]
 }
@@ -741,8 +723,8 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="nl" href="#faq">FAQ</a>
   </div>
   <div class="nact">
-    <a class="btn btn-ghost" href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener">GITHUB</a>
-    <a class="btn btn-primary" href="/dashboard" style="margin-right:4px">OPEN DASHBOARD</a>
+    <a class="btn btn-ghost" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
+    <a class="btn btn-primary" href="/dashboard" style="margin-right:4px">LAUNCH DASHBOARD</a>
   </div>
   <button class="nhbg" id="nhbg" onclick="toggleMobNav()" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
@@ -756,8 +738,8 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="#quickstart" onclick="closeMobNav()">INTEGRATION</a>
     <a class="mob-nl" href="#faq" onclick="closeMobNav()">FAQ</a>
     <div class="mob-divider"></div>
-    <a class="mob-nl" href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener">GITHUB</a>
-    <a class="mob-nl mob-cta" href="https://promptmatrixx.vercel.app/dashboard">LOGIN / ACCESS</a>
+    <a class="mob-nl" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
+    <a class="mob-nl mob-cta" href="/dashboard">LAUNCH DASHBOARD</a>
   </div>
 </nav>
 
@@ -793,17 +775,16 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <span>No server needed to start — runs entirely in your browser. Upgrade storage when you're ready.</span>
     </div>
 
-    <!-- EMAIL WAITLIST INPUT -->
     <div style="display:flex;flex-direction:column;gap:12px;max-width:480px;animation:rise .7s .26s var(--ease) both">
       <div style="display:flex;gap:10px">
         <a href="/dashboard" class="btn btn-primary" style="padding:14px 32px;font-size:12px">LAUNCH LOCAL DASHBOARD →</a>
-        <a href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" class="btn btn-ghost" style="padding:14px 24px;font-size:11px">VIEW DOCUMENTATION</a>
+        <a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" class="btn btn-ghost" style="padding:14px 24px;font-size:11px">VIEW ON GITHUB</a>
       </div>
     </div>
-
+      
     <!-- GITHUB GHOST LINK -->
     <div style="margin-top:11px;margin-bottom:2px;display:flex;align-items:center;gap:12px;animation:rise .7s .28s var(--ease) both">
-      <a href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener" style="font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--txt3);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .15s" onmouseover="this.style.color='var(--g2)'" onmouseout="this.style.color='var(--txt3)'">
+      <a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener" style="font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--txt3);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .15s" onmouseover="this.style.color='var(--g2)'" onmouseout="this.style.color='var(--txt3)'">
         <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         VIEW SOURCE ON GITHUB — MIT LICENSED
       </a>
@@ -1955,170 +1936,53 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   </div>
   </section>
 
-  <!-- PRICING -->
-  <section class="pricing" id="pricing" aria-label="SaaS Pricing Plans">
+  <!-- PRICING: COMMUNITY ONLY -->
+  <section class="pricing" id="pricing" aria-label="Community Self-Hosted Usage">
   <div class="prinr">
     <div class="prih rv">
-      <div class="slabel" style="text-align:center">// SAAS_PRICING</div>
-      <h2 class="stitle" style="text-align:center">Managed Access.<br><span class="em si">Production Ready.</span></h2>
-      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:500px">Get started with the managed cloud today. Founder seats are limited and price-locked forever.</p>
+      <div class="slabel" style="text-align:center">// COMMUNITY_GOVERNANCE</div>
+      <h2 class="stitle" style="text-align:center">100% Open Source.<br><span class="em si">Strictly Local.</span></h2>
+      <p class="sbody" style="text-align:center;margin:10px auto 0;max-width:550px">PromptMatrix is a community-first protocol. Download, self-host, and govern your AI systems with total autonomy.</p>
     </div>
 
-    <!-- ROW 1: FOUNDER -->
-    <div class="pricing-row1">
-
-      <!-- FOUNDER ACCESS -->
-      <div class="plan founder rv" style="transition-delay:.08s; padding:0;">
-        <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(255,204,2,.045),transparent 80%);pointer-events:none"></div>
-        <div style="position:relative;z-index:1;display:flex;flex-wrap:wrap;min-height:100%">
-          
-          <!-- LEFT COL: Info -->
-          <div style="flex:1;min-width:300px;padding:34px 42px;border-right:1px solid rgba(255,204,2,.1);display:flex;flex-direction:column;justify-content:center">
-            <div style="display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:7.5px;color:rgba(0,0,0,0.8);background:var(--am);box-shadow:0 0 20px rgba(255,204,2,.3);padding:4px 12px;border-radius:2px;letter-spacing:.12em;margin-bottom:18px;width:fit-content;font-weight:700">
-              <span class="spot-pip" style="background:#000"></span>
-              ★ WHITE GLOVE ONBOARDING · <span id="pro-spots-badge" style="color:#000">100 TEAMS ONLY</span>
-            </div>
-            <div class="pname" style="color:rgba(255,204,2,.55);font-size:10px">// CLOUD · FOUNDING SEAT · FOREVER</div>
-            <div class="pprice" style="color:var(--am);text-shadow:0 0 28px rgba(255,204,2,.3);font-size:55px;margin-bottom:8px"><sup style="color:var(--am);font-size:24px">$</sup>499<sub style="font-size:13px;color:rgba(255,204,2,.45)"> once</sub></div>
-            <div class="pperiod" style="color:rgba(255,204,2,.55);font-size:9.5px;margin-bottom:21px">PAY ONCE · PRICE LOCKED FOREVER · NO SUBSCRIPTION</div>
-            <p class="pdesc" style="color:rgba(255,240,180,.5);font-size:14px;max-width:380px;margin-bottom:0">Scale plan access — permanently. When this moves to recurring pricing, founding members pay nothing more. Ever. You get the cloud the moment it ships, and your price stays at $499 for the life of the product.</p>
-          </div>
-
-          <!-- RIGHT COL: Features -->
-          <div style="flex:1;min-width:300px;padding:34px 42px;background:rgba(255,204,2,.015);display:flex;flex-direction:column">
-            <ul class="pitems" style="flex:1;gap:9px">
-              <li style="color:rgba(255,204,2,.85);font-weight:500"><span style="color:var(--am);font-size:11px">⚡</span> Everything in Scale plan — forever</li>
-              <li style="color:rgba(255,204,2,.85);font-weight:500"><span style="color:var(--am);font-size:11px">⚡</span> Price never increases. Ever.</li>
-              <li style="color:rgba(255,204,2,.85);font-weight:500"><span style="color:var(--am);font-size:11px">⚡</span> Lifetime locked · no subscription fee</li>
-              <li style="padding-top:6px;border-top:1px solid rgba(255,204,2,.1);margin-top:2px">Managed cloud backend — zero ops</li>
-              <li>Up to 5 team seats + role-based access</li>
-              <li>Cross-device sync from anywhere</li>
-              <li>Direct line to the builder</li>
-              <li>Shape what gets built next</li>
-            </ul>
-            <button class="pbtn am" id="claim-btn" onclick="openWaitlist('founder')" style="margin-top:24px;font-size:11px;padding:14px">★ GET STARTED — $499 FOUNDING →</button>
-            <p style="font-family:var(--mono);font-size:8.5px;color:rgba(255,204,2,.45);letter-spacing:.06em;margin-top:12px;text-align:center">Founding rate · $499 one-time · locked forever · no subscription ever</p>
-          </div>
-          
-        </div>
+    <!-- SINGLE PILLAR: COMMUNITY -->
+    <div style="display:flex;justify-content:center;margin-top:40px">
+      <div class="plan rv" style="transition-delay:.05s; border-color: rgba(0,230,118,.15); max-width:500px; width:100%; padding:45px">
+        <div class="pname" style="color:var(--g);font-size:12px">// COMMUNITY / SELF-HOST</div>
+        <div class="pprice" style="font-size:62px"><sup>$</sup>0<sub>/life</sub></div>
+        <div class="pperiod" style="letter-spacing:.15em">MIT LICENSED · LOCAL-FIRST SQLite</div>
+        <p class="pdesc" style="font-size:16px;line-height:1.6;color:var(--txt2)">The full governance protocol for local-first engineers. Fully open source, transparent, and community-driven. Run it on your iron, keep your data, own your logic.</p>
+        <ul class="pitems" style="margin:30px 0; gap:12px">
+          <li style="font-size:14px"><span style="color:var(--g)">✔</span> Full repository & source access</li>
+          <li style="font-size:14px"><span style="color:var(--g)">✔</span> Local-first SQLite registry</li>
+          <li style="font-size:14px"><span style="color:var(--g)">✔</span> Unlimited seat count (Self-hosted)</li>
+          <li style="font-size:14px"><span style="color:var(--g)">✔</span> Rule-based evaluation engine</li>
+          <li style="font-size:14px"><span style="color:var(--g)">✔</span> AES-256-GCM Cryptographic security</li>
+          <li style="font-size:14px"><span style="color:var(--g)">✔</span> Docker, Start-scripts, and CLI tools</li>
+          <li style="font-size:14px"><span style="color:var(--g)">✔</span> 100% Privacy & Data Sovereignty</li>
+        </ul>
+        <a href="https://github.com/PromptMatrix/PromptMatrix" class="pbtn g" style="text-decoration:none; text-align:center; display:block; padding:18px 0; font-size:13px; font-weight:700">★ CLONE ON GITHUB →</a>
       </div>
-
     </div>
 
-    <!-- ROW 2: STARTER + PRO + SCALE + ENTERPRISE -->
-    <div class="pricing-row2">
-
-      <!-- STARTER -->
-      <div class="plan rv" style="transition-delay:.05s">
-        <div class="pname">// STARTER</div>
-        <div class="pprice"><sup>$</sup>16<sub>/mo</sub></div>
-        <div class="pperiod">1 SEAT · 10 PROMPTS</div>
-        <p class="pdesc">Zero ops — login, edit, serve. The perfect entry point for solo developers running production AI.</p>
-        <ul class="pitems">
-          <li>Browser + Local Mode</li>
-          <li>Managed cloud backend</li>
-          <li>1 workspace seat</li>
-          <li>10 Prompts limit</li>
-          <li>50,000 API Requests / month</li>
-          <li>Automatic updates</li>
-          <li>99.9% uptime SLA</li>
-          <li class="off">Team seats</li>
-          <li class="off">Role-based access</li>
-          <li class="off">Slack notifications</li>
-        </ul>
-        <button class="pbtn g" onclick="openWaitlist('starter')">JOIN WAITLIST →</button>
-      </div>
-
-      <!-- PRO -->
-      <div class="plan rv" style="transition-delay:.10s">
-        <div class="pname">// PRO</div>
-        <div class="pprice"><sup>$</sup>39<sub>/mo</sub></div>
-        <div class="pperiod">UP TO 3 SEATS · 50 PROMPTS</div>
-        <p class="pdesc">The core governance protocol for small teams. Role-based access, approvals, and immutable audit logs.</p>
-        <ul class="pitems">
-          <li>Everything in Starter</li>
-          <li>Up to 3 team seats</li>
-          <li>50 Prompts limit</li>
-          <li>250,000 API Requests / month</li>
-          <li>Role-based access — 5 levels</li>
-          <li>Approval workflow</li>
-          <li>CSV audit log export</li>
-          <li>Standard support</li>
-          <li class="off">LLM-as-judge scoring</li>
-          <li class="off">SSO / SAML</li>
-        </ul>
-        <button class="pbtn g" onclick="openWaitlist('pro3')">JOIN WAITLIST →</button>
-      </div>
-
-      <!-- SCALE — most popular -->
-      <div class="plan hot rv" style="transition-delay:.12s">
-        <div class="phot">
-          <span class="spot-pip g"></span>
-          MOST POPULAR
-        </div>
-        <div class="pname">// SCALE</div>
-        <div class="pprice"><sup>$</sup>79<sub>/mo</sub></div>
-        <div class="pperiod">UP TO 10 SEATS · 150 PROMPTS</div>
-        <p class="pdesc">Advanced governance for scaling organisations. Full workflow automation, Slack approvals, and LLM eval scoring.</p>
-        <ul class="pitems">
-          <li>Everything in Pro</li>
-          <li>Up to 10 team seats</li>
-          <li>150 Prompts limit</li>
-          <li>1,000,000 API Requests / month</li>
-          <li>Slack approval notifications</li>
-          <li>LLM-as-judge eval scoring</li>
-          <li>Priority support</li>
-          <li class="off">SSO / SAML</li>
-          <li class="off">Custom data residency</li>
-          <li class="off">Dedicated onboarding</li>
-        </ul>
-        <button class="pbtn p" onclick="openWaitlist('scale10')">JOIN WAITLIST →</button>
-      </div>
-
-      <!-- ENTERPRISE — contact sales -->
-      <div class="plan rv" style="transition-delay:.15s">
-        <div class="pname">// ENTERPRISE</div>
-        <div style="font-family:var(--mono);font-size:28px;font-weight:600;color:var(--g);line-height:1;margin-bottom:5px;letter-spacing:-.01em">CONTACT<br><span style="font-size:13px;color:var(--txt3);font-weight:400;letter-spacing:.06em">hello@promptmatrix.io</span></div>
-        <div class="pperiod">ANNUAL CONTRACT · UNLIMITED SEATS</div>
-        <p class="pdesc">For organisations with compliance mandates, large teams, and enterprise procurement requirements.</p>
-        <ul class="pitems">
-          <li>Everything in Scale</li>
-          <li>Unlimited seats & limits</li>
-          <li>Unlimited API Requests</li>
-          <li>SSO / SAML</li>
-          <li>Custom data residency</li>
-          <li>SOC 2 Type II (roadmap)</li>
-          <li>Dedicated onboarding</li>
-          <li>Custom SLA & Audit API</li>
-          <li>On-premise deployment option</li>
-          <li>24/7 support channel</li>
-        </ul>
-        <button class="pbtn g" onclick="submitEmail(null,'enterprise')">CONTACT SALES →</button>
-        <p style="font-family:var(--mono);font-size:8px;color:var(--txt3);letter-spacing:.06em;margin-top:10px;text-align:center">hello@promptmatrix.io · response within 48h</p>
-      </div>
-
-    </div>
-
-    <!-- HOW FOUNDING ACCESS WORKS -->
-    <div class="rv" style="transition-delay:.22s;border:1px solid rgba(255,204,2,.15);border-radius:5px;padding:28px 34px;background:rgba(4,3,0,.85);max-width:680px;margin:0 auto 13px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.18),transparent)"></div>
-      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(255,204,2,.4);text-align:center;margin-bottom:21px">// HOW FOUNDING ACCESS WORKS</div>
+    <div class="rv" style="transition-delay:.22s;border:1px solid rgba(0,230,118,.1);border-radius:5px;padding:28px 34px;background:rgba(0,10,5,.4);max-width:680px;margin:40px auto 0;position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,230,118,.15),transparent)"></div>
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(0,230,118,.4);text-align:center;margin-bottom:21px">// THE LOCAL-FIRST MANIFESTO</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:21px">
         <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.28);line-height:1;margin-bottom:8px">01</div>
-          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">Grab a seat. Email confirms your spot. No card charged now.</div>
+          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.25);line-height:1;margin-bottom:8px">100%</div>
+          <div style="font-size:12px;color:rgba(200,255,200,.4);line-height:1.6">Open Source. MIT Licensed. No proprietary hooks.</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--am);text-shadow:0 0 18px rgba(255,204,2,.28);line-height:1;margin-bottom:8px">100</div>
-          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">White Glove Onboarding. Lifetime locked. Seat reserved.</div>
+          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.25);line-height:1;margin-bottom:8px">SEC</div>
+          <div style="font-size:12px;color:rgba(200,255,200,.4);line-height:1.6">On-Prem Security. Your keys, your database, your iron.</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.28);line-height:1;margin-bottom:8px">∞</div>
-          <div style="font-size:13px;color:rgba(200,255,200,.45);line-height:1.6">One payment — $499. Scale tier access. Price locked forever. No subscriptions. No surprises.</div>
+          <div style="font-family:var(--mono);font-size:34px;font-weight:700;color:var(--g);text-shadow:0 0 18px rgba(0,230,118,.25);line-height:1;margin-bottom:8px">∞</div>
+          <div style="font-size:12px;color:rgba(200,255,200,.4);line-height:1.6">Free for teams, startups, and enterprises locally.</div>
         </div>
       </div>
     </div>
-    <p class="rv" style="transition-delay:.28s;text-align:center;font-family:var(--mono);font-size:8.5px;color:var(--txt3);letter-spacing:.07em">100 founding teams · hello@promptmatrix.io · Secure Early Access</p>
   </div>
   </section>
 
@@ -2442,12 +2306,9 @@ function _updateSpotsBadges(){
 }
 _updateSpotsBadges();
 
-/* CLAIM SPOT (early seat) */
+/* CLAIM SPOT (early seat) — DISABLED IN OSS */
 function claimSpot(btn){
-  // Lemon Squeezy payment link — $499 founding seat
-  if(btn){btn.textContent='OPENING...';btn.disabled=true;}
-  window.open('LEMON_SQUEEZY_PAYMENT_LINK_HERE','_blank');
-  if(btn){setTimeout(()=>{btn.textContent='★ GET STARTED — $499 FOUNDING';btn.disabled=false;},2000);}
+  showToast("Founding seats are available only in the Cloud version.");
 }
 
 /* HERO WAITLIST — reads hero-email input, validates, opens Beehiiv */
@@ -2471,52 +2332,21 @@ function heroJoinWaitlist(){
   if(btn){setTimeout(()=>{btn.textContent='JOINED ✓';btn.style.color='var(--g)';btn.style.background='rgba(0,230,118,.22)';setTimeout(()=>{btn.textContent='JOIN WAITLIST →';btn.style.color='';btn.style.background='rgba(0,230,118,.16)';btn.disabled=false;},4200);},100);}
 }
 
-/* OPEN WAITLIST — for solo/team tiers (pre-launch) */
-function openWaitlist(plan, email){
-  const orgId = localStorage.getItem('pm_org_id') || 'unregistered';
-  const paidTiers = ['founder', 'starter', 'pro', 'pro3', 'scale', 'scale10'];
-  if (paidTiers.includes(plan)) {
-    const variantMap = { 'pro3': 'pro', 'scale10': 'scale' };
-    const slug = variantMap[plan] || plan;
-    window.location.href = `https://matrixlabs.lemonsqueezy.com/checkout/buy/${slug}?custom[org_id]=${orgId}`;
-    return;
+/* ── THE CONVERSION ENGINE ── */
+
+function showToast(text, duration = 3000) {
+  let toast = document.getElementById('pm-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'pm-toast';
+    toast.className = 'pm-toast';
+    document.body.appendChild(toast);
   }
-  if (plan === 'enterprise') {
-    showToast("Opening sales channel...");
-    window.open('mailto:hello@promptmatrix.io?subject=Enterprise Inquiry','_blank');
-    return;
-  }
-  const base = 'https://matrixlabs.beehiiv.com/subscribe';
-  const params = new URLSearchParams({ utm_source: plan, utm_medium: 'landing_page', utm_campaign: 'cloud_waitlist' });
-  if (email) params.set('email', email);
-  window.open(`${base}?${params.toString()}`, '_blank');
-  showToast("You're on the list — we'll be in touch.");
+  toast.textContent = text;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), duration);
 }
 
-async function submitEmail(id, plan){
-  const input = id ? document.getElementById(id) : null;
-  const email = input ? input.value.trim() : '';
-  if (id && (!email || !email.includes('@'))) {
-    if (input) input.style.outline = '1px solid #ff5252';
-    return;
-  }
-  openWaitlist(plan, email);
-}
-
-/* NEW: Purchase flow for live tiers */
-function openCheckout(variantId) {
-  const orgId = localStorage.getItem('pm_org_id') || 'unregistered';
-  // Lemon Squeezy Checkout URLs for each variant
-  const base = "https://matrixlabs.lemonsqueezy.com/buy/";
-  const urls = {
-    "founder": "founder", 
-    "starter": "starter",
-    "pro": "pro",
-    "scale": "scale"
-  };
-  const slug = urls[variantId] || "founder";
-  window.location.href = `${base}${slug}?custom[org_id]=${orgId}`;
-}
 
 /* FAQ */
 function toggleFaq(btn){
@@ -2573,41 +2403,6 @@ window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('ink',scrollY>28);
 });
 
-</script>
-<script>
-  // 🚀 Deployment Intelligence
-  (function() {
-    const isVercel = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('promptmatrix');
-    const isGithub = window.location.hostname.includes('github.io');
-    const ctas = document.querySelectorAll('.pbtn, .auth-btn, .btn-primary, .mob-cta');
-    const demoBtns = document.querySelectorAll('a[href*="vercel.app"]');
-    
-    if (isVercel) {
-      // ☁️ Managed Mode: Direct to Login
-      ctas.forEach(btn => {
-        if (!btn.href.includes('github.com') && !btn.classList.contains('pbtn')) {
-          btn.textContent = "LOGIN / ACCESS";
-          btn.href = "/dashboard";
-        }
-      });
-      demoBtns.forEach(btn => {
-        if (!btn.classList.contains('pbtn')) btn.style.display = 'none';
-      });
-    } else if (isGithub) {
-      // 🛠 OSS Mode: Point only Hero/Docs to GitHub, keep Pricing directed to Cloud
-      const heroCta = document.querySelector('.hero .btn-primary');
-      if (heroCta) {
-        heroCta.textContent = "DOWNLOAD OSS";
-        heroCta.href = "https://github.com/PromptMatrix/promptmatrix.github.io";
-      }
-      
-      const mobCta = document.querySelector('.mob-cta');
-      if (mobCta) {
-        mobCta.textContent = "GITHUB OSS";
-        mobCta.href = "https://github.com/PromptMatrix/promptmatrix.github.io";
-      }
-    }
-  })();
 </script>
 </body>
 </html>

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "promptmatrix"
-version = "0.1.0"
+version = "0.2.0"
 description = "Enterprise-grade prompt governance infrastructure for AI applications."
 readme = "README.md"
 requires-python = ">=3.11"

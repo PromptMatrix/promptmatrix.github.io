@@ -25,6 +25,10 @@ class Organisation(Base):
     id = Column(String, primary_key=True, default=_uuid)
     name = Column(String(120), nullable=False)
     slug = Column(String(80), unique=True, nullable=False)
+    plan = Column(String(30), default="local")  # OSS: always "local"
+    plan_seat_limit = Column(Integer, default=100)
+    plan_prompt_limit = Column(Integer, default=1000)
+    plan_rpm_limit = Column(Integer, default=60)
     created_at = Column(DateTime, default=_now)
     updated_at = Column(DateTime, default=_now, onupdate=_now)
     members = relationship(
@@ -139,6 +143,7 @@ class Prompt(Base):
         "PromptVersion", foreign_keys=[live_version_id], post_update=True
     )
     version = Column(Integer, nullable=False, default=1)  # Optimistic Locking
+    __mapper_args__ = {"version_id_col": version}
     __table_args__ = (UniqueConstraint("environment_id", "key"),)
 
 
@@ -334,20 +339,3 @@ class ServeEvent(Base):
     served_at = Column(DateTime, default=_now)
 
 
-# ── Plan Overrides ────────────────────────────────────────────────
-
-
-class PlanOverride(Base):
-    __tablename__ = "plan_overrides"
-    id = Column(String, primary_key=True, default=_uuid)
-    org_id = Column(
-        String,
-        ForeignKey("organisations.id", ondelete="CASCADE"),
-        nullable=False,
-        unique=True,
-    )
-    rpm_limit = Column(Integer, nullable=True)
-    prompt_limit = Column(Integer, nullable=True)
-    seat_limit = Column(Integer, nullable=True)
-    notes = Column(Text, default="")
-    created_at = Column(DateTime, default=_now)

@@ -141,12 +141,6 @@ def upgrade() -> None:
         batch_op.add_column(sa.Column("plan_seat_limit", sa.Integer(), nullable=True))
         batch_op.add_column(sa.Column("plan_prompt_limit", sa.Integer(), nullable=True))
         batch_op.add_column(sa.Column("plan_rpm_limit", sa.Integer(), nullable=True))
-        batch_op.add_column(
-            sa.Column("lemon_order_id", sa.String(length=100), nullable=True)
-        )
-        batch_op.add_column(
-            sa.Column("billing_email", sa.String(length=255), nullable=True)
-        )
         batch_op.add_column(sa.Column("updated_at", sa.DateTime(), nullable=True))
 
     with op.batch_alter_table("projects", schema=None) as batch_op:
@@ -200,10 +194,7 @@ def downgrade() -> None:
         batch_op.drop_constraint("uq_project_org_name", type_="unique")
         batch_op.drop_column("description")
 
-    with op.batch_alter_table("organisations", schema=None) as batch_op:
         batch_op.drop_column("updated_at")
-        batch_op.drop_column("billing_email")
-        batch_op.drop_column("lemon_order_id")
         batch_op.drop_column("plan_rpm_limit")
         batch_op.drop_column("plan_prompt_limit")
         batch_op.drop_column("plan_seat_limit")
