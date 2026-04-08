@@ -51,6 +51,15 @@
       "price": "0.00",
       "priceCurrency": "USD",
       "description": "Free, open-source, and self-hosted prompt governance."
+    },
+    {
+      "@type": "Offer",
+      "name": "Founding Member",
+      "price": "499.00",
+      "priceCurrency": "USD",
+      "priceValidUntil": "2026-12-31",
+      "availability": "https://schema.org/LimitedAvailability",
+      "description": "Lifetime access to PromptMatrix Cloud — 500 prompts, 10 seats, 600 RPM, full eval engine, approval workflow. One-time payment, no subscription."
     }
   ]
 }
@@ -720,11 +729,12 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="nl" href="#how-it-works">PROTOCOL</a>
     <a class="nl" href="#features">FEATURES</a>
     <a class="nl" href="#quickstart">INTEGRATION</a>
+    <a class="nl" href="#pricing" style="color:var(--am)">PRICING</a>
     <a class="nl" href="#faq">FAQ</a>
   </div>
   <div class="nact">
     <a class="btn btn-ghost" href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener">GITHUB</a>
-    <a class="btn btn-primary" href="/dashboard" style="margin-right:4px">LAUNCH DASHBOARD</a>
+    <a class="btn btn-primary" id="nav-cta" href="#pricing">BECOME A FOUNDER</a>
   </div>
   <button class="nhbg" id="nhbg" onclick="toggleMobNav()" aria-label="Toggle menu"><span></span><span></span><span></span></button>
 </nav>
@@ -2040,6 +2050,182 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════ PRICING ══ -->
+<section id="pricing" aria-label="Pricing Plans" style="position:relative;z-index:2;padding:96px 0 80px;border-top:1px solid var(--b);background:linear-gradient(180deg,rgba(0,8,4,.7) 0%,rgba(0,4,2,.9) 100%)">
+<div class="wrap">
+
+  <div class="rv" style="text-align:center;margin-bottom:60px">
+    <div class="slabel" style="text-align:center">// PRICING_ARCHITECTURE</div>
+    <h2 class="stitle" style="text-align:center">Own the tool.<br><span class="em si">Not just the subscription.</span></h2>
+    <p class="sbody" style="margin:16px auto 0;text-align:center;max-width:540px">Start local and free. When your team needs managed cloud access with multi-seat governance, approve once and it's live — no migration, no data export, same protocol.</p>
+  </div>
+
+  <!-- PLAN GRID -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:40px" class="rv pricing-grid">
+
+    <!-- FREE / OSS -->
+    <div style="background:rgba(0,5,0,.9);border:1px solid var(--b2);border-radius:10px;padding:32px 28px;display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden">
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--g3);margin-bottom:18px">//&nbsp;PLAN_01&nbsp;·&nbsp;OPEN_SOURCE</div>
+      <div style="font-size:22px;font-weight:800;color:var(--txt1);letter-spacing:-.02em;margin-bottom:4px">Community</div>
+      <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--g);line-height:1;margin-bottom:6px">$0<span style="font-size:14px;color:var(--txt3)">&nbsp;/forever</span></div>
+      <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.75;margin-bottom:24px">Self-hosted. Local-first. MIT licensed. Your server, your data, no subscription needed. Clone and run.</p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:32px;flex:1">
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Unlimited prompts locally</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Approval workflow + diff view</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Immutable audit log</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Rule-based eval engine</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> AES-256-GCM encryption</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> SQLite + Postgres + MySQL</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> 100% data sovereignty</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.2);display:flex;align-items:baseline;gap:8px"><span style="color:var(--txt4);font-size:10px">–</span> Cloud dashboard &amp; invites</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.2);display:flex;align-items:baseline;gap:8px"><span style="color:var(--txt4);font-size:10px">–</span> LLM-as-a-judge evals</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.2);display:flex;align-items:baseline;gap:8px"><span style="color:var(--txt4);font-size:10px">–</span> Email notifications</li>
+      </ul>
+      <a href="https://github.com/PromptMatrix/PromptMatrix" target="_blank" rel="noopener" style="display:block;padding:14px;text-align:center;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--g);border:1px solid rgba(0,230,118,.25);border-radius:5px;text-decoration:none;transition:all .18s;background:rgba(0,230,118,.04)" onmouseover="this.style.background='rgba(0,230,118,.1)'" onmouseout="this.style.background='rgba(0,230,118,.04)'">★ CLONE ON GITHUB →</a>
+    </div>
+
+    <!-- FOUNDER — FEATURED -->
+    <div id="founder-card" style="background:rgba(2,8,4,.95);border:1px solid rgba(0,230,118,.35);border-radius:10px;padding:32px 28px;display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(0,230,118,.07)">
+      <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,230,118,.55),transparent)"></div>
+      <!-- live badge -->
+      <div id="spots-badge" style="position:absolute;top:20px;right:20px;font-family:var(--mono);font-size:8px;letter-spacing:.12em;color:var(--am);border:1px solid rgba(255,204,2,.3);padding:3px 8px;border-radius:2px;background:rgba(255,204,2,.04)">LOADING…</div>
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--g);margin-bottom:18px">//&nbsp;PLAN_02&nbsp;·&nbsp;FOUNDING_MEMBER</div>
+      <div style="font-size:22px;font-weight:800;color:var(--txt1);letter-spacing:-.02em;margin-bottom:4px">Founder</div>
+      <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--g);line-height:1;margin-bottom:2px">$499<span style="font-size:14px;color:var(--txt3)">&nbsp;one-time</span></div>
+      <div style="font-family:var(--mono);font-size:9px;color:rgba(200,255,200,.3);letter-spacing:.08em;margin-bottom:8px">Lifetime access — no subscription, ever</div>
+      <!-- live progress bar -->
+      <div style="margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--txt3);margin-bottom:5px">
+          <span>SPOTS CLAIMED</span>
+          <span id="spots-label">── / 100</span>
+        </div>
+        <div style="height:4px;background:rgba(0,230,118,.1);border-radius:2px;overflow:hidden">
+          <div id="spots-bar" style="height:100%;width:0%;background:linear-gradient(90deg,rgba(0,230,118,.6),rgba(0,230,118,1));border-radius:2px;transition:width .8s ease"></div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:rgba(200,255,200,.45);line-height:1.75;margin-bottom:22px">Everything in Community — plus fully managed cloud with multi-seat governance, LLM-powered evaluation, and priority support. Pay once. Own it permanently.</p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:32px;flex:1">
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Everything in Community</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> <strong>500 prompts</strong> on managed cloud</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> <strong>10 team seats</strong> with RBAC</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> <strong>600 RPM</strong> serve throughput</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> LLM-as-a-judge evaluation engine</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Email approval notifications</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Dashboard + invite flows</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Priority email support</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--am);font-size:10px">★</span> Name in FOUNDERS.md forever</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.75);display:flex;align-items:baseline;gap:8px"><span style="color:var(--am);font-size:10px">★</span> Direct input on roadmap</li>
+      </ul>
+      <button id="founder-cta" onclick="claimFounderSpot()" style="display:block;width:100%;padding:16px;text-align:center;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;color:#000;background:var(--g);border:none;border-radius:5px;cursor:pointer;transition:all .18s;box-shadow:0 0 32px rgba(0,230,118,.25)" onmouseover="this.style.boxShadow='0 0 48px rgba(0,230,118,.4)'" onmouseout="this.style.boxShadow='0 0 32px rgba(0,230,118,.25)'">BECOME A FOUNDING MEMBER →</button>
+      <p style="font-family:var(--mono);font-size:8px;color:var(--txt4);text-align:center;margin-top:10px;letter-spacing:.05em">Create your workspace first, then unlock Founder access from your dashboard.</p>
+    </div>
+
+    <!-- ENTERPRISE / WAITLIST -->
+    <div style="background:rgba(0,5,0,.9);border:1px solid var(--b2);border-radius:10px;padding:32px 28px;display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden">
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--txt3);margin-bottom:18px">//&nbsp;PLAN_03&nbsp;·&nbsp;ENTERPRISE</div>
+      <div style="font-size:22px;font-weight:800;color:var(--txt1);letter-spacing:-.02em;margin-bottom:4px">Scale</div>
+      <div style="font-family:var(--mono);font-size:36px;font-weight:700;color:var(--txt2);line-height:1;margin-bottom:6px">Custom<span style="font-size:14px;color:var(--txt3)">&nbsp;pricing</span></div>
+      <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.75;margin-bottom:24px">For teams that need custom seats, SLAs, SSO, dedicated infrastructure, or compliance contracts. Let's talk.</p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:32px;flex:1">
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Everything in Founder</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Unlimited prompts + seats</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Dedicated infrastructure</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> SSO / SAML</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> SLA + compliance contracts</li>
+        <li style="font-size:12px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:8px"><span style="color:var(--g);font-size:10px">✓</span> Custom on-prem options</li>
+      </ul>
+      <a href="mailto:hello@promptmatrix.io?subject=Enterprise%20Inquiry" style="display:block;padding:14px;text-align:center;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--txt2);border:1px solid var(--b2);border-radius:5px;text-decoration:none;transition:all .18s;background:rgba(255,255,255,.02)" onmouseover="this.style.borderColor='rgba(255,255,255,.2)'" onmouseout="this.style.borderColor='var(--b2)'">CONTACT US →</a>
+    </div>
+
+  </div>
+
+  <!-- FEATURE COMPARISON TABLE -->
+  <div class="rv" style="transition-delay:.12s;overflow-x:auto;border:1px solid var(--b2);border-radius:8px;background:rgba(0,4,0,.6)">
+    <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px">
+      <thead>
+        <tr style="border-bottom:1px solid var(--b2)">
+          <th style="text-align:left;padding:12px 18px;color:var(--txt3);font-size:8px;letter-spacing:.15em;font-weight:400">CAPABILITY</th>
+          <th style="text-align:center;padding:12px 18px;color:var(--g3);font-size:8px;letter-spacing:.15em;font-weight:400;border-left:1px solid var(--b)">COMMUNITY</th>
+          <th style="text-align:center;padding:12px 18px;color:var(--g);font-size:8px;letter-spacing:.15em;font-weight:700;border-left:1px solid var(--b);background:rgba(0,230,118,.03)">FOUNDER</th>
+          <th style="text-align:center;padding:12px 18px;color:var(--txt3);font-size:8px;letter-spacing:.15em;font-weight:400;border-left:1px solid var(--b)">SCALE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--b)">
+          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Prompt governance + approval</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b)">✓</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b);background:rgba(0,230,118,.03)">✓</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b)">✓</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--b)">
+          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Immutable audit trail</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b)">✓</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b);background:rgba(0,230,118,.03)">✓</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b)">✓</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--b)">
+          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Prompts (local)</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--txt2);border-left:1px solid var(--b)">∞</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--txt2);border-left:1px solid var(--b);background:rgba(0,230,118,.03)">∞ local + 500 cloud</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--txt2);border-left:1px solid var(--b)">∞</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--b)">
+          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Team seats</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--txt2);border-left:1px solid var(--b)">∞ self-hosted</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);font-weight:700;border-left:1px solid var(--b);background:rgba(0,230,118,.03)">10 cloud</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--txt2);border-left:1px solid var(--b)">Custom</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--b)">
+          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Serve RPM</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--txt2);border-left:1px solid var(--b)">Self-hosted limit</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);font-weight:700;border-left:1px solid var(--b);background:rgba(0,230,118,.03)">600 RPM</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--txt2);border-left:1px solid var(--b)">Custom</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--b)">
+          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">LLM-as-a-judge evals</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--rd);border-left:1px solid var(--b)">Rule-based only</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b);background:rgba(0,230,118,.03)">✓ Full</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b)">✓ Full</td>
+        </tr>
+        <tr style="border-bottom:1px solid var(--b)">
+          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Email notifications</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--rd);border-left:1px solid var(--b)">–</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b);background:rgba(0,230,118,.03)">✓</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b)">✓</td>
+        </tr>
+        <tr>
+          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Price</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b);font-weight:700">Free forever</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--g);border-left:1px solid var(--b);background:rgba(0,230,118,.03);font-weight:700">$499 one-time</td>
+          <td style="text-align:center;padding:10px 18px;color:var(--txt2);border-left:1px solid var(--b)">Custom</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GUARANTEES -->
+  <div class="rv" style="transition-delay:.18s;display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:24px">
+    <div style="text-align:center;padding:20px;border:1px solid var(--b);border-radius:6px;background:rgba(0,3,0,.5)">
+      <div style="font-family:var(--mono);font-size:24px;color:var(--g);margin-bottom:8px">∞</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--g2);letter-spacing:.12em;margin-bottom:5px">LIFETIME ACCESS</div>
+      <div style="font-size:11px;color:rgba(200,255,200,.35);line-height:1.6">Pay once. Use forever. No renewal, no price hike.</div>
+    </div>
+    <div style="text-align:center;padding:20px;border:1px solid var(--b);border-radius:6px;background:rgba(0,3,0,.5)">
+      <div style="font-family:var(--mono);font-size:24px;color:var(--am);margin-bottom:8px">100</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--am);letter-spacing:.12em;margin-bottom:5px">HARDCAPPED SPOTS</div>
+      <div style="font-size:11px;color:rgba(200,255,200,.35);line-height:1.6">When the last founder spot is claimed, this tier closes. No exceptions.</div>
+    </div>
+    <div style="text-align:center;padding:20px;border:1px solid var(--b);border-radius:6px;background:rgba(0,3,0,.5)">
+      <div style="font-family:var(--mono);font-size:24px;color:var(--cy);margin-bottom:8px">MIT</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--cy);letter-spacing:.12em;margin-bottom:5px">OPEN SOURCE ALWAYS</div>
+      <div style="font-size:11px;color:rgba(200,255,200,.35);line-height:1.6">The OSS core stays free and public no matter what. Community is not going away.</div>
+    </div>
+  </div>
+
+</div>
+</section>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
   </section>
 </main>
 
@@ -2059,6 +2245,7 @@ curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">ht
       <ul class="flinks">
         <li><a href="#how-it-works">The Protocol</a></li>
         <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
         <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>
@@ -2358,6 +2545,72 @@ function handleApprove(btn){
 window.addEventListener('scroll',()=>{
   document.getElementById('nav').classList.toggle('ink',scrollY>28);
 });
+
+/* ═══════════════════════ PRICING — LIVE SPOTS COUNTER ══════════════════ */
+(function(){
+  const API_BASE = 'https://promptmatrixx.vercel.app';
+  const CLOUD_REGISTER = API_BASE + '/register';
+  const CLOUD_LOGIN    = API_BASE + '/login';
+  const BILLING_API    = API_BASE + '/api/v1/billing/checkout?plan=founder';
+
+  function updateSpots(data){
+    if(!data || !data.founder) return;
+    const f = data.founder;
+    const bar   = document.getElementById('spots-bar');
+    const label = document.getElementById('spots-label');
+    const badge = document.getElementById('spots-badge');
+    const cta   = document.getElementById('founder-cta');
+    const pct   = Math.min(100, (f.claimed / f.cap) * 100);
+
+    if(label) label.textContent = f.claimed + ' / ' + f.cap;
+    if(bar)   bar.style.width   = pct + '%';
+
+    if(f.sold_out){
+      if(badge) { badge.textContent = 'SOLD OUT'; badge.style.color='var(--rd)'; badge.style.borderColor='rgba(255,68,68,.4)'; }
+      if(cta)   { cta.textContent='ALL SPOTS CLAIMED'; cta.disabled=true; cta.style.opacity='0.5'; cta.style.cursor='not-allowed'; }
+    } else {
+      const rem = f.remaining;
+      if(badge) badge.textContent = rem + ' of ' + f.cap + ' LEFT';
+      if(cta && !cta.disabled) cta.textContent = 'BECOME A FOUNDING MEMBER → (' + rem + ' spots left)';
+    }
+  }
+
+  async function fetchSpots(){
+    try{
+      const r = await fetch(API_BASE + '/api/v1/public/stats', {signal: AbortSignal.timeout(5000)});
+      if(r.ok) { const d = await r.json(); updateSpots(d); }
+    } catch(e){
+      // silently fail — backend may not be reachable; static fallback shown
+      const badge = document.getElementById('spots-badge');
+      if(badge && badge.textContent === 'LOADING…') badge.textContent = '< 100 spots left';
+    }
+  }
+
+  window.claimFounderSpot = function(){
+    // Send user to create account first, then they upgrades from within the dashboard
+    window.open(CLOUD_REGISTER, '_blank', 'noopener,noreferrer');
+    showToast('Create your workspace → unlock Founder from the dashboard');
+  };
+
+  // fetch on load, then poll every 30s
+  if(document.getElementById('spots-badge')){
+    fetchSpots();
+    setInterval(fetchSpots, 30000);
+  }
+
+  // Style updates for pricing grid responsive
+  const style = document.createElement('style');
+  style.textContent = `
+    @media(max-width:860px){
+      .pricing-grid{grid-template-columns:1fr!important;}
+    }
+    @media(max-width:600px){
+      #pricing .stitle{font-size:clamp(28px,7vw,42px)!important;}
+    }
+    #founder-cta:disabled{cursor:not-allowed;}
+  `;
+  document.head.appendChild(style);
+})();
 
 </script>
 </body>
