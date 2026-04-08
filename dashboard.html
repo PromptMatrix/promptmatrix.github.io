@@ -387,7 +387,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
           <div class="mc"><div class="ml">TOTAL_PROMPTS</div><div class="mv" id="dm-total">—</div><div class="mch ne" id="dm-total-ch">this environment</div></div>
           <div class="mc"><div class="ml">LIVE_IN_PROD</div><div class="mv" id="dm-prod">—</div><div class="mch up">approved versions</div></div>
           <div class="mc"><div class="ml">PENDING_REVIEW</div><div class="mv" id="dm-pending">—</div><div class="mch ne" id="dm-pend-ch">awaiting engineer</div></div>
-          <div class="mc"><div class="ml">LOCAL_MODE</div><div class="mv" id="dm-members">ON</div><div class="mch ne">self-hosted</div></div>
+          <div class="mc" id="mc-savings"><div class="ml">EST_SAVINGS</div><div class="mv" id="dm-savings" style="color:var(--g)">$0.00</div><div class="mch up" id="dm-savings-ch">lifetime token ROI</div></div>
         </div>
         <div class="g2">
           <div class="card">
@@ -471,6 +471,23 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
             <div class="card">
               <div class="card-title">DETECTED VARIABLES</div>
               <div id="e-vars" style="font-size:9px;color:var(--t3);line-height:1.8">Write {{variable}} in your prompt to define dynamic values. They appear here automatically.</div>
+            </div>
+            <div class="card" id="editor-intel-card">
+              <div class="card-title">PROMPT INTELLIGENCE (V1)</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;font-size:9px">
+                   <span style="color:var(--t3)">COMPLEXITY</span>
+                   <span id="intel-complexity" style="color:var(--t)">0.0</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:9px">
+                   <span style="color:var(--t3)">CHAR_COUNT</span>
+                   <span id="intel-chars" style="color:var(--t)">0</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:9px">
+                   <span style="color:var(--t3)">VAL_GRADE</span>
+                   <span id="intel-grade" style="color:var(--g);font-weight:600">A+</span>
+                </div>
+              </div>
             </div>
             <div class="card">
               <div class="card-title">VERSION HISTORY</div>

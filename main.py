@@ -178,12 +178,12 @@ async def lifespan(app: FastAPI):
     """Application lifecycle — runs on startup, yields, then runs on shutdown."""
     log.info("PromptMatrix ready — env=%s", settings.app_env)
 
-    # Security warning: ENCRYPTION_KEY should be set separately from JWT_SECRET_KEY
+    # Security warning: ENCRYPTION_KEY must be set for eval key storage
     if not settings.encryption_key:
         log.warning(
-            "ENCRYPTION_KEY is not set in .env — eval key encryption is falling back to "
-            "JWT_SECRET_KEY. If you rotate JWT_SECRET_KEY, all stored eval keys will be "
-            "unreadable. Set a separate ENCRYPTION_KEY in .env to avoid data loss."
+            "ENCRYPTION_KEY is not set in .env. Eval key encryption (AES-256-GCM) "
+            "will fail until this key is provided. Set a secure ENCRYPTION_KEY "
+            "in your .env file to enable LLM-as-judge evaluations."
         )
 
     # Local-first: auto-seed default admin on first run so the login screen
@@ -196,9 +196,9 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="PromptMatrix API",
-    description="Prompt governance infrastructure for AI applications",
-    version="0.1.0",
+    title="⬡ PromptMatrix API",
+    description="Enterprise-grade prompt governance infrastructure for AI applications",
+    version="0.2.0",
     docs_url="/docs" if settings.app_env != "production" else None,
     redoc_url=None,
     lifespan=lifespan,
@@ -246,7 +246,7 @@ async def status():
         db.close()
     return {
         "status": "ok",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "env": settings.app_env,
         "db": db_status,
     }
