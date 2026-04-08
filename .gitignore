@@ -32,3 +32,7 @@ standalone.html
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Graphify knowledge graph working files (local analysis only)
+.graphify_*
+graphify-out/
