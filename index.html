@@ -819,13 +819,15 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 <div class="wl-overlay" id="wl-overlay" onclick="if(event.target===this)closeWaitlist()">
   <div class="wl-box">
     <button class="wl-close" onclick="closeWaitlist()" aria-label="Close">×</button>
-    <div class="wl-title">Join the Waitlist</div>
-    <div class="wl-sub">Founding Member spots are limited to 100. Join the waitlist — you'll be first to know when the next tier opens and get an early-adopter discount.</div>
+    <div class="wl-title" id="wl-title">Join the Waitlist</div>
+    <div class="wl-sub">Get early-adopter pricing when this tier launches. We'll email you first — no spam, no obligation.</div>
     <form class="wl-form" id="wl-form" onsubmit="submitWaitlist(event)">
+      <input type="hidden" id="wl-tier" value="starter">
       <input class="wl-input" id="wl-name" type="text" placeholder="Your name" autocomplete="name">
       <input class="wl-input" id="wl-email" type="email" placeholder="your@email.com" required autocomplete="email">
-      <button class="wl-submit" type="submit">NOTIFY ME WHEN OPEN →</button>
+      <button class="wl-submit" type="submit">JOIN WAITLIST →</button>
     </form>
+
     <div class="wl-success" id="wl-success">✓ You're on the list. We'll email you first.</div>
   </div>
 </div>
@@ -2894,15 +2896,37 @@ window.addEventListener('scroll',()=>{
 })();
 
 /* ═══════════════════════ WAITLIST MODAL ═══════════════ */
+// openWaitlistModal(tier) — called by Starter/Pro/Scale 'JOIN WAITLIST' buttons
+window.openWaitlistModal = function(tier){
+  // Store selected tier in hidden input so submitWaitlist reads the correct one
+  const hidden = document.getElementById('wl-tier');
+  if(hidden) hidden.value = tier || 'starter';
+
+  // Update modal heading to reflect which tier the user clicked
+  const tierLabels = {starter:'Starter ($19/mo)', pro:'Pro ($49/mo)', scale:'Scale ($149/mo)'};
+  const titleEl = document.getElementById('wl-title');
+  if(titleEl) titleEl.textContent = 'Join the ' + (tierLabels[tier] || tier) + ' Waitlist';
+
+  openWaitlist();
+};
+
 function openWaitlist(){
   document.getElementById('wl-overlay').classList.add('open');
   document.body.style.overflow='hidden';
+  // Reset form state each time modal opens
+  const frm = document.getElementById('wl-form');
+  const suc = document.getElementById('wl-success');
+  if(frm) frm.style.display='';
+  if(suc) suc.style.display='none';
+  const btn = document.querySelector('.wl-submit');
+  if(btn){ btn.textContent='JOIN WAITLIST'; btn.disabled=false; }
   setTimeout(()=>document.getElementById('wl-email').focus(),150);
 }
 function closeWaitlist(){
   document.getElementById('wl-overlay').classList.remove('open');
   document.body.style.overflow='';
 }
+
 
 async function submitWaitlist(e){
   e.preventDefault();
@@ -2918,7 +2942,8 @@ async function submitWaitlist(e){
     const r = await fetch('https://promptmatrixx.vercel.app/api/v1/public/waitlist', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email, name, tier:'starter'}),
+      body: JSON.stringify({email, name, tier: (document.getElementById('wl-tier')||{value:'starter'}).value}),
+
       signal: AbortSignal.timeout(6000)
     });
     // Accept 200 or 409 (already on list) as success
