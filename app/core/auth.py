@@ -8,7 +8,8 @@ from typing import Optional
 import bcrypt
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
+import jwt
+from jwt import InvalidTokenError
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -63,7 +64,7 @@ def decode_token(token: str) -> dict:
         return jwt.decode(
             token, settings.jwt_secret_key, algorithms=["HS256"]
         )
-    except JWTError:
+    except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
