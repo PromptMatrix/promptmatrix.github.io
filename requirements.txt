@@ -7,7 +7,7 @@
 # ── Core ──────────────────────────────────────────────────────────
 fastapi==0.115.0
 # (fastapi 0.115.0 allows starlette>=0.37.0)
-starlette>=0.37.2,<0.41.0
+starlette>=0.47.2,<0.48.0  # CVE-2025-54121: DoS in multipart parsing, fixed in 0.47.2
 uvicorn[standard]==0.32.0
 sqlalchemy==2.0.36
 alembic==1.14.0
