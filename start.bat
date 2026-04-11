@@ -22,12 +22,15 @@ if not exist venv (
 :: Activate
 call venv\Scripts\activate.bat
 
+:: Upgrade pip silently (prevents false failure from pip update notices)
+python -m pip install --upgrade pip --quiet
+
 :: Always install/update dependencies (handles new deps after git pull)
 echo [Setup] Installing dependencies...
 pip install -r requirements.txt --quiet
 if %errorlevel% neq 0 (
     echo [ERROR] Dependency installation failed. Check requirements.txt and your Python version.
-    pause & exit /b 1
+    pause ^& exit /b 1
 )
 
 :: Copy .env.example if no .env exists
