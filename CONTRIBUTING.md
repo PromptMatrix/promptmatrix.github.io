@@ -16,7 +16,7 @@ When contributing, keep this constraint in mind. Features that introduce mandato
 
 ## 🐛 Reporting Bugs
 
-1. Check [existing issues](https://github.com/PromptMatrix/PromptMatrix/issues) first.
+1. Check [existing issues](https://github.com/PromptMatrix/promptmatrix.github.io/issues) first.
 2. Open a new issue with:
    - OS and Python version
    - Steps to reproduce
