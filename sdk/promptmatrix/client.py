@@ -35,7 +35,8 @@ class PromptMatrix:
         Your PromptMatrix API key (e.g. ``pm_live_xxxxxxxxxxxxx``).
     base_url : str
         Base URL of your PromptMatrix backend.
-        Defaults to ``https://promptmatrixx.vercel.app``.
+        Defaults to ``http://localhost:8000`` (local self-hosted instance).
+        For a remote/team server, pass your server's URL explicitly.
     ttl : float
         In-process cache TTL in seconds. Default: 30.
         Set to 0 to disable caching.
@@ -53,7 +54,7 @@ class PromptMatrix:
     >>> subject = pm.serve("email.subject", variables={"product": "PromptMatrix"})
     """
 
-    DEFAULT_BASE_URL = "https://promptmatrixx.vercel.app"
+    DEFAULT_BASE_URL = "http://localhost:8000"
 
     def __init__(
         self,

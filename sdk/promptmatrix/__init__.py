@@ -7,7 +7,8 @@ Usage:
   pip install promptmatrix-sdk
 
   from promptmatrix import PromptMatrix
-  pm = PromptMatrix(api_key="pm_live_xxx", base_url="https://your-api.vercel.app")
+  pm = PromptMatrix(api_key="pm_live_xxx")  # defaults to http://localhost:8000
+  # For a remote server: PromptMatrix(api_key="pm_live_xxx", base_url="https://your-server.com")
 
   # Sync
   system_prompt = pm.serve("assistant.system")
