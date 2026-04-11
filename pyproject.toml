@@ -23,7 +23,7 @@ dependencies = [
     "python-multipart>=0.0.22",
     "httpx>=0.28.0",
     "PyJWT>=2.8.0",
-    "bcrypt==4.2.1",
+    "bcrypt==5.0.0",
     "cryptography>=46.0.0"
 ]
 
