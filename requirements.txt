@@ -1,32 +1,34 @@
 # ── Python Version ──────────────────────────────────────────────────────────
-# Requires Python >=3.11, <3.13 — use pyenv or python.org to get the right version
+# Requires Python >=3.11 (3.11, 3.12, 3.13, 3.14 all supported)
 # IMPORTANT: Always run tests inside the virtualenv:
 #   Windows:  .\venv\Scripts\activate && pytest
 #   Linux/Mac: source venv/bin/activate && pytest
 #
-# ── Core ──────────────────────────────────────────────────────────
-fastapi>=0.115.0,<0.120.0
-# PromptMatrix uses FastAPI + starlette — kept in sync for security
-starlette>=0.49.1  # CVE-2025-62727: O(n²) DoS in FileResponse Range header, fixed in 0.49.1
-uvicorn[standard]==0.32.0
+# ── Core ──────────────────────────────────────────────────────────────────
+# FastAPI 0.135+ bundles starlette>=0.49.1 which patches:
+#   CVE-2025-62727 (High)   — O(n²) DoS in FileResponse Range header
+#   CVE-2025-54121 (Moderate) — DoS in multipart/form-data parsing
+# Do NOT pin starlette separately — FastAPI manages that transitive dep.
+fastapi>=0.135.0
+uvicorn[standard]>=0.32.0
 sqlalchemy==2.0.36
 alembic==1.14.0
 pydantic>=2.10.3
 pydantic-settings>=2.6.1
 
-# ── Auth & Security ──────────────────────────────────────────────
+# ── Auth & Security ──────────────────────────────────────────────────────
 PyJWT>=2.8.0
 bcrypt==4.2.1
 cryptography>=46.0.0
 
-# ── HTTP & Middleware ────────────────────────────────────────────
-httpx==0.28.0
-python-multipart==0.0.22
+# ── HTTP & Middleware ─────────────────────────────────────────────────────
+httpx>=0.28.0
+python-multipart>=0.0.22
 
-# ── Database Drivers (uncomment for PostgreSQL deployment) ───────
+# ── Database Drivers (uncomment for PostgreSQL self-hosted team deployment)
 # psycopg2-binary==2.9.10
 
-# ── Testing ──────────────────────────────────────────────────────
-pytest==8.3.3
-pytest-asyncio==0.24.0
-anyio[trio]==4.4.0
+# ── Testing ──────────────────────────────────────────────────────────────
+pytest>=8.3.3
+pytest-asyncio>=0.24.0
+anyio[trio]>=4.4.0

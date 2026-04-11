@@ -21,6 +21,9 @@ fi
 # Activate
 source venv/bin/activate
 
+# Upgrade pip silently (prevents false failure from pip update notices)
+python3 -m pip install --upgrade pip --quiet
+
 # Always install/update deps (handles new deps after git pull)
 echo "[Setup] Installing dependencies..."
 pip install -r requirements.txt --quiet

@@ -107,7 +107,7 @@ docker compose up -d
 ## 🛠 Manual Installation
 
 ```bash
-git clone https://github.com/PromptMatrix/promptmatrix.github.io.git
+git clone https://github.com/PromptMatrix/promptmatrix.github.io.git promptmatrix
 cd promptmatrix
 
 python -m venv venv
