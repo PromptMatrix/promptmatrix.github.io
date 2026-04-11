@@ -6,6 +6,21 @@ This project uses [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.2.1] — 2026-04-11
+
+### Fixed
+- **INSTALL-01**: `pip install -r requirements.txt` was impossible for all new users due to an irreconcilable version conflict between `fastapi==0.115.0` and `starlette>=0.49.1`. Resolved by upgrading to `fastapi>=0.135.0` which bundles `starlette 1.0.0`.
+- **INSTALL-02**: `start.bat` and `start.sh` incorrectly aborted with "Dependency installation failed" even on successful installs because pip exits with code 1 when printing "upgrade available" notices. Fixed by upgrading pip first.
+- **LINK-01**: All GitHub links in the landing page and source docs pointed to a 404 URL (`/PromptMatrix/PromptMatrix`). Corrected to the live repository (`/PromptMatrix/promptmatrix.github.io`).
+- **ROUTE-01**: Vercel routes for `/register`, `/login`, `/reset-password`, and `/pm/*` were falling through to the static file handler and returning 404. Added explicit routes to forward them to FastAPI.
+- `pyproject.toml`: synced dependency versions with `requirements.txt`; fixed project URLs.
+
+### Security
+- **CVE-2025-54121** (Moderate): starlette multipart parsing DoS — patched via `fastapi>=0.135.0`.
+- **CVE-2025-62727** (High): starlette FileResponse O(n²) DoS via crafted Range headers — patched via `fastapi>=0.135.0` → `starlette 1.0.0`.
+
+---
+
 ## [0.2.0] — 2026-04-06
 
 ### Added
