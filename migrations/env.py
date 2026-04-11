@@ -33,11 +33,13 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    use_null_pool = "pooler.supabase.com" in settings.database_url
+    # NullPool is needed for serverless/PgBouncer environments (any PostgreSQL provider)
+    # that use connection string port 6543 (PgBouncer). StaticPool is used for SQLite.
+    use_null_pool = "6543" in settings.database_url or settings.database_url.startswith("sqlite")
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
-        poolclass=pool.NullPool if use_null_pool else pool.StaticPool,
+        poolclass=pool.NullPool if ("postgresql" in settings.database_url and "6543" in settings.database_url) else (pool.StaticPool if "sqlite" in settings.database_url else pool.NullPool),
     )
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)

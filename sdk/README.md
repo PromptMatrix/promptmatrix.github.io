@@ -49,7 +49,7 @@ asyncio.run(main())
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `api_key` | required | Your API key (from the Dashboard → API Keys) |
-| `base_url` | `https://promptmatrixx.vercel.app` | Your PromptMatrix backend URL |
+| `base_url` | `http://localhost:8000` | Your PromptMatrix backend URL (local or remote self-hosted) |
 | `ttl` | `30` | In-process cache TTL in seconds. Set to `0` to disable. |
 | `timeout` | `4` | HTTP request timeout in seconds |
 | `strict` | `False` | If `True`, raises `PromptMatrixError` instead of returning fallback |
