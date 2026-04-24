@@ -59,7 +59,7 @@
       "priceCurrency": "USD",
       "priceValidUntil": "2026-12-31",
       "availability": "https://schema.org/LimitedAvailability",
-      "description": "Lifetime access to PromptMatrix Cloud — 500 prompts, 10 seats, 600 RPM, full eval engine, approval workflow. One-time payment, no subscription."
+      "description": "Lifetime access to PromptMatrix Cloud — 500 prompts, 5 seats, 600 RPM, full eval engine, approval workflow. One-time payment, no subscription."
     }
   ]
 }
@@ -2756,19 +2756,13 @@ function closeMobNav(){
   });
 })();
 
-/* TOAST */
-function showToast(msg){const t=document.getElementById('toast');t.innerHTML='<span style="color:var(--g)">✓</span> '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
+
 
 /* TOAST ENGINE */
 function showToast(text, duration = 3000) {
-  let toast = document.getElementById('pm-toast');
-  if (!toast) {
-    toast = document.createElement('div');
-    toast.id = 'pm-toast';
-    toast.className = 'pm-toast';
-    document.body.appendChild(toast);
-  }
-  toast.textContent = text;
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.innerHTML = '<span style="color:var(--g)">✓</span> ' + text;
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), duration);
 }
