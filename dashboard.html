@@ -11,7 +11,7 @@
   --g:#00e676;--g2:#00c853;--g3:rgba(0,230,118,.07);--g4:rgba(0,230,118,.13);
   --bg:#060806;--bg2:#0a0c0a;--bg3:#0e110e;--bg4:#131613;
   --b:#161a16;--b2:#1e231e;--b3:#262b26;
-  --t:#c8d4c8;--t2:#6a7a6a;--t3:#2e3a2e;--t4:#3e4e3e;
+  --t:#f0fcf0;--t2:#a0b0a0;--t3:#708070;--t4:#90a090;
   --r:#ff4444;--r2:rgba(255,68,68,.12);
   --y:#ffd700;--y2:rgba(255,215,0,.12);
   --c:#00e5ff;--c2:rgba(0,229,255,.1);
@@ -19,7 +19,7 @@
   --f:'JetBrains Mono',monospace;
   --rad:0px;
 }
-html,body{height:100%;background:var(--bg);color:var(--t);font-family:var(--f);font-size:12px;overflow:hidden}
+html,body{height:100%;background:var(--bg);color:var(--t);font-family:var(--f);font-size:15px;overflow:hidden}
 canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 .scanlines{position:fixed;inset:0;z-index:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.04) 2px,rgba(0,0,0,.04) 4px);opacity:.6}
 .shell{position:relative;z-index:1;display:flex;height:100vh;overflow:hidden}
@@ -38,9 +38,9 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
   flex-direction:column;gap:12px;
 }
 #boot-loading.hidden{display:none}
-.boot-logo{font-size:14px;font-weight:600;letter-spacing:.1em;color:var(--g)}
-.boot-logo em{color:var(--t3);font-style:normal;font-size:10px;margin-left:4px}
-.boot-status{font-size:9px;color:var(--t3);letter-spacing:.1em}
+.boot-logo{font-size:18px;font-weight:600;letter-spacing:.1em;color:var(--g)}
+.boot-logo em{color:var(--t3);font-style:normal;font-size:13px;margin-left:4px}
+.boot-status{font-size:15px;color:var(--t3);letter-spacing:.1em}
 .auth-box{
   width:100%;max-width:420px;background:var(--bg2);
   border:1px solid var(--b2);padding:0;overflow:hidden;
@@ -49,15 +49,15 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
   padding:24px 28px 20px;border-bottom:1px solid var(--b2);
 }
 .auth-logo{
-  font-size:16px;font-weight:600;letter-spacing:.08em;color:var(--g);
+  font-size:18px;font-weight:600;letter-spacing:.08em;color:var(--g);
   margin-bottom:4px;
 }
-.auth-logo em{color:var(--t3);font-style:normal;font-size:10px;margin-left:4px}
+.auth-logo em{color:var(--t3);font-style:normal;font-size:13px;margin-left:4px}
 .auth-tabs{
   display:flex;gap:0;border-bottom:1px solid var(--b2);
 }
 .auth-tab{
-  flex:1;padding:10px;text-align:center;font-size:10px;letter-spacing:.08em;
+  flex:1;padding:10px;text-align:center;font-size:13px;letter-spacing:.08em;
   cursor:pointer;color:var(--t3);border-bottom:2px solid transparent;
   transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;
   font-family:var(--f);
@@ -65,91 +65,91 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 .auth-tab.active{color:var(--g);border-bottom-color:var(--g)}
 .auth-body{padding:24px 28px}
 .auth-field{margin-bottom:14px}
-.auth-field label{display:block;font-size:9px;color:var(--t3);letter-spacing:.1em;margin-bottom:5px}
+.auth-field label{display:block;font-size:15px;color:var(--t3);letter-spacing:.1em;margin-bottom:5px}
 .auth-field input{
   width:100%;background:var(--bg3);border:1px solid var(--b2);
-  color:var(--t);font-family:var(--f);font-size:11px;
+  color:var(--t);font-family:var(--f);font-size:18px;
   padding:8px 10px;outline:none;transition:border-color .15s;
 }
 .auth-field input:focus{border-color:var(--g)}
 .auth-btn{
   width:100%;background:var(--g);color:#000;font-family:var(--f);
-  font-size:10px;font-weight:600;letter-spacing:.1em;padding:10px;
+  font-size:13px;font-weight:600;letter-spacing:.1em;padding:10px;
   border:none;cursor:pointer;transition:background .15s;
 }
 .auth-btn:hover{background:var(--g2)}
 .auth-btn:disabled{opacity:.5;cursor:not-allowed}
 .auth-err{
-  font-size:9px;color:var(--r);margin-top:10px;
+  font-size:15px;color:var(--r);margin-top:10px;
   padding:6px 8px;background:var(--r2);border-left:2px solid var(--r);
   display:none;
 }
 .auth-err.show{display:block}
 .auth-footer{
   padding:14px 28px;border-top:1px solid var(--b2);
-  font-size:9px;color:var(--t3);text-align:center;
+  font-size:15px;color:var(--t3);text-align:center;
 }
 
 /* ══ SIDEBAR ══ */
 .sb{width:196px;min-width:196px;border-right:1px solid var(--b2);display:flex;flex-direction:column;background:var(--bg);transition:width .15s,min-width .15s}
 .sb.col{width:42px;min-width:42px}
 .logo{padding:12px 10px;border-bottom:1px solid var(--b2);display:flex;align-items:center;gap:8px;min-height:46px;overflow:hidden}
-.logo-mark{color:var(--g);font-size:12px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
-.logo-mark em{color:var(--t3);font-style:normal;font-size:9px;margin-left:3px}
-.sb-tog{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-family:var(--f);font-size:14px;flex-shrink:0;line-height:1;padding:0 2px;transition:color .15s}
+.logo-mark{color:var(--g);font-size:15px;font-weight:600;letter-spacing:.04em;white-space:nowrap}
+.logo-mark em{color:var(--t3);font-style:normal;font-size:15px;margin-left:3px}
+.sb-tog{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-family:var(--f);font-size:18px;flex-shrink:0;line-height:1;padding:0 2px;transition:color .15s}
 .sb-tog:hover{color:var(--g)}
 .nav{flex:1;padding:6px 3px;overflow-y:auto;overflow-x:hidden}
 .nav::-webkit-scrollbar{width:2px}
 .nav::-webkit-scrollbar-thumb{background:var(--b2)}
-.ns{font-size:8px;color:var(--t3);letter-spacing:.18em;padding:8px 7px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ns{font-size:18px;color:var(--t3);letter-spacing:.18em;padding:8px 7px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .col .ns{opacity:0;pointer-events:none}
 .ni{display:flex;align-items:center;gap:7px;padding:5px 7px;cursor:pointer;color:var(--t2);border-left:2px solid transparent;margin-bottom:1px;white-space:nowrap;overflow:hidden;transition:color .12s,background .12s,border-color .12s;user-select:none}
 .ni:hover{color:var(--t);background:rgba(255,255,255,.018)}
 .ni.on{color:var(--g);border-left-color:var(--g);background:var(--g3)}
-.ni .ic{font-size:11px;width:14px;text-align:center;flex-shrink:0}
-.ni .lb{overflow:hidden;transition:max-width .15s,opacity .15s;font-size:11px}
+.ni .ic{font-size:18px;width:14px;text-align:center;flex-shrink:0}
+.ni .lb{overflow:hidden;transition:max-width .15s,opacity .15s;font-size:18px}
 .col .ni .lb{max-width:0;opacity:0}
-.ni .bx{margin-left:auto;font-size:8px;color:var(--t3);border:1px solid var(--b2);padding:0 3px;flex-shrink:0;line-height:14px}
+.ni .bx{margin-left:auto;font-size:18px;color:var(--t3);border:1px solid var(--b2);padding:0 3px;flex-shrink:0;line-height:14px}
 .col .bx{display:none}
 .sf{padding:6px;border-top:1px solid var(--b2)}
 .uc{display:flex;align-items:center;gap:6px;padding:6px 7px;border:1px solid var(--b2);cursor:pointer;background:var(--bg2);overflow:hidden;transition:background .12s}
 .uc:hover{background:var(--bg3)}
-.av{width:24px;height:24px;background:var(--g3);border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--g);flex-shrink:0;font-weight:600}
+.av{width:24px;height:24px;background:var(--g3);border:1px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--g);flex-shrink:0;font-weight:600}
 .ui{overflow:hidden;flex:1}
-.un{font-size:10px;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.up{font-size:8px;color:var(--t3)}
+.un{font-size:13px;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up{font-size:18px;color:var(--t3)}
 .col .ui{display:none}
 .sb-dot{width:5px;height:5px;border-radius:50%;background:var(--r);flex-shrink:0}
 .sb-dot.ok{background:var(--g)}
-.sb-clock{font-size:8px;color:var(--t3);padding:4px 7px;letter-spacing:.04em}
+.sb-clock{font-size:18px;color:var(--t3);padding:4px 7px;letter-spacing:.04em}
 .col .sb-clock{display:none}
-.sb-info{font-size:8px;color:var(--t3);padding:2px 7px;letter-spacing:.04em;white-space:nowrap;overflow:hidden}
+.sb-info{font-size:18px;color:var(--t3);padding:2px 7px;letter-spacing:.04em;white-space:nowrap;overflow:hidden}
 .col .sb-info{display:none}
-.sb-mode{font-size:8px;color:var(--y);padding:0 7px 4px;letter-spacing:.04em}
+.sb-mode{font-size:18px;color:var(--y);padding:0 7px 4px;letter-spacing:.04em}
 .col .sb-mode{display:none}
 
 /* ══ MAIN ══ */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .top{height:38px;border-bottom:1px solid var(--b2);display:flex;align-items:center;padding:0 12px;gap:10px;flex-shrink:0;background:var(--bg)}
-.bc{font-size:9px;color:var(--t3);letter-spacing:.08em;flex:1}
+.bc{font-size:15px;color:var(--t3);letter-spacing:.08em;flex:1}
 .bc span{color:var(--t2)}
-.lb-live{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--t3)}
+.lb-live{display:flex;align-items:center;gap:5px;font-size:15px;color:var(--t3)}
 .lb-live .dot{width:5px;height:5px;border-radius:50%;background:var(--r)}
 .lb-live .dot.ok{background:var(--g)}
 .top-r{display:flex;gap:6px;align-items:center}
-.top-btn{padding:3px 8px;font-family:var(--f);font-size:9px;background:var(--bg3);border:1px solid var(--b2);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s}
+.top-btn{padding:3px 8px;font-family:var(--f);font-size:15px;background:var(--bg3);border:1px solid var(--b2);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s}
 .top-btn:hover{border-color:var(--g);color:var(--g)}
 
 /* ENV SELECTOR */
 .env-sel{
   display:flex;align-items:center;gap:6px;padding:3px 8px;
   background:var(--bg3);border:1px solid var(--b2);cursor:pointer;
-  font-size:9px;color:var(--t2);letter-spacing:.06em;
+  font-size:15px;color:var(--t2);letter-spacing:.06em;
 }
 .env-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .env-sel select{
   background:none;border:none;color:var(--t2);font-family:var(--f);
-  font-size:9px;outline:none;cursor:pointer;padding:0;
+  font-size:15px;outline:none;cursor:pointer;padding:0;
 }
 
 /* ══ CONTENT PANES ══ */
@@ -162,73 +162,73 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 /* ══ COMPONENTS ══ */
 .row{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .row-end{margin-left:auto;display:flex;gap:6px;align-items:center}
-.ph{font-size:10px;letter-spacing:.1em;color:var(--t2);font-weight:500}
+.ph{font-size:13px;letter-spacing:.1em;color:var(--t2);font-weight:500}
 .ph span{color:var(--g)}
-.ps2{font-size:8px;color:var(--t3);margin-top:2px;letter-spacing:.04em}
+.ps2{font-size:18px;color:var(--t3);margin-top:2px;letter-spacing:.04em}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .card{background:var(--bg2);border:1px solid var(--b2);padding:10px 12px}
-.card-title{font-size:9px;letter-spacing:.12em;color:var(--t2);margin-bottom:8px;font-weight:500}
-.card-sub{font-size:9px;color:var(--t3);line-height:1.6;margin-top:4px}
+.card-title{font-size:15px;letter-spacing:.12em;color:var(--t2);margin-bottom:8px;font-weight:500}
+.card-sub{font-size:15px;color:var(--t3);line-height:1.6;margin-top:4px}
 .mc{background:var(--bg2);border:1px solid var(--b2);padding:10px 12px}
-.ml{font-size:8px;color:var(--t3);letter-spacing:.1em;margin-bottom:4px}
-.mv{font-size:22px;font-weight:600;color:var(--t);letter-spacing:.02em;line-height:1}
-.mch{font-size:8px;margin-top:3px;letter-spacing:.05em}
+.ml{font-size:18px;color:var(--t3);letter-spacing:.1em;margin-bottom:4px}
+.mv{font-size:28px;font-weight:600;color:var(--t);letter-spacing:.02em;line-height:1}
+.mch{font-size:18px;margin-top:3px;letter-spacing:.05em}
 .mch.up{color:var(--g)}.mch.ne{color:var(--t3)}.mch.dn{color:var(--r)}
-.btn{padding:4px 10px;font-family:var(--f);font-size:9px;border:1px solid var(--b2);background:var(--bg3);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s;white-space:nowrap}
+.btn{padding:4px 10px;font-family:var(--f);font-size:15px;border:1px solid var(--b2);background:var(--bg3);color:var(--t2);cursor:pointer;letter-spacing:.06em;transition:all .12s;white-space:nowrap}
 .btn:hover{border-color:var(--g);color:var(--g)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn.bp{background:var(--g3);border-color:var(--g);color:var(--g)}
 .btn.bp:hover{background:var(--g4)}
 .btn.br{border-color:rgba(255,68,68,.3);color:var(--r)}
 .btn.bg2b{border-color:var(--b3);color:var(--t3)}
-.bxs{font-size:8px;padding:3px 8px}
-.tag{font-size:8px;padding:1px 5px;border:1px solid var(--b2);color:var(--t3);letter-spacing:.05em}
+.bxs{font-size:18px;padding:3px 8px}
+.tag{font-size:18px;padding:1px 5px;border:1px solid var(--b2);color:var(--t3);letter-spacing:.05em}
 .tag.tg{border-color:rgba(0,230,118,.3);color:var(--g);background:var(--g3)}
 .tag.tc{border-color:rgba(0,229,255,.3);color:var(--c)}
 .tag.ty{border-color:rgba(255,215,0,.3);color:var(--y);background:var(--y2)}
 .tag.tp{border-color:rgba(179,136,255,.3);color:var(--p)}
 .tag.tr{border-color:rgba(255,68,68,.3);color:var(--r);background:var(--r2)}
 .tag.tn{color:var(--t3)}
-.empty{font-size:9px;color:var(--t3);letter-spacing:.06em;padding:20px 0;text-align:center;border:1px dashed var(--b2)}
+.empty{font-size:15px;color:var(--t3);letter-spacing:.06em;padding:20px 0;text-align:center;border:1px dashed var(--b2)}
 .vl{display:flex;flex-direction:column;gap:4px}
 .vi{padding:7px 10px;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;gap:8px;cursor:pointer;transition:border-color .12s}
 .vi:hover{border-color:var(--g)}
-.vi-key{font-size:10px;color:var(--t);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.vi-meta{font-size:8px;color:var(--t3);letter-spacing:.04em;white-space:nowrap}
+.vi-key{font-size:13px;color:var(--t);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vi-meta{font-size:18px;color:var(--t3);letter-spacing:.04em;white-space:nowrap}
 .fg{margin-bottom:10px}
-.fg label{display:block;font-size:8px;color:var(--t3);letter-spacing:.1em;margin-bottom:4px}
-.fg input,.fg textarea,.fg select{width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:11px;padding:6px 8px;outline:none;resize:vertical;transition:border-color .15s}
+.fg label{display:block;font-size:18px;color:var(--t3);letter-spacing:.1em;margin-bottom:4px}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:18px;padding:6px 8px;outline:none;resize:vertical;transition:border-color .15s}
 .fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--g)}
 .fg textarea{min-height:120px;line-height:1.6}
 .fg select option{background:var(--bg3)}
 
 /* notif */
 #notif{position:fixed;bottom:16px;right:16px;z-index:9998;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-.nt{padding:8px 12px;background:var(--bg2);border:1px solid var(--b2);font-size:10px;color:var(--t);letter-spacing:.04em;max-width:320px;opacity:0;transform:translateY(8px);transition:all .2s;border-left:3px solid var(--g)}
+.nt{padding:8px 12px;background:var(--bg2);border:1px solid var(--b2);font-size:13px;color:var(--t);letter-spacing:.04em;max-width:320px;opacity:0;transform:translateY(8px);transition:all .2s;border-left:3px solid var(--g)}
 .nt.show{opacity:1;transform:none}
 .nt.err{border-left-color:var(--r);color:var(--r)}
 .nt.warn{border-left-color:var(--y);color:var(--y)}
 
 /* version diff */
-.diff-old{background:rgba(255,68,68,.08);border-left:2px solid var(--r);padding:8px;font-size:10px;color:var(--t2);white-space:pre-wrap;word-break:break-all;line-height:1.7;margin-bottom:4px;max-height:200px;overflow-y:auto}
-.diff-new{background:var(--g3);border-left:2px solid var(--g);padding:8px;font-size:10px;color:var(--t);white-space:pre-wrap;word-break:break-all;line-height:1.7;max-height:200px;overflow-y:auto}
+.diff-old{background:rgba(255,68,68,.08);border-left:2px solid var(--r);padding:8px;font-size:13px;color:var(--t2);white-space:pre-wrap;word-break:break-all;line-height:1.7;margin-bottom:4px;max-height:200px;overflow-y:auto}
+.diff-new{background:var(--g3);border-left:2px solid var(--g);padding:8px;font-size:13px;color:var(--t);white-space:pre-wrap;word-break:break-all;line-height:1.7;max-height:200px;overflow-y:auto}
 
 /* score ring */
 .score-ring{position:relative;width:40px;height:40px;flex-shrink:0}
 .score-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
 .score-ring .sr-bg{fill:none;stroke:var(--b2);stroke-width:3}
 .score-ring .sr-fg{fill:none;stroke:var(--g);stroke-width:3;stroke-linecap:square;transition:stroke-dashoffset .6s ease}
-.score-ring .sr-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--t)}
+.score-ring .sr-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:var(--t)}
 
 /* modal */
 #modal-overlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
 #modal-overlay.show{display:flex}
 .modal{background:var(--bg2);border:1px solid var(--b2);width:90%;max-width:560px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
 .modal-hdr{padding:12px 16px;border-bottom:1px solid var(--b2);display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-size:10px;letter-spacing:.1em;color:var(--t);font-weight:500}
-.modal-close{background:none;border:none;color:var(--t3);font-size:14px;cursor:pointer;font-family:var(--f)}
+.modal-title{font-size:13px;letter-spacing:.1em;color:var(--t);font-weight:500}
+.modal-close{background:none;border:none;color:var(--t3);font-size:18px;cursor:pointer;font-family:var(--f)}
 .modal-close:hover{color:var(--r)}
 .modal-body{padding:16px;overflow-y:auto;flex:1}
 .modal-foot{padding:10px 16px;border-top:1px solid var(--b2);display:flex;gap:8px;justify-content:flex-end}
@@ -242,15 +242,15 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 @keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* code block */
-.codeblk{background:var(--bg3);border:1px solid var(--b2);padding:10px 12px;font-size:10px;line-height:1.8;overflow-x:auto;white-space:pre}
+.codeblk{background:var(--bg3);border:1px solid var(--b2);padding:10px 12px;font-size:13px;line-height:1.8;overflow-x:auto;white-space:pre}
 .codeblk .kw{color:var(--c)} .codeblk .st{color:var(--g)} .codeblk .cm{color:var(--t3)} .codeblk .va{color:var(--y)} .codeblk .fn{color:var(--p)}
 
 /* eval criteria bars */
 .crit-bar{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.crit-label{font-size:9px;color:var(--t3);width:110px;flex-shrink:0;letter-spacing:.04em}
+.crit-label{font-size:15px;color:var(--t3);width:110px;flex-shrink:0;letter-spacing:.04em}
 .crit-track{flex:1;height:3px;background:var(--b2);overflow:hidden}
 .crit-fill{height:100%;background:var(--g);transition:width .5s ease}
-.crit-val{font-size:9px;color:var(--t2);width:28px;text-align:right;flex-shrink:0}
+.crit-val{font-size:15px;color:var(--t2);width:28px;text-align:right;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -268,7 +268,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 <div id="auth-overlay" class="hidden">
   <div class="auth-box">
     <div class="auth-header">
-      <div class="auth-logo">PROMPT<em>MATRIX</em> <span style="font-size:9px;color:var(--t3);margin-left:8px;letter-spacing:.04em">// PROMPT GOVERNANCE FOR AI APPLICATIONS</span></div>
+      <div class="auth-logo">PROMPT<em>MATRIX</em> <span style="font-size:15px;color:var(--t3);margin-left:8px;letter-spacing:.04em">// PROMPT GOVERNANCE FOR AI APPLICATIONS</span></div>
     </div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="authTab('login')">SIGN_IN</button>
@@ -403,19 +403,19 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
           <div class="card-title">QUICK_START</div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
             <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="openNewPromptModal()">
-              <div style="font-size:16px;margin-bottom:6px">✦</div>
-              <div style="font-size:9px;color:var(--g);letter-spacing:.06em;margin-bottom:3px">CREATE PROMPT</div>
-              <div style="font-size:8px;color:var(--t3);line-height:1.5">Name your prompt, write the content, save as draft</div>
+              <div style="font-size:18px;margin-bottom:6px">✦</div>
+              <div style="font-size:15px;color:var(--g);letter-spacing:.06em;margin-bottom:3px">CREATE PROMPT</div>
+              <div style="font-size:18px;color:var(--t3);line-height:1.5">Name your prompt, write the content, save as draft</div>
             </div>
             <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="pg('keys')">
-              <div style="font-size:16px;margin-bottom:6px">⌘</div>
-              <div style="font-size:9px;color:var(--c);letter-spacing:.06em;margin-bottom:3px">GET API KEY</div>
-              <div style="font-size:8px;color:var(--t3);line-height:1.5">Create a serve key for your agents and workflows</div>
+              <div style="font-size:18px;margin-bottom:6px">⌘</div>
+              <div style="font-size:15px;color:var(--c);letter-spacing:.06em;margin-bottom:3px">GET API KEY</div>
+              <div style="font-size:18px;color:var(--t3);line-height:1.5">Create a serve key for your agents and workflows</div>
             </div>
             <div style="padding:10px;background:var(--bg3);border:1px solid var(--b2);cursor:pointer" onclick="pg('integrate')">
-              <div style="font-size:16px;margin-bottom:6px">⊕</div>
-              <div style="font-size:9px;color:var(--p);letter-spacing:.06em;margin-bottom:3px">CONNECT AGENT</div>
-              <div style="font-size:8px;color:var(--t3);line-height:1.5">See integration code for n8n, Python, Node, curl</div>
+              <div style="font-size:18px;margin-bottom:6px">⊕</div>
+              <div style="font-size:15px;color:var(--p);letter-spacing:.06em;margin-bottom:3px">CONNECT AGENT</div>
+              <div style="font-size:18px;color:var(--t3);line-height:1.5">See integration code for n8n, Python, Node, curl</div>
             </div>
           </div>
         </div>
@@ -426,7 +426,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
         <div class="row">
           <div><div class="ph">▦ <span>PROMPT_REGISTRY</span></div><div class="ps2">all prompts in this environment · click to open editor</div></div>
           <div class="row-end">
-            <input id="preg-search" placeholder="search keys..." style="background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:10px;padding:4px 8px;outline:none;width:160px" oninput="filterRegistry(this.value)">
+            <input id="preg-search" placeholder="search keys..." style="background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:13px;padding:4px 8px;outline:none;width:160px" oninput="filterRegistry(this.value)">
             <button class="btn bp bxs" onclick="openNewPromptModal()">+ NEW</button>
           </div>
         </div>
@@ -470,20 +470,20 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
           <div style="display:flex;flex-direction:column;gap:8px">
             <div class="card">
               <div class="card-title">DETECTED VARIABLES</div>
-              <div id="e-vars" style="font-size:9px;color:var(--t3);line-height:1.8">Write {{variable}} in your prompt to define dynamic values. They appear here automatically.</div>
+              <div id="e-vars" style="font-size:15px;color:var(--t3);line-height:1.8">Write {{variable}} in your prompt to define dynamic values. They appear here automatically.</div>
             </div>
             <div class="card" id="editor-intel-card">
               <div class="card-title">PROMPT INTELLIGENCE (V1)</div>
               <div style="display:flex;flex-direction:column;gap:6px">
-                <div style="display:flex;justify-content:space-between;font-size:9px">
+                <div style="display:flex;justify-content:space-between;font-size:15px">
                    <span style="color:var(--t3)">COMPLEXITY</span>
                    <span id="intel-complexity" style="color:var(--t)">0.0</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;font-size:9px">
+                <div style="display:flex;justify-content:space-between;font-size:15px">
                    <span style="color:var(--t3)">CHAR_COUNT</span>
                    <span id="intel-chars" style="color:var(--t)">0</span>
                 </div>
-                <div style="display:flex;justify-content:space-between;font-size:9px">
+                <div style="display:flex;justify-content:space-between;font-size:15px">
                    <span style="color:var(--t3)">VAL_GRADE</span>
                    <span id="intel-grade" style="color:var(--g);font-weight:600">A+</span>
                 </div>
@@ -491,7 +491,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
             </div>
             <div class="card">
               <div class="card-title">VERSION HISTORY</div>
-              <div class="vl" id="e-versions"><div style="font-size:9px;color:var(--t3)">Select a prompt to see version history</div></div>
+              <div class="vl" id="e-versions"><div style="font-size:15px;color:var(--t3)">Select a prompt to see version history</div></div>
             </div>
             <div class="card" id="eval-result-card" style="display:none">
               <div class="card-title">LATEST EVAL RESULT</div>
@@ -558,7 +558,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
           <div>
             <div class="card" style="margin-bottom:8px">
               <div class="card-title">SAVED LLM KEYS</div>
-              <div id="team-keys-list"><div style="font-size:9px;color:var(--t3)">No saved keys. Add one to run evals without pasting keys each time.</div></div>
+              <div id="team-keys-list"><div style="font-size:15px;color:var(--t3)">No saved keys. Add one to run evals without pasting keys each time.</div></div>
               <button class="btn bxs" style="margin-top:8px" onclick="openSaveKeyModal()">+ SAVE KEY</button>
             </div>
             <div class="card" id="eval-output" style="display:none">
@@ -621,7 +621,7 @@ system_prompt = r.text  <span class="cm"># returns the approved content</span></
         <div class="row">
           <div><div class="ph">≡ <span>AUDIT_LOG</span></div><div class="ps2">every action · append-only · who did what and when</div></div>
           <div class="row-end">
-            <select id="audit-filter" onchange="loadAudit()" style="background:var(--bg3);border:1px solid var(--b2);color:var(--t2);font-family:var(--f);font-size:9px;padding:3px 6px;outline:none">
+            <select id="audit-filter" onchange="loadAudit()" style="background:var(--bg3);border:1px solid var(--b2);color:var(--t2);font-family:var(--f);font-size:15px;padding:3px 6px;outline:none">
               <option value="">ALL ACTIONS</option>
               <option value="version">versions</option>
               <option value="prompt">prompts</option>
@@ -660,7 +660,7 @@ system = get_prompt(<span class="st">"email.writer"</span>, {<span class="st">"t
           </div>
           <div class="card">
             <div class="card-title">n8n / MAKE / ZAPIER</div>
-            <div style="font-size:10px;color:var(--t2);line-height:1.8;margin-bottom:10px">Add an HTTP Request node before your AI node:</div>
+            <div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:10px">Add an HTTP Request node before your AI node:</div>
             <div class="codeblk">Method:  GET
 URL:     http://localhost:8000
          /pm/serve/{{$vars.promptKey}}
@@ -712,7 +712,7 @@ curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
           <div>
             <div class="card" style="margin-bottom:8px">
               <div class="card-title">WORKSPACE</div>
-              <div style="font-size:9px;color:var(--t3);margin-bottom:10px;line-height:1.8">
+              <div style="font-size:15px;color:var(--t3);margin-bottom:10px;line-height:1.8">
                 <div>Org: <span style="color:var(--t)" id="set-org-name">—</span></div>
                 <div>Plan: <span style="color:var(--g)" id="set-plan">—</span></div>
                 <div>Slug: <span style="color:var(--t2)" id="set-slug">—</span></div>
@@ -720,18 +720,18 @@ curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
             </div>
             <div class="card" style="margin-bottom:8px">
               <div class="card-title">SERVE ENDPOINT</div>
-              <div style="font-size:9px;color:var(--t3);margin-bottom:8px">Your agents call this endpoint. Replace <span style="color:var(--y)">{key}</span> with your prompt key.</div>
-              <div class="codeblk" style="font-size:9px" id="settings-serve-url">loading...</div>
+              <div style="font-size:15px;color:var(--t3);margin-bottom:8px">Your agents call this endpoint. Replace <span style="color:var(--y)">{key}</span> with your prompt key.</div>
+              <div class="codeblk" style="font-size:15px" id="settings-serve-url">loading...</div>
             </div>
           </div>
           <div>
             <div class="card" style="margin-bottom:8px">
               <div class="card-title">ACCOUNT</div>
-              <div id="set-user-info" style="font-size:9px;color:var(--t3);line-height:2;margin-bottom:10px"></div>
+              <div id="set-user-info" style="font-size:15px;color:var(--t3);line-height:2;margin-bottom:10px"></div>
             </div>
             <div class="card" style="margin-bottom:8px">
               <div class="card-title">DATA PORTABILITY</div>
-              <div style="font-size:9px;color:var(--t3);line-height:1.6;margin-bottom:12px">
+              <div style="font-size:15px;color:var(--t3);line-height:1.6;margin-bottom:12px">
                 Export your entire registry (prompts, versions, environments) as a JSON file. Use this for backups or to migrate to a self-hosted instance.
               </div>
               <div style="display:flex;gap:8px">
