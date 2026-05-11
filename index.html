@@ -865,7 +865,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="#faq" onclick="closeMobNav()">FAQ</a>
     <div class="mob-divider"></div>
     <a class="mob-nl" href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener">GITHUB</a>
-    <a class="mob-nl mob-cta" href="https://promptmatrixx.vercel.app/register" target="_blank" rel="noopener">START FREE →</a>
+    <a class="mob-nl mob-cta" href="https://promptmatrix.vercel.app/register" target="_blank" rel="noopener">START FREE →</a>
   </div>
 </nav>
 
@@ -899,7 +899,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 
     <!-- HERO DUAL-PATH CTA: Cloud-first, OSS secondary -->
     <div class="hero-cta-row">
-      <a href="https://promptmatrixx.vercel.app/register" target="_blank" rel="noopener" class="hero-cta-cloud" id="hero-cta-cloud">
+      <a href="https://promptmatrix.vercel.app/register" target="_blank" rel="noopener" class="hero-cta-cloud" id="hero-cta-cloud">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
         START FREE →
       </a>
@@ -2825,10 +2825,12 @@ window.addEventListener('scroll',()=>{
 
 /* ═══════════════════════ PRICING — LIVE SPOTS COUNTER ══════════════════ */
 (function(){
-  const API_BASE = 'https://promptmatrixx.vercel.app';
-  const CLOUD_REGISTER = API_BASE + '/register';
-  const CLOUD_LOGIN    = API_BASE + '/login';
-  const BILLING_API    = API_BASE + '/api/v1/billing/checkout?plan=founder';
+  // Cloud product public stats API (read-only, no private keys required)
+  const CLOUD_API_BASE  = 'https://promptmatrix.vercel.app';
+  // Registration URL for the cloud product (Founder CTA sends user here)
+  const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
+  // NOTE: Checkout and billing endpoints belong exclusively to the cloud product
+  // dashboard. The OSS landing page must NOT contain any reference to private API routes.
 
   function updateSpots(data){
     if(!data || !data.founder) return;
@@ -2854,7 +2856,7 @@ window.addEventListener('scroll',()=>{
 
   async function fetchSpots(){
     try{
-      const r = await fetch(API_BASE + '/api/v1/public/stats', {signal: AbortSignal.timeout(5000)});
+      const r = await fetch(CLOUD_API_BASE + '/api/v1/public/stats', {signal: AbortSignal.timeout(5000)});
       if(r.ok) { const d = await r.json(); updateSpots(d); }
     } catch(e){
       // silently fail — backend may not be reachable; static fallback shown
@@ -2864,7 +2866,8 @@ window.addEventListener('scroll',()=>{
   }
 
   window.claimFounderSpot = function(){
-    // Send user to create account first, then they upgrades from within the dashboard
+    // Directs user to create a cloud account; Founder upgrade happens inside
+    // the cloud dashboard after registration (not via a direct billing endpoint).
     window.open(CLOUD_REGISTER, '_blank', 'noopener,noreferrer');
     showToast('Create your workspace → unlock Founder from the dashboard');
   };
@@ -2933,7 +2936,7 @@ async function submitWaitlist(e){
   btn.disabled = true;
 
   try {
-    const r = await fetch('https://promptmatrixx.vercel.app/api/v1/public/waitlist', {
+    const r = await fetch('https://promptmatrix.vercel.app/api/v1/public/waitlist', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({email, name, tier: (document.getElementById('wl-tier')||{value:'starter'}).value}),

@@ -7,7 +7,7 @@ Create Date: 2026-03-23
 Notes:
   The circular FK between prompts.live_version_id → prompt_versions.id
   uses different strategies per dialect:
-    - PostgreSQL (Supabase production): standard ALTER TABLE ADD CONSTRAINT
+    - PostgreSQL (production): standard ALTER TABLE ADD CONSTRAINT
     - SQLite (local dev): inline FK — SQLite ignores FK enforcement by default
       so this does not need ALTER TABLE and works without batch mode.
 """
@@ -223,7 +223,7 @@ def upgrade() -> None:
     # PostgreSQL supports ALTER TABLE ADD CONSTRAINT for this.
     # SQLite does not support ALTER TABLE on constraints — but SQLite also
     # doesn't enforce FK constraints by default, so we skip it on SQLite.
-    # In production (Supabase/PostgreSQL) this runs correctly.
+    # In PostgreSQL production this runs correctly.
     if not _is_sqlite():
         op.create_foreign_key(
             "fk_prompt_live_version",
