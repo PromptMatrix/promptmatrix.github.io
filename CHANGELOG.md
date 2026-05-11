@@ -9,10 +9,9 @@ This project uses [Semantic Versioning](https://semver.org/).
 ## [0.2.1] — 2026-04-11
 
 ### Fixed
-- **INSTALL-01**: `pip install -r requirements.txt` was impossible for all new users due to an irreconcilable version conflict between `fastapi==0.115.0` and `starlette>=0.49.1`. Resolved by upgrading to `fastapi>=0.135.0` which bundles `starlette 1.0.0`.
-- **INSTALL-02**: `start.bat` and `start.sh` incorrectly aborted with "Dependency installation failed" even on successful installs because pip exits with code 1 when printing "upgrade available" notices. Fixed by upgrading pip first.
-- **LINK-01**: All GitHub links in the landing page and source docs pointed to a 404 URL (`/PromptMatrix/PromptMatrix`). Corrected to the live repository (`/PromptMatrix/promptmatrix.github.io`).
-- **ROUTE-01**: Vercel routes for `/register`, `/login`, `/reset-password`, and `/pm/*` were falling through to the static file handler and returning 404. Added explicit routes to forward them to FastAPI.
+- Resolved dependency version conflict between `fastapi` and `starlette` that made `pip install -r requirements.txt` fail on clean installs. Upgraded to `fastapi>=0.135.0` which bundles `starlette 1.0.0`.
+- `start.bat` and `start.sh` no longer abort with "Dependency installation failed" when pip prints upgrade notices on successful installs.
+- Fixed broken GitHub links across the landing page and source docs (pointed to a 404 URL).
 - `pyproject.toml`: synced dependency versions with `requirements.txt`; fixed project URLs.
 
 ### Security
@@ -54,15 +53,14 @@ This project uses [Semantic Versioning](https://semver.org/).
 - Groq and Mistral LLM providers fully supported in eval and assist.
 
 ### Fixed
-- **BUG-01**: Groq and Mistral provider configs now use the unified `PROVIDER_CONFIG` dict — previously broken with 400 errors.
-- **BUG-02**: Variable substitution (`?vars=key=value`) no longer breaks on values containing commas.
-- **BUG-03**: `list_prompts` uses a subquery count pattern — no longer loads all version content into memory.
-- **BUG-04**: Audit log URL construction in the dashboard no longer produces malformed URLs without filters.
-- **BUG-08**: `unfilled` variables are detected and returned in JSON mode serve responses.
-- **BUG-10**: Approval queue is paginated with `total` count returned.
+- Groq and Mistral provider configs now use the unified `PROVIDER_CONFIG` dict.
+- Variable substitution (`?vars=key=value`) no longer breaks on values containing commas.
+- `list_prompts` uses a subquery count pattern — no longer loads all version content into memory.
+- Audit log URL construction in the dashboard no longer produces malformed URLs.
+- `unfilled` variables are detected and returned in JSON mode serve responses.
+- Approval queue is paginated with `total` count returned.
 - `config.py` production validator now checks all four security conditions: encryption key present, JWT key not default, PostgreSQL URL, and key distinctness.
-- `FeedbackIn` Pydantic model moved to top of `serve/router.py` (PEP-8 compliant).
-- `prompt_cache_ttl_seconds` default aligned to 30s (was inconsistently 60 in code, 30 in docs).
+- `prompt_cache_ttl_seconds` default aligned to 30s.
 
 ### Security
 - Import whitelist on workspace import: `approved`/`archived` status forced to `draft`.
@@ -90,6 +88,6 @@ This project uses [Semantic Versioning](https://semver.org/).
 - Local-first auto-seed: admin user + default project + 3 environments on first run.
 - `/api/status` health endpoint.
 - Dashboard served at `/dashboard` (vanilla JS, no build step).
-- `README.md`, `CONTRIBUTING.md`, `AGENTS.md`, `LICENSE` (MIT).
+- `README.md`, `CONTRIBUTING.md`, `LICENSE` (MIT).
 - GitHub Actions CI: install → migrate → test.
 - Dependabot for automated dependency updates.

@@ -38,6 +38,7 @@ fix_schema*.py
 *_scratch.py
 
 # ── Private strategy / architecture docs — NEVER publish ───────────
+FOUNDERS.md
 MASTER_BLUEPRINT.md
 MASTER_ARCHITECTURE*.md
 AGI_SaaS*.md
