@@ -68,7 +68,7 @@ agent.run(system_prompt)
 
 ---
 
-## 🆕 Release v0.2.0: Zero-Trust Architecture Update
+## 🆕 Release v0.2.1: Security Patch + Stability
 
 We have heavily fortified the system for production-ready, zero-trust deployments:
 *   **IDOR Protections:** Enforced strict Multi-Tenant schemas guaranteeing prompt and workspace isolation.
@@ -172,7 +172,7 @@ Switch to PostgreSQL for team deployments:
 3. Uncomment `psycopg2-binary` in `requirements.txt`
 4. Run `alembic upgrade head` to apply migrations
 
-> For multi-user team collaboration with RBAC, managed hosting, and advanced workflow features — see the [Cloud version](https://promptmatrix.io).
+> For multi-user team collaboration with RBAC, managed hosting, and advanced workflow features — see the [Cloud version](https://promptmatrix.vercel.app).
 
 ---
 
