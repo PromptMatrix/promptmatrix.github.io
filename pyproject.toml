@@ -19,7 +19,7 @@ dependencies = [
     "sqlalchemy==2.0.36",
     "alembic==1.14.0",
     "pydantic>=2.10.3",
-    "pydantic-settings>=2.6.1",
+    "pydantic-settings>=2.13.1",
     "python-multipart>=0.0.22",
     "httpx>=0.28.0",
     "PyJWT>=2.8.0",
