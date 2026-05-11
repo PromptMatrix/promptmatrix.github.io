@@ -400,7 +400,7 @@ class TestEvalKeyCRUD:
         """Saved key must expose only last 4 characters as hint."""
         r = client.post(
             "/api/v1/evals/keys",
-            json={"provider": "anthropic", "api_key": "sk-ant-api03-SECRET1234"},
+            json={"provider": "anthropic", "api_key": "sk-ant-test-XXXXXXXXXXXXXXXX1234"},
             headers=seeded["headers"],
         )
         assert r.status_code == 200
