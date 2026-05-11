@@ -131,7 +131,6 @@ def _seed_local_admin():
             resource_type="system",
             created_at=datetime.now(timezone.utc)
         ))
-        db.add(member)
         db.flush()
 
         # Seed default project + three standard environments

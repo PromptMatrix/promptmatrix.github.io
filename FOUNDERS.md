@@ -2,7 +2,7 @@
 
 > The 100 people who believed in PromptMatrix before anyone else.
 
-Founding Members get permanent lifetime access, their name here, and direct input on the product roadmap.
+Founding Members get permanent lifetime access to the PromptMatrix Cloud tier, their name listed here, and direct input on the product roadmap.
 
 ---
 
@@ -12,16 +12,17 @@ Founding Members get permanent lifetime access, their name here, and direct inpu
 
 | # | Name / Handle | Joined |
 |---|---|---|
-| 1–100 | *Your name could be here* | [Become a Founding Member →](https://promptmatrix.github.io/#pricing) |
+| 1–100 | *Your name could be here* | [Become a Founding Member →](https://promptmatrix.vercel.app/register) |
 
 ---
 
 ## How to Claim Your Spot
 
-1. Visit [promptmatrix.github.io/#pricing](https://promptmatrix.github.io/#pricing)
-2. Click **BECOME A FOUNDING MEMBER** on the Founder card
-3. Complete checkout — $499, one-time, lifetime access, no renewal
+1. Visit [promptmatrix.vercel.app/register](https://promptmatrix.vercel.app/register) and create your workspace
+2. Unlock the **Founder** tier from inside your dashboard
+3. Only 100 founding member spots exist. Once claimed, this tier closes permanently.
 
 ---
 
-*Only 100 founding member spots exist. Once claimed, this tier closes permanently.*
+*Founding Members receive lifetime cloud access, priority support, and a direct line to the roadmap.*
+

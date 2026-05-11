@@ -1,6 +1,18 @@
 """
 Local-only in-memory cache.
 No external dependencies. No Redis. No Upstash. No network calls.
+
+# SCALE-TODO: This cache is node-local (process-scoped).
+# When running with multiple workers (gunicorn -w N, uvicorn --workers N)
+# or horizontal replicas, each process has its own cache state.
+# Two consequences:
+#   1. Rate limit counters are per-process — a single client can exceed
+#      the RPM limit by N×. Fix: replace _cache.incr() with Redis INCR.
+#   2. Prompt/key cache is not invalidated across workers — stale data
+#      can be served for up to TTL seconds after an approval.
+#      Fix: add a Redis pub/sub invalidation channel or use Redis SET.
+# Redis migration path: swap _MemoryCache for aioredis + keep the same
+# public interface (get_cached_key, cache_key, etc.) unchanged.
 """
 
 import logging
@@ -145,6 +157,10 @@ async def check_rate_limit(
 ) -> tuple[bool, int, int]:
     if rpm_limit == 0:
         return True, 0, 0
+    # SCALE-TODO: Rate limit counter is per-process. With multiple workers,
+    # each worker has its own window counter, allowing N×rpm_limit effective
+    # requests. Replace _cache.incr() with Redis INCR + EXPIRE for
+    # accurate cross-process rate limiting.
     window = int(time.time() // 60)
     rate_key = f"rl:{key_hash}:{window}"
     count = await _cache.incr(rate_key, 120)
