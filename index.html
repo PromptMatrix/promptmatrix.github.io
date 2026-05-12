@@ -1515,7 +1515,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 <span class="cm"># same pattern for any prompt — chatbot, agent, pipeline</span>
 <span class="kw">def</span> <span class="fn">get_prompt</span>():
     res = requests.<span class="fn">get</span>(
-        <span class="gr">"https://api.promptmatrix.dev/pm/serve/assistant.persona"</span>,
+        <span class="gr">"http://localhost:8000/pm/serve/assistant.persona"</span>,
         headers={<span class="st">"x-pm-key"</span>: PM_API_KEY}
     )
     <span class="kw">return</span> res.<span class="fn">json</span>()[<span class="st">"content"</span>]
@@ -1527,7 +1527,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     </div>
 
     <div class="rv" style="transition-delay:.12s">
-      <div class="slabel" style="margin-bottom:16px">// SDK · PYTHON + NODE.JS — SHIPS Q2 2026</div>
+      <div class="slabel" style="margin-bottom:16px">// SDK · PYTHON + NODE.JS — AVAILABLE NOW</div>
       <div class="qs-sdk-grid">
         <div class="qs-sdk-block">
           <div class="qs-block-label">
@@ -1582,13 +1582,13 @@ response = openai.<span class="fn">chat</span>.<span class="fn">completions</spa
           <span class="qs-good">&#x2713; FRAMEWORK AGNOSTIC</span>
         </div>
         <div class="qs-code"><span class="cm"># one GET to fetch the current approved prompt</span>
-curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">https://api.promptmatrix.dev/pm/serve/assistant.persona</span>
+curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">http://localhost:8000/pm/serve/assistant.persona</span>
 
 {
   <span class="st">"key"</span>:          <span class="gr">"assistant.persona"</span>,
   <span class="st">"content"</span>:      <span class="gr">"I'm your AI assistant. Ask me anything — I'll give you a direct answer."</span>,
   <span class="st">"version"</span>:      <span class="dim">14</span>,
-  <span class="st">"approved_by"</span>:  <span class="dim">"hello@promptmatrix.io"</span>,
+  <span class="st">"approved_by"</span>:  <span class="dim">"team@acme.internal"</span>,
   <span class="st">"approved_at"</span>:  <span class="dim">"2026-03-12T09:41:02Z"</span>,
   <span class="st">"latency_ms"</span>:   <span class="dim">11</span>
 }</div>

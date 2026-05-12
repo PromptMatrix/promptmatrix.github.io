@@ -11,13 +11,13 @@ services:
       - ./data:/app/data
     environment:
       # Set to "production" for multi-user authentication, "development" for local single-user access
-      - APP_ENV=development
-      # Replace these with strong random secrets:
-      # python -c "import secrets; print(secrets.token_hex(32))"
-      - JWT_SECRET_KEY=change-me-to-a-random-secret
-      # Required for eval key AES-256-GCM encryption. Must be set before first run.
-      - ENCRYPTION_KEY=change-me-to-a-random-secret
-      - DATABASE_URL=sqlite:///./data/promptmatrix.db
+      - APP_ENV=${APP_ENV:-development}
+      # REQUIRED: Generate strong secrets before first run:
+      #   python -c "import secrets; print(secrets.token_hex(32))"
+      # Then set via: export JWT_SECRET_KEY=<value> before running docker compose up
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:?JWT_SECRET_KEY must be set - see .env.example}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:?ENCRYPTION_KEY must be set - see .env.example}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./data/promptmatrix.db}
     # NOTE: Single worker required. In-memory rate limiting and caching are
     # per-process. Multiple workers will produce inconsistent behavior.
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1"
