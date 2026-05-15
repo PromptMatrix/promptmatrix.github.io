@@ -254,9 +254,11 @@ async def status():
 BASE_DIR = Path(__file__).resolve().parent
 
 
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+
 @app.get("/")
 async def root():
-    return FileResponse(BASE_DIR / "index.html")
+    return RedirectResponse(url="/dashboard")
 
 
 @app.get("/dashboard")
