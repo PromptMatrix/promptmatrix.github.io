@@ -70,7 +70,4 @@ graphify-out/
 # Ruff cache
 .ruff_cache/
 
-# Ignore all markdown files
-*.md
-**/*.md
 
