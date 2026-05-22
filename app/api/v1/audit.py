@@ -33,14 +33,14 @@ async def list_audit(
     return {
         "logs": [
             {
-                "id": l.id,
-                "action": l.action,
-                "resource_type": l.resource_type,
-                "resource_id": l.resource_id,
-                "actor_email": l.actor_email,
-                "extra": l.extra or {},
-                "created_at": l.created_at.isoformat() if l.created_at else None,
+                "id": log_entry.id,
+                "action": log_entry.action,
+                "resource_type": log_entry.resource_type,
+                "resource_id": log_entry.resource_id,
+                "actor_email": log_entry.actor_email,
+                "extra": log_entry.extra or {},
+                "created_at": log_entry.created_at.isoformat() if log_entry.created_at else None,
             }
-            for l in logs
+            for log_entry in logs
         ]
     }

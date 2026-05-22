@@ -1,4 +1,3 @@
-import hashlib
 import re
 from datetime import datetime, timezone
 
@@ -8,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.policy import analyze_prompt_safety, redact_identified_secrets
-from app.models import (AuditLog, Environment, OrgMember, Prompt,
+from app.models import (Environment, OrgMember, Prompt,
                         PromptVersion, User)
 from app.serve.cache import invalidate_prompt_cache
 
@@ -238,7 +237,7 @@ class PromptService:
     ):
         """Create a secure audit log entry using the centralized AuditService."""
         from app.services.audit_service import AuditService
-        
+
         AuditService.log_action(
             db=self.db,
             org_id=org_id,

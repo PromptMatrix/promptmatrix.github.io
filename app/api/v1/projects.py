@@ -220,8 +220,6 @@ async def import_workspace(
                         import_count += 1
 
     db.commit()
-    from app.models import AuditLog
-
     from app.services.audit_service import AuditService
     AuditService.log_action(
         db=db,

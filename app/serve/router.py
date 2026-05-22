@@ -56,10 +56,10 @@ async def _resolve_api_key(key_hash, db=None):
         # Project and Org lookups are now avoided thanks to denormalization
         row = (
             db.query(
-                ApiKey.id, 
-                ApiKey.environment_id, 
-                ApiKey.org_id, 
-                ApiKey.plan, 
+                ApiKey.id,
+                ApiKey.environment_id,
+                ApiKey.org_id,
+                ApiKey.plan,
                 Environment.name.label("env_name")
             )
             .join(Environment, ApiKey.environment_id == Environment.id)
@@ -77,7 +77,7 @@ async def _resolve_api_key(key_hash, db=None):
             "org_id": row.org_id,
             "plan": row.plan,
         }
-        
+
         await cache_key(
             key_hash, row.environment_id, row.org_id, row.plan, row.env_name, api_key_id=row.id
         )
@@ -244,7 +244,6 @@ async def serve_prompt(
             key_hash, settings.serve_rate_limit_rpm
         )
         if not allowed:
-            from fastapi.responses import Response
             return JSONResponse(
                 status_code=429,
                 content={"detail": "Rate limit exceeded. Retry after 60 seconds."},
@@ -353,6 +352,6 @@ async def serve_feedback(
         llm_latency_ms=body.llm_latency_ms,
         extra=body.metadata,
     )
-    
+
     return {"recorded": True}
 

@@ -25,7 +25,7 @@ class AuditService:
         Each entry contains a hash of its own data + the hash of the previous entry.
         """
         ts = datetime.now(timezone.utc).replace(microsecond=0)
-        
+
         # 1. Get the previous hash for this organisation
         prev_log = (
             db.query(AuditLog)
@@ -52,7 +52,7 @@ class AuditService:
             created_at=ts,
             integrity_hash=new_hash,
         )
-        
+
         db.add(log)
         return log
 
@@ -67,20 +67,20 @@ class AuditService:
             .order_by(AuditLog.created_at.asc(), AuditLog.id.asc())
             .all()
         )
-        
+
         current_prev_hash = "GENESIS_BLOCK"
         for log in logs:
             # Ensure timestamp is normalized (some DBs might add/strip micro/tz)
             ts_str = log.created_at.replace(microsecond=0)
             if ts_str.tzinfo is None:
                 ts_str = ts_str.replace(tzinfo=timezone.utc)
-            
+
             data_str = f"{log.action}:{log.resource_id or ''}:{ts_str.isoformat()}:{current_prev_hash}"
             expected_hash = hashlib.sha256(data_str.encode()).hexdigest()
-            
+
             if log.integrity_hash != expected_hash:
                 return False
-            
+
             current_prev_hash = log.integrity_hash
-            
+
         return True
