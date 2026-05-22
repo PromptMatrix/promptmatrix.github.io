@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.auth import (generate_api_key, get_current_user_and_org,
                            require_role)
 from app.database import get_db
-from app.models import ApiKey, AuditLog, Environment, Project
+from app.models import ApiKey, Environment, Project
 from app.serve.cache import invalidate_key_cache
 
 router = APIRouter(prefix="/api/v1/keys", tags=["keys"])

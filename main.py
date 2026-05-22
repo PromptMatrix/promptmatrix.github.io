@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.v1.approvals import router as approvals_router
@@ -119,9 +119,8 @@ def _seed_local_admin():
         db.add(member)
 
         # We must add an audit log so it doesn't break analytics later
-        from datetime import datetime, timezone
         from app.models import AuditLog
-        
+
         db.add(AuditLog(
             id=str(uuid.uuid4()),
             org_id=org.id,
@@ -129,7 +128,7 @@ def _seed_local_admin():
             actor_email=user.email,
             action="init.local_admin",
             resource_type="system",
-            created_at=datetime.now(timezone.utc)
+            created_at=datetime.datetime.now(datetime.timezone.utc)
         ))
         db.flush()
 
@@ -254,7 +253,6 @@ async def status():
 BASE_DIR = Path(__file__).resolve().parent
 
 
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 
 @app.get("/")
 async def root():
