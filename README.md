@@ -82,23 +82,38 @@ We have heavily fortified the system for production-ready, zero-trust deployment
 
 PromptMatrix runs purely on SQLite with zero external database dependencies.
 
+### Option A — pip (Recommended for developers)
+
+```bash
+pip install promptmatrix-cli        # Install the pmx CLI globally
+pmx config set-url http://localhost:8000
+pmx login                           # Authenticate
+pmx list                            # List all prompts
+pmx push assistant.system ./prompt.txt
+```
+
+### Option B — One-click script
+
 **Step 1:** Download the latest `.zip` from the [GitHub Releases](https://github.com/PromptMatrix/promptmatrix.github.io/releases) page and extract it.
 
 **Step 2:** Run the startup script for your system:
 
-### Windows
-Double-click **`start.bat`** — it handles venv creation, dependencies, secret generation, and database migrations automatically.
+**Windows** — Double-click **`start.bat`** — handles venv creation, dependencies, secret generation, and migrations automatically.
 
-### Linux / macOS
+**Linux / macOS:**
 ```bash
 chmod +x start.sh
 ./start.sh
 ```
 
-### Docker (Recommended for Servers)
+### Option C — Docker (Recommended for Servers)
 ```bash
 docker compose up -d
 ```
+
+### Option D — One-click Cloud Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/PromptMatrix/promptmatrix.github.io&env=JWT_SECRET_KEY,ENCRYPTION_KEY&envDescription=Generate%20secure%20keys%20with%3A%20python%20-c%20%22import%20secrets%3B%20print(secrets.token_hex(32))%22)
 
 **Access the Visual Governance Dashboard at:** `http://localhost:8000/dashboard`
 
@@ -176,16 +191,27 @@ Switch to PostgreSQL for team deployments:
 
 ---
 
-## ⌨️ CLI (`pmx.py`)
+## ⌨️ CLI
 
+Two ways to use the CLI:
+
+**Globally installed (via pip):**
 ```bash
-python pmx.py status                                         # Server health + version
-python pmx.py list                                           # List all prompts
-python pmx.py push agent.system ./prompt.txt                 # Push + auto-approve (dev mode)
-python pmx.py pull agent.system ./out.txt                    # Pull live prompt to file
-python pmx.py diff agent.system ./prompt.txt                 # Unified diff local vs live
-python pmx.py eval agent.system ./prompt.txt --type rule_based  # Score offline (no API key)
-python pmx.py promote agent.system production                # Promote to another environment
+pip install promptmatrix-cli
+pmx login
+pmx push agent.system ./prompt.txt
+pmx pull agent.system ./out.txt
+pmx diff agent.system ./prompt.txt
+pmx eval agent.system ./prompt.txt --type rule_based  # Offline — no API key needed
+pmx promote agent.system production
+```
+
+**Or use the bundled script directly:**
+```bash
+python pmx.py status                    # Server health + version
+python pmx.py list
+python pmx.py push agent.system ./prompt.txt
+python pmx.py eval agent.system ./prompt.txt --type rule_based
 ```
 
 ### CI/CD Integration
@@ -193,8 +219,43 @@ python pmx.py promote agent.system production                # Promote to anothe
 ```yaml
 # .github/workflows/eval_prompts.yml
 - name: Evaluate prompts
-  run: python pmx.py eval agent.system ./prompts/agent.txt --type rule_based
+  env:
+    PMX_URL: ${{ secrets.PMX_URL }}
+    PMX_TOKEN: ${{ secrets.PMX_TOKEN }}
+  run: |
+    pip install promptmatrix-cli
+    pmx eval agent.system ./prompts/agent.txt --type rule_based
 ```
+
+---
+
+## 🐍 Python SDK
+
+For integrating PromptMatrix into your Python application:
+
+```bash
+pip install promptmatrix
+```
+
+```python
+from promptmatrix import PromptMatrix
+
+pm = PromptMatrix(
+    api_key="pm_live_your_key_here",
+    base_url="http://localhost:8000",  # or https://promptmatrixx.vercel.app
+)
+
+# Hot-path: fetch and render a live prompt
+result = pm.serve("assistant.system")
+system_prompt = result.render(company="Acme", user="Alice")
+
+# Async (FastAPI, etc.)
+from promptmatrix import AsyncPromptMatrix
+async with AsyncPromptMatrix(api_key="pm_live_...") as pm:
+    result = await pm.serve("assistant.system")
+```
+
+SDK docs: [promptmatrix-sdk README](https://github.com/PromptMatrix/promptmatrix-python#readme)
 
 ---
 
