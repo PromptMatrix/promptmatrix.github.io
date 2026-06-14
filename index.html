@@ -3000,7 +3000,7 @@ async function submitWaitlist(e){
   btn.disabled = true;
 
   try {
-    const r = await fetch('https://promptmatrixx.vercel.app/api/v1/public/waitlist', {
+    const r = await fetch(CLOUD_API_BASE + '/api/v1/public/waitlist', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({email, name, tier: (document.getElementById('wl-tier')||{value:'starter'}).value}),
