@@ -2894,6 +2894,8 @@ window.addEventListener('scroll',()=>{
     const pct   = Math.min(100, (f.claimed / f.cap) * 100);
     const heroSpots = document.getElementById('hero-spots-left');
     const heroText = document.getElementById('hero-scarcity-text');
+    // Store checkout_available for claimFounderSpot to read
+    window._pmxCheckoutReady = !!data.checkout_available;
 
     if(label) label.textContent = f.claimed + ' / ' + f.cap;
     if(bar)   bar.style.width   = pct + '%';
@@ -2930,10 +2932,14 @@ window.addEventListener('scroll',()=>{
   }
 
   window.claimFounderSpot = function(){
-    // Step 1: Create workspace account. Step 2: Complete $499 payment to activate.
-    // No free tier — registration is the first step of the Founder purchase flow.
-    window.open(CLOUD_REGISTER, '_blank', 'noopener,noreferrer');
-    showToast('Step 1/2: Create workspace → complete $499 payment to activate cloud access');
+    // If checkout is not yet configured (RAZORPAY_FOUNDER_LINK not set in Vercel),
+    // send interested founders to email instead of dead-end registration.
+    if(window._pmxCheckoutReady === false){
+      window.location.href = 'mailto:jachinchsaikiasonowal@gmail.com?subject=Founder%20Tier%20%E2%80%94%20Claim%20My%20Spot&body=Hi%2C%20I%20want%20to%20claim%20a%20Founder%20spot%20(%24499%20lifetime)%20for%20PromptMatrix.%0A%0AName%3A%0ACompany%3A';
+      return;
+    }
+    // Normal flow: same-window redirect (popups blocked in async handlers)
+    window.location.href = CLOUD_REGISTER;
   };
 
   // fetch on load, then poll every 30s
