@@ -70,4 +70,9 @@ graphify-out/
 # Ruff cache
 .ruff_cache/
 
+# Local/temporary files
+*.crdownload
+Gemini_Generated_Image_*.png
+
+
 
