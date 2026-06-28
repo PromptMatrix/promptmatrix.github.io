@@ -20,7 +20,7 @@ dependencies = [
     "alembic==1.14.0",
     "pydantic>=2.10.3",
     "pydantic-settings>=2.6.1",
-    "python-multipart>=0.0.22",
+    "python-multipart>=0.0.26",
     "httpx>=0.28.0",
     "PyJWT>=2.8.0",
     "bcrypt==4.2.1",
