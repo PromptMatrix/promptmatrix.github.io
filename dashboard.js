@@ -512,6 +512,17 @@ async function runEval(){
   if(data) renderEvalResult(data);
 }
 
+async function runRuleBasedEval(){
+  const versionId = document.getElementById('ev-version').value;
+  if(!versionId){ notif('Select a version first','warn'); return; }
+  const data = await api('POST', '/api/v1/evals/run', {
+    version_id: versionId, provider: 'rule_based',
+    model: 'rule_based', api_key: 'none',
+    test_input: '', eval_type: 'rule_based'
+  });
+  if(data) renderEvalResult(data);
+}
+
 function renderEvalResult(data){
   const body = document.getElementById('eval-output-body');
   document.getElementById('eval-output').style.display='';
@@ -528,6 +539,214 @@ function renderEvalResult(data){
         <div style="flex:1;height:4px;background:var(--bg3)"><div style="height:100%;width:${v*10}%;background:var(--c)"></div></div>
         <div style="font-size:10px;color:var(--t)">${v}</div>
       </div>`).join('')}`;
+}
+
+async function loadTeamKeys(){
+  const data = await api('GET', '/api/v1/evals/keys');
+  if(!data) return;
+  const list = document.getElementById('team-keys-list');
+  if(!list) return;
+  const keys = data.keys||[];
+  if(!keys.length){ list.innerHTML='<div style="font-size:11px;color:var(--t3)">No saved keys. Add one to run evals without pasting keys each time.</div>'; return; }
+  list.innerHTML = keys.map(k=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;padding:5px 7px;background:var(--bg3);border:1px solid var(--b2)">
+      <div style="font-size:11px;color:var(--y);width:70px">${k.provider}</div>
+      <div style="font-size:11px;color:var(--t3);flex:1">${k.hint}</div>
+      <div style="font-size:11px;color:var(--t3)">${k.label||'—'}</div>
+      <button class="btn br bxs" style="font-size:9px" data-id="${esc(k.id)}" onclick="deleteTeamKey(this.dataset.id)">✕</button>
+    </div>`).join('');
+}
+
+function openSaveKeyModal(){
+  openModal('SAVE_TEAM_LLM_KEY', `
+    <div class="fg"><label>PROVIDER</label>
+    <select id="sk-prov"><option value="anthropic">Anthropic</option><option value="openai">OpenAI</option><option value="google">Google</option></select></div>
+    <div class="fg"><label>API KEY — stored encrypted (AES-256), never shown again</label><input type="password" id="sk-key" placeholder="sk-..."></div>
+    <div class="fg"><label>LABEL (optional)</label><input type="text" id="sk-label" placeholder="Team OpenAI key"></div>
+    <div style="font-size:10px;color:var(--t3);line-height:1.7;padding:8px;background:var(--bg3);border:1px solid var(--b2)">Your key is encrypted with AES-256-GCM before storage. Only decrypted in server memory during eval runs. Never logged or returned via API.</div>`,
+    [{label:'SAVE ENCRYPTED KEY', fn:'saveTeamKey()'}]
+  );
+}
+
+async function saveTeamKey(){
+  const provider = document.getElementById('sk-prov').value;
+  const apiKey   = document.getElementById('sk-key').value.trim();
+  const label    = document.getElementById('sk-label').value.trim();
+  if(!apiKey){ notif('Enter an API key','warn'); return; }
+  const data = await api('POST', '/api/v1/evals/keys', {provider, api_key:apiKey, label});
+  if(data){ notif('Key saved (encrypted) ✓'); closeModal(); loadTeamKeys(); }
+}
+
+async function deleteTeamKey(id){
+  if(!confirm('Remove this key?')) return;
+  const data = await api('DELETE', `/api/v1/evals/keys/${id}`);
+  if(data){ notif('Key removed'); loadTeamKeys(); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// VERSION HISTORY
+// ══════════════════════════════════════════════════════════════════════
+async function loadVersionHistory(promptId){
+  if(!promptId) return;
+  const data = await api('GET', `/api/v1/prompts/${promptId}`);
+  if(!data) return;
+  const versions = data.versions||[];
+  const el = document.getElementById('hist-list');
+  if(!el) return;
+  if(!versions.length){ el.innerHTML='<div class="empty">no versions yet</div>'; return; }
+  const liveId = data.prompt?.live_version?.id;
+  el.innerHTML = [...versions].reverse().map(v => {
+    const isLive = v.id===liveId;
+    const statusMap = {approved:'tg',pending_review:'ty',draft:'tn',rejected:'tr',archived:'tn'};
+    return `
+      <div style="background:var(--bg2);border:1px solid ${isLive?'rgba(0,230,118,.3)':'var(--b2)'};margin-bottom:4px;overflow:hidden">
+        <div style="padding:8px 12px;display:flex;align-items:center;gap:8px;font-size:11px">
+          <div style="font-size:12px;color:${isLive?'var(--g)':'var(--t2)'}">v${v.version_num}</div>
+          <div style="flex:1;font-size:10px;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.commit_message||'no message'}</div>
+          <span class="tag ${statusMap[v.status]||'tn'}">${v.status}</span>
+          ${isLive?'<span style="font-size:10px;color:var(--g)">← LIVE</span>':''}
+          ${v.last_eval_score!=null?`<span style="font-size:10px;color:${v.last_eval_score>=8?'var(--g)':v.last_eval_score>=7?'var(--y)':'var(--r)'}">eval:${v.last_eval_score.toFixed(1)}</span>`:''}
+          <div style="font-size:10px;color:var(--t3)">${(v.created_at||'').slice(0,10)}</div>
+          ${v.status==='approved'&&!isLive?`<button class="btn bxs" data-pid="${esc(data.prompt.id)}" data-vid="${esc(v.id)}" data-vnum="${v.version_num}" onclick="rollbackTo(this.dataset.pid,this.dataset.vid,this.dataset.vnum)">↩ ROLLBACK</button>`:''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function rollbackTo(promptId, versionId, vnum){
+  if(!confirm(`Rollback to v${vnum}? This creates a new approved version with that content.`)) return;
+  const data = await api('POST', `/api/v1/prompts/${promptId}/versions/${versionId}/rollback`);
+  if(data){ notif(data.message||'Rolled back ✓'); loadVersionHistory(promptId); loadDash(); }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// API KEYS
+// ══════════════════════════════════════════════════════════════════════
+async function loadKeys(){
+  if(!S.env) return;
+  const data = await api('GET', `/api/v1/keys?environment_id=${S.env.id}`);
+  if(!data) return;
+  const keys = data.keys||[];
+  const list = document.getElementById('keys-list');
+  const empty = document.getElementById('keys-empty');
+  if(!list) return;
+  if(!keys.length){ list.innerHTML=''; empty.style.display=''; return; }
+  empty.style.display='none';
+  list.innerHTML = keys.map(k=>`
+    <div style="background:var(--bg2);border:1px solid var(--b2);padding:10px 12px;margin-bottom:4px;display:flex;align-items:center;gap:10px">
+      <div style="flex:1">
+        <div style="font-size:13px;color:var(--t)">${k.name}</div>
+        <div style="font-size:11px;color:var(--c);margin-top:2px;letter-spacing:.04em">${k.prefix}••••••••</div>
+        <div style="font-size:10px;color:var(--t3);margin-top:2px">
+          env: ${S.env?.name} · created ${(k.created_at||'').slice(0,10)} · last used: ${k.last_used_at?(k.last_used_at.slice(0,10)):'never'}
+        </div>
+      </div>
+      <button class="btn bxs" data-id="${esc(k.id)}" data-name="${esc(k.name)}" onclick="rotateKey(this.dataset.id,this.dataset.name)">↻ ROTATE</button>
+      <button class="btn br bxs" data-id="${esc(k.id)}" data-name="${esc(k.name)}" onclick="revokeKey(this.dataset.id,this.dataset.name)">✕ REVOKE</button>
+    </div>`).join('');
+}
+
+function openCreateKeyModal(){
+  if(!S.env){ notif('Select an environment first','warn'); return; }
+  openModal('CREATE_API_KEY', `
+    <div style="font-size:11px;color:var(--t3);margin-bottom:12px;line-height:1.7;padding:8px;background:var(--bg3);border-left:2px solid var(--y)">
+      ⚠ The full API key is shown ONCE on creation. Copy and store it securely. It cannot be recovered — only rotated.
+    </div>
+    <div class="fg"><label>KEY NAME</label><input type="text" id="ck-name" placeholder="n8n production · RADAR agent · chatbot key"></div>
+    <div style="font-size:11px;color:var(--t3)">Environment: <span style="color:${S.env.color}">${S.env.name}</span></div>`,
+    [{label:'CREATE KEY', fn:'createKey()'}]
+  );
+}
+
+async function createKey(){
+  const name = document.getElementById('ck-name')?.value.trim();
+  if(!name){ notif('Enter a key name','warn'); return; }
+  const data = await api('POST', '/api/v1/keys', {environment_id: S.env.id, name});
+  if(!data) return;
+  closeModal();
+  openModal('YOUR_API_KEY', `
+    <div style="font-size:11px;color:var(--y);background:var(--y2);border:1px solid rgba(255,215,0,.3);padding:10px;margin-bottom:12px;letter-spacing:.04em;line-height:1.7">
+      ⚠ This key is shown ONCE. Copy it now. It cannot be retrieved again — only rotated.
+    </div>
+    <div class="fg"><label>FULL API KEY — COPY NOW</label>
+    <input type="text" value="${data.key}" readonly onclick="this.select()" style="color:var(--g);font-size:13px;cursor:pointer;letter-spacing:.04em">
+    </div>
+    <div style="font-size:11px;color:var(--t3);margin-top:8px">Add to your agent:<br>
+    <span style="color:var(--c)">Authorization: Bearer ${data.key}</span></div>`,
+    [{label:'I COPIED IT', fn:'closeModal();loadKeys()'}]
+  );
+}
+
+async function revokeKey(id, name){
+  if(!confirm(`Revoke key "${name}"? Agents using it will get 401 immediately.`)) return;
+  const data = await api('DELETE', `/api/v1/keys/${id}`);
+  if(data){ notif(data.message); loadKeys(); }
+}
+
+async function rotateKey(id, name){
+  if(!confirm(`Rotate key "${name}"? Old key stops working immediately. You'll get a new key to copy.`)) return;
+  const data = await api('POST', `/api/v1/keys/${id}/rotate`);
+  if(!data) return;
+  openModal('ROTATED_KEY', `
+    <div style="font-size:11px;color:var(--y);background:var(--y2);border:1px solid rgba(255,215,0,.3);padding:10px;margin-bottom:12px">
+      Old key revoked. Copy your new key now.
+    </div>
+    <div class="fg"><label>NEW API KEY</label>
+    <input type="text" value="${data.key}" readonly onclick="this.select()" style="color:var(--g);font-size:13px;cursor:pointer"></div>`,
+    [{label:'I COPIED IT', fn:'closeModal();loadKeys()'}]
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// ENVIRONMENTS & REGISTRY
+// ══════════════════════════════════════════════════════════════════════
+function renderEnvList(){
+  const el = document.getElementById('env-list');
+  if(!el) return;
+  if(!S.envs.length){ el.innerHTML='<div class="empty">no environments</div>'; return; }
+  el.innerHTML = S.envs.map(e => `
+    <div style="background:var(--bg2);border:1px solid var(--b2);padding:12px;margin-bottom:4px;display:flex;align-items:center;gap:12px;border-left:3px solid ${e.color||'#888'}">
+      <div style="flex:1">
+        <div style="font-size:13px;color:var(--t);font-weight:500">${e.display_name||e.name}</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.8">
+          ${e.is_protected?'🔒 Protected (approval required)':'🔓 Open (auto-approve in dev)'}
+          · Eval threshold: <span style="color:var(--y)">${e.eval_pass_threshold}</span>/10
+        </div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn bxs" onclick="switchEnv('${e.id}');pg('prompts')">VIEW PROMPTS →</button>
+      </div>
+    </div>`).join('');
+}
+
+function openNewPromptModal(){
+  openModal('NEW_PROMPT', `
+    <div class="fg"><label>PROMPT KEY — dot notation, lowercase</label>
+    <input type="text" id="np-key" placeholder="assistant.system · radar.briefing · chatbot.greeting"></div>
+    <div class="fg"><label>INITIAL CONTENT</label>
+    <textarea id="np-content" rows="8" placeholder="You are a helpful assistant...&#10;&#10;Use {{variable}} for dynamic values."></textarea></div>
+    <div class="fg"><label>DESCRIPTION (optional)</label>
+    <input type="text" id="np-desc" placeholder="What this prompt does"></div>`,
+    [{label:'CREATE & OPEN EDITOR', fn:'createAndOpen()'}]
+  );
+}
+
+async function createAndOpen(){
+  const key     = document.getElementById('np-key')?.value.trim();
+  const content = document.getElementById('np-content')?.value.trim();
+  const desc    = document.getElementById('np-desc')?.value.trim();
+  if(!key||!content){ notif('Key and content required','warn'); return; }
+  if(!S.env){ notif('Select an environment first','warn'); return; }
+  const data = await api('POST', '/api/v1/prompts', {
+    environment_id: S.env.id, key, content,
+    description: desc, commit_message: 'Initial version'
+  });
+  if(data){
+    notif('Prompt created ✓');
+    S.prompts.push(data.prompt);
+    closeModal();
+    openPromptEditor(data.prompt.id);
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -554,8 +773,27 @@ function pg(name){
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
   if(document.getElementById('pane-'+name)) document.getElementById('pane-'+name).classList.add('on');
   if(document.getElementById('ni-'+name)) document.getElementById('ni-'+name).classList.add('on');
-  const PAGE_LOAD = {prompts:loadRegistry, approvals:loadApprovals, audit:loadAudit, keys:loadKeys, dashboard:loadDash};
-  if(PAGE_LOAD[name]) PAGE_LOAD[name]();
+  
+  // Custom mapping: 'dash' maps to 'dashboard' logic
+  const pageName = name === 'dash' ? 'dashboard' : name;
+  
+  const PAGE_LOAD = {
+    prompts:      loadRegistry,
+    approvals:    loadApprovals,
+    audit:        loadAudit,
+    keys:         loadKeys,
+    dashboard:    loadDash,
+    environments: renderEnvList,
+    evals:        () => { loadTeamKeys(); populatePromptSelectors(); },
+    versions:     () => {
+      const select = document.getElementById('hist-select');
+      if (select) {
+        select.innerHTML = '<option value="">— Select Prompt —</option>' + S.prompts.map(p=>`<option value="${p.id}">${p.key}</option>`).join('');
+      }
+      document.getElementById('hist-list').innerHTML = '';
+    }
+  };
+  if(PAGE_LOAD[pageName]) PAGE_LOAD[pageName]();
 }
 
 function openModal(title, body, actions=[]){
@@ -563,8 +801,40 @@ function openModal(title, body, actions=[]){
   document.getElementById('modal-body').innerHTML=body;
   document.getElementById('modal-foot').innerHTML=actions.map(a=>`<button class="btn bp" onclick="${a.fn}">${a.label}</button>`).join('')+'<button class="btn" onclick="closeModal()">CANCEL</button>';
   document.getElementById('modal-overlay').classList.add('show');
+  
+  // Auto-focus first input
+  setTimeout(()=>{
+    const first = document.querySelector('#modal-body input,#modal-body textarea');
+    if(first) first.focus();
+  },80);
 }
-function closeModal(){ document.getElementById('modal-overlay').classList.remove('show'); }
+
+function closeModal(e){
+  if(e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+let sbOpen=true;
+function toggleSb(){
+  sbOpen=!sbOpen;
+  const sb=document.getElementById('sb');
+  const tog=document.getElementById('sb-tog');
+  const lt=document.getElementById('logo-text');
+  sb.classList.toggle('col',!sbOpen);
+  if(tog) tog.textContent=sbOpen?'‹':'›';
+  if(lt)  lt.style.opacity=sbOpen?'1':'0';
+}
+
+function exportWorkspace() {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(S.prompts, null, 2));
+  const downloadAnchor = document.createElement('a');
+  downloadAnchor.setAttribute("href", dataStr);
+  downloadAnchor.setAttribute("download", `promptmatrix_workspace_${S.org?.slug || 'export'}.json`);
+  document.body.appendChild(downloadAnchor);
+  downloadAnchor.click();
+  downloadAnchor.remove();
+  notif("Workspace exported successfully");
+}
 
 function notif(msg, type='ok'){
   const n = document.createElement('div');
@@ -592,3 +862,4 @@ window.addEventListener('load', async () => {
   document.getElementById('boot-loading').classList.add('hidden');
   if(!ok) document.getElementById('auth-overlay').classList.remove('hidden');
 });
+
