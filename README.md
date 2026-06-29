@@ -2,27 +2,25 @@
 
   <img src="PromptMatrix.webp" alt="PromptMatrix" width="100%">
 
-  <h1>⬡ PromptMatrix</h1>
+  <h1>⬡ PromptMatrix — Website</h1>
   <h3>The Governance Engine for AI Systems</h3>
 
   <p>
-    <b>Stop hardcoding your LLM prompts. Start governing them.</b>
+    <b>This repository hosts the <a href="https://promptmatrix.github.io">promptmatrix.github.io</a> landing page.</b><br>
+    👉 <b>Looking for the open-source backend code? <a href="https://github.com/PromptMatrix/Promptmatrix">→ PromptMatrix/Promptmatrix</a></b>
   </p>
 
   <p>
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/promptmatrix.github.io?label=version" alt="Version" /></a>
+    <a href="https://github.com/PromptMatrix/Promptmatrix/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" /></a>
+    <a href="https://github.com/PromptMatrix/Promptmatrix/releases"><img src="https://img.shields.io/github/v/release/PromptMatrix/Promptmatrix?label=version" alt="Version" /></a>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11%2B-blue.svg" alt="Python 3.11+" /></a>
     <img src="https://img.shields.io/badge/SQLite-local--first-orange.svg" alt="Local-first SQLite" />
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/actions"><img src="https://github.com/PromptMatrix/promptmatrix.github.io/actions/workflows/test.yml/badge.svg" alt="CI" /></a>
   </p>
 
   <p>
-    <a href="#-quick-start">Quick Start</a> •
-    <a href="#-features">Features</a> •
-    <a href="#-deployment-models">Deployment Models</a> •
-    <a href="#-manual-installation">Manual Installation</a> •
-    <a href="https://github.com/PromptMatrix/promptmatrix.github.io/blob/main/LICENSE">MIT License</a>
+    <a href="https://github.com/PromptMatrix/Promptmatrix">⬡ Open-Source Code</a> •
+    <a href="https://promptmatrix.github.io">🌐 Live Website</a> •
+    <a href="https://github.com/PromptMatrix/Promptmatrix/blob/main/LICENSE">MIT License</a>
   </p>
 </div>
 
