@@ -1,0 +1,16 @@
+{
+  "name": "PromptMatrix Governance Dashboard",
+  "short_name": "PromptMatrix",
+  "description": "Enterprise-grade prompt governance and infrastructure protocol.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#00e676",
+  "icons": [
+    {
+      "src": "PromptMatrix.webp",
+      "sizes": "any",
+      "type": "image/webp"
+    }
+  ]
+}
