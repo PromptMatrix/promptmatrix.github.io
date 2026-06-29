@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /googleec4c2cd4a7aabc25.html
+Disallow: /dashboard.html
+Disallow: /standalone.html
+Disallow: /accept-invite.html
 
 # Sitemaps
 Sitemap: https://promptmatrix.github.io/sitemap.xml
