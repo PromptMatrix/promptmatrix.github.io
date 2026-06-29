@@ -187,7 +187,7 @@ Switch to PostgreSQL for team deployments:
 3. Uncomment `psycopg2-binary` in `requirements.txt`
 4. Run `alembic upgrade head` to apply migrations
 
-> For multi-user team collaboration with RBAC, managed hosting, and advanced workflow features — see the [Cloud version](https://promptmatrixx.vercel.app).
+> For multi-user team collaboration with RBAC, managed hosting, and advanced workflow features — see the [Cloud version](https://promptmatrix.github.io).
 
 ---
 
