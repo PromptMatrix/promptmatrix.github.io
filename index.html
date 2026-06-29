@@ -915,7 +915,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="nl" href="#problem">PROBLEM</a>
     <a class="nl" href="#how-it-works">PROTOCOL</a>
     <a class="nl" href="#features">FEATURES</a>
-    <a class="nl" href="https://github.com/PromptMatrix/promptmatrix.github.io#readme" target="_blank" rel="noopener">INTEGRATION</a>
+    <a class="nl" href="#quickstart">INTEGRATION</a>
     <a class="nl" href="#pricing" style="color:var(--am)">PRICING</a>
     <a class="nl" href="#faq">FAQ</a>
   </div>
@@ -932,7 +932,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a class="mob-nl" href="#problem" onclick="closeMobNav()">PROBLEM</a>
     <a class="mob-nl" href="#how-it-works" onclick="closeMobNav()">PROTOCOL</a>
     <a class="mob-nl" href="#features" onclick="closeMobNav()">FEATURES</a>
-    <a class="mob-nl" href="https://github.com/PromptMatrix/promptmatrix.github.io#readme" target="_blank" rel="noopener" onclick="closeMobNav()">INTEGRATION</a>
+    <a class="mob-nl" href="#quickstart" onclick="closeMobNav()">INTEGRATION</a>
     <a class="mob-nl" href="#faq" onclick="closeMobNav()">FAQ</a>
     <div class="mob-divider"></div>
     <a class="mob-nl" href="https://github.com/PromptMatrix/promptmatrix.github.io" target="_blank" rel="noopener">GITHUB</a>
@@ -1161,11 +1161,83 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
         <div style="font-size:15px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Prompts leave the codebase.</div>
         <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.75;margin-bottom:14px">Even building alone, every prompt gets versioned, audited, and editable from a dashboard — not scattered across env files, Notion docs, and forgotten commits. Your system has memory.</p>
         <div style="display:flex;flex-direction:column;gap:5px">
-          <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Start in your browser — no install</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Export and migrate anytime — no lock-in</div>
-          <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Your data, your schema, your keys</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> All prompts in one governed registry</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Complete history · 1-click rollback</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Any LLM API · any framework</div>
         </div>
       </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STORAGE TIERS — NEW SECTION -->
+<section id="storage" style="position:relative;z-index:2;padding:80px 0;border-top:1px solid var(--b);background:rgba(0,3,0,.5)">
+  <div class="wrap">
+    <div class="rv" style="text-align:center;margin-bottom:44px">
+      <div class="slabel">// STORAGE_ARCHITECTURE</div>
+      <h2 class="stitle">Run it your way.<br><span class="em si">Your data. Your rules.</span></h2>
+      <p class="sbody" style="margin:12px auto 0;text-align:center;max-width:520px">No forced cloud. No vendor lock-in. Start in your browser today. Move to SQLite when you're ready. Self-host when it's serious. Cloud when your team needs it.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:44px">
+
+      <!-- Tier 1: Browser -->
+      <div class="rv" style="background:rgba(0,230,118,.03);border:1px solid rgba(0,230,118,.18);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,230,118,.3),transparent)"></div>
+        <div style="font-family:var(--mono);font-size:22px;margin-bottom:10px">🌐</div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--g);margin-bottom:8px">// TIER 1 · INSTANT</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Browser Storage</div>
+        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Zero setup. Open the HTML file, start adding prompts. Everything lives in localStorage — no backend, no install, no account. Your agents can read from it instantly.</p>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--g3);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--g)">✓</span> How the builder uses it today</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--g3);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--g)">✓</span> No install required</div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--g3);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--g)">✓</span> Instant. Today.</div>
+      </div>
+
+      <!-- Tier 2: SQLite -->
+      <div class="rv" style="transition-delay:.07s;background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
+        <div style="font-family:var(--mono);font-size:22px;margin-bottom:10px">🗃️</div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--cy);margin-bottom:8px">// TIER 2 · LOCAL FILE</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">SQLite</div>
+        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Download the open-source repo, point it at a local SQLite file. Persistent across browser sessions, queryable, portable. Ideal for solo developers and indie builders who want durability without a server.</p>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(128,222,234,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--cy)">✓</span> Data survives browser restarts</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(128,222,234,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--cy)">✓</span> Git-friendly · single file</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(128,222,234,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--cy)">✓</span> No network dependency</div>
+      </div>
+
+      <!-- Tier 3: Self-hosted DB -->
+      <div class="rv" style="transition-delay:.14s;background:rgba(0,4,0,.8);border:1px solid var(--b2);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
+        <div style="font-family:var(--mono);font-size:22px;margin-bottom:10px">🖥️</div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--pu);margin-bottom:8px">// TIER 3 · SELF-HOSTED</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Your Own Server</div>
+        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">Point PromptMatrix at your own Postgres, MySQL, or any database backend. Full control, zero vendor relationship. Teams and orgs who need data residency, custom auth, or integration into an existing stack.</p>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(179,136,255,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--pu)">✓</span> Any database backend</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(179,136,255,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--pu)">✓</span> Full data sovereignty</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(179,136,255,.5);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--pu)">✓</span> MIT licensed · self-managed</div>
+      </div>
+
+      <!-- Tier 4: Future Proof -->
+      <div class="rv" style="transition-delay:.21s;background:rgba(3,4,0,.9);border:1px solid rgba(255,204,2,.14);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.1),transparent)"></div>
+        <div style="font-family:var(--mono);font-size:22px;margin-bottom:10px">📡</div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(255,204,2,.5);margin-bottom:8px">// ENTERPRISE READY</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">Managed Scaling</div>
+        <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:14px">PromptMatrix is built to scale. Start locally, then move to your own production cluster. The protocol remains the same. Whether you have 5 prompts or 5,000, the governance engine handles the load with zero friction.</p>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.4);letter-spacing:.1em;display:flex;align-items:center;gap:5px"><span style="color:var(--am)">⚡</span> Horizontal scaling ready</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.4);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> Production-hardened core</div>
+        <div style="font-family:var(--mono);font-size:8px;color:rgba(255,204,2,.4);letter-spacing:.1em;display:flex;align-items:center;gap:5px;margin-top:4px"><span style="color:var(--am)">⚡</span> 100% Open Governance</div>
+      </div>
+
+    </div>
+
+    <!-- Storage migration note -->
+    <div class="rv" style="transition-delay:.28s;border:1px solid var(--b2);border-radius:5px;padding:14px 20px;background:rgba(0,4,0,.7);display:flex;align-items:center;gap:16px;max-width:680px;margin:0 auto">
+      <div style="font-family:var(--mono);font-size:20px;flex-shrink:0">⟶</div>
+      <div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--g3);margin-bottom:4px">// MIGRATION PATH</div>
+        <div style="font-size:12.5px;color:rgba(200,255,200,.5);line-height:1.65">Start in your browser this afternoon. When you outgrow it, export your prompt registry and move to SQLite or your own server — your data, your schema, your keys. No migration tax. No lock-in.</div>
+      </div>
+    </div>
 
   </div>
 </section>
@@ -1221,6 +1293,38 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
           <div class="pc-t">Engineering hours spent on non-engineering work.</div>
           <div class="pc-b">Three to six hours per week. Senior engineers updating tone, adjusting copy, shipping work that anyone with product context could handle — if there were a safe, governed channel to do it through.</div>
           <span class="pc-cost">ENGINEERING WASTE: 150–300 HRS/YEAR</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE / AFTER -->
+<section id="compare" style="position:relative;z-index:2">
+  <div class="wrap">
+    <div class="cmp">
+      <div class="rv">
+        <div class="slabel">// STATE_COMPARISON</div>
+        <h2 class="stitle">Uncontrolled changes.<br><span class="em si">Or a control plane.</span></h2>
+      </div>
+      <div class="cmpg">
+        <div class="cc cc-no rv">
+          <div class="cc-lbl"><span>✗</span> WITHOUT GOVERNANCE</div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Product spots a tone failure. Files a ticket. Waits 5 days. Engineer deploys a two-word change.</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Leadership asks "what is our AI actually saying right now?" — no one can answer with certainty.</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Marketing wants to test two onboarding variants. Needs an engineer. Gets backlogged.</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>A prompt change slips through a large PR unreviewed. Quality drops. Support tickets surface it three days later.</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Compliance requests the AI's change history. You produce a Git log. The deal stalls.</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>The people who understand users best have zero influence over how the AI behaves.</span></div>
+        </div>
+        <div class="cc cc-yes rv" style="transition-delay:.1s">
+          <div class="cc-lbl"><span>✓</span> WITH PROMPTMATRIX</div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Product edits the prompt in plain text. Engineer reviews the diff and approves. Live in 10 seconds.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>The registry shows every prompt's live content, version history, and who approved the last change.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Marketing proposes both variants. Engineer approves both. They're tracked with quality scores and full history.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Every change is reviewed before it reaches production. Bad version? 1-click rollback in under 10 seconds.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Full immutable log: who changed what, when, previous content, who approved. Export-ready. Enterprise-grade.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Non-engineers contribute directly to AI behavior. Engineers maintain the gate. Everyone moves faster.</span></div>
         </div>
       </div>
     </div>
@@ -1449,7 +1553,326 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
   </div>
   </section>
 
+  <!-- INTEGRATION / QUICK START -->
+  <section class="qs-section" id="quickstart" aria-label="Developer Integration and Quickstart">
+  <div class="qs-inner">
 
+    <div class="qs-head rv">
+      <div class="slabel">// INTEGRATION_PROTOCOL</div>
+      <h2 class="stitle">Register once.<br><span class="em si">Serve forever.</span></h2>
+      <p class="sbody" style="margin-top:12px;max-width:560px">The entire engineer integration is two code changes. Register the key once. Replace the hardcoded string with the serve endpoint. That is the complete engineering cost. Everything after that happens in the dashboard — no further deploys, ever.</p>
+    </div>
+
+    <div class="qs-grid rv" style="transition-delay:.08s">
+      <div class="qs-block">
+        <div class="qs-block-label">
+          <span class="qs-lang">Python · Before</span>
+          <span class="qs-bad">&#x2717; HARDCODED · NO GOVERNANCE</span>
+        </div>
+        <div class="qs-code"><span class="cm"># prompt buried in application code
+# no version history · no approval gate · no rollback</span>
+
+<span class="cm"># works until someone asks "what is our AI actually saying?"</span>
+<span class="kw">def</span> <span class="fn">get_prompt</span>():
+    <span class="kw">return</span> <span class="rd">"You are a helpful AI assistant.
+    Be concise. Stay on topic.
+    Never fabricate information."</span>
+
+<span class="cm"># to change this: PR → review → deploy
+# average turnaround: 2–6 days
+# non-engineers: locked out permanently</span></div>
+      </div>
+      <div class="qs-block" style="border-color:rgba(0,230,118,.22)">
+        <div class="qs-block-label">
+          <span class="qs-lang">Python · After</span>
+          <span class="qs-good">&#x2713; GOVERNED · LIVE IN 10s</span>
+        </div>
+        <div class="qs-code"><span class="cm"># one-time setup — register key in codebase once</span>
+<span class="kw">import</span> requests
+
+<span class="cm"># same pattern for any prompt — chatbot, agent, pipeline</span>
+<span class="kw">def</span> <span class="fn">get_prompt</span>():
+    res = requests.<span class="fn">get</span>(
+        <span class="gr">"http://localhost:8000/pm/serve/assistant.persona"</span>,
+        headers={<span class="st">"x-pm-key"</span>: PM_API_KEY}
+    )
+    <span class="kw">return</span> res.<span class="fn">json</span>()[<span class="st">"content"</span>]
+
+<span class="cm"># now any team member can propose a change
+# engineer reviews the diff → approves → live in 10s
+# zero redeploy · full audit trail written automatically</span></div>
+      </div>
+    </div>
+
+    <div class="rv" style="transition-delay:.12s">
+      <div class="slabel" style="margin-bottom:16px">// SDK · PYTHON + NODE.JS — AVAILABLE NOW</div>
+      <div class="qs-sdk-grid">
+        <div class="qs-sdk-block">
+          <div class="qs-block-label">
+            <span class="qs-lang">Python SDK</span>
+            <span style="font-family:var(--mono);font-size:7px;color:var(--g3);letter-spacing:.1em">pip install promptmatrix</span>
+          </div>
+          <div class="qs-code"><span class="kw">from</span> promptmatrix <span class="kw">import</span> PromptMatrix
+
+pm = <span class="fn">PromptMatrix</span>(api_key=<span class="st">"pm_your_key"</span>)
+
+<span class="cm"># register once — replaces the hardcoded string</span>
+pm.<span class="fn">register</span>(<span class="st">"assistant.persona"</span>)
+
+<span class="cm"># fetch current approved version at runtime</span>
+prompt = pm.<span class="fn">serve</span>(<span class="st">"assistant.persona"</span>)
+
+<span class="cm"># drop directly into your LLM call</span>
+response = openai.<span class="fn">chat</span>.<span class="fn">completions</span>.<span class="fn">create</span>(
+    model=<span class="st">"gpt-4o"</span>,
+    messages=[{<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: prompt}]
+)</div>
+        </div>
+        <div class="qs-sdk-block">
+          <div class="qs-block-label">
+            <span class="qs-lang">Node.js SDK</span>
+            <span style="font-family:var(--mono);font-size:7px;color:var(--g3);letter-spacing:.1em">npm install promptmatrix</span>
+          </div>
+          <div class="qs-code"><span class="kw">import</span> { <span class="fn">PromptMatrix</span> } <span class="kw">from</span> <span class="st">'promptmatrix'</span>
+
+<span class="kw">const</span> pm = <span class="kw">new</span> <span class="fn">PromptMatrix</span>({ apiKey: <span class="st">'pm_your_key'</span> })
+
+<span class="cm">// register once — replaces the hardcoded string</span>
+<span class="kw">await</span> pm.<span class="fn">register</span>(<span class="st">'assistant.persona'</span>)
+
+<span class="cm">// fetch current approved version at runtime</span>
+<span class="kw">const</span> prompt = <span class="kw">await</span> pm.<span class="fn">serve</span>(<span class="st">'assistant.persona'</span>)
+
+<span class="cm">// drop directly into your LLM call</span>
+<span class="kw">const</span> res = <span class="kw">await</span> openai.chat.<span class="fn">completions</span>.<span class="fn">create</span>({
+  model: <span class="st">'gpt-4o'</span>,
+  messages: [{ role: <span class="st">'system'</span>, content: prompt }]
+})</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rv" style="transition-delay:.16s;margin-bottom:48px">
+      <div class="slabel" style="margin-bottom:16px">// RAW HTTP · ANY LANGUAGE · ANY FRAMEWORK</div>
+      <div class="qs-block">
+        <div class="qs-block-label">
+          <span class="qs-lang">curl / fetch / requests — no SDK required, works everywhere</span>
+          <span class="qs-good">&#x2713; FRAMEWORK AGNOSTIC</span>
+        </div>
+        <div class="qs-code"><span class="cm"># one GET to fetch the current approved prompt</span>
+curl -H <span class="st">"x-pm-key: pm_your_key"</span>      <span class="gr">http://localhost:8000/pm/serve/assistant.persona</span>
+
+{
+  <span class="st">"key"</span>:          <span class="gr">"assistant.persona"</span>,
+  <span class="st">"content"</span>:      <span class="gr">"I'm your AI assistant. Ask me anything — I'll give you a direct answer."</span>,
+  <span class="st">"version"</span>:      <span class="dim">14</span>,
+  <span class="st">"approved_by"</span>:  <span class="dim">"team@acme.internal"</span>,
+  <span class="st">"approved_at"</span>:  <span class="dim">"2026-03-12T09:41:02Z"</span>,
+  <span class="st">"latency_ms"</span>:   <span class="dim">11</span>
+}</div>
+      </div>
+    </div>
+
+    <div class="rv" style="transition-delay:.2s">
+      <div class="slabel" style="margin-bottom:16px">// ENGINEER SETUP · TOTAL TIME: ~30 MINUTES</div>
+      <div class="qs-steps-row">
+        <div class="qs-step">
+          <div class="qs-step-n">01</div>
+          <div class="qs-step-t">Install and initialise</div>
+          <div class="qs-step-d">pip or npm install. Run <code style="color:var(--am);font-size:10px">pm init</code> with your API key. Two minutes total.</div>
+          <div class="qs-code" style="margin-top:12px;padding:10px 14px;border-radius:4px;border:1px solid var(--b2);background:rgba(0,5,0,.97)"><span class="dim">$</span> pip install promptmatrix
+<span class="dim">$</span> pm init --key pm_your_key
+<span class="gr">✓ PromptMatrix initialised</span></div>
+          <span class="qs-step-tag">ENGINEER ONLY · ONCE</span>
+        </div>
+        <div class="qs-step">
+          <div class="qs-step-n">02</div>
+          <div class="qs-step-t">Register your prompt keys</div>
+          <div class="qs-step-d">Find every hardcoded prompt string. Call <code style="color:var(--am);font-size:10px">pm.register("key")</code>. Each key appears in the dashboard immediately and is ready for governed editing.</div>
+          <div class="qs-code" style="margin-top:12px;padding:10px 14px;border-radius:4px;border:1px solid var(--b2);background:rgba(0,5,0,.97)"><span class="dim">$</span> pm register assistant.persona
+<span class="dim">$</span> pm register agent.briefing
+<span class="dim">$</span> pm register email.composer
+<span class="gr">✓ 3 prompts registered · live in dashboard</span></div>
+          <span class="qs-step-tag">ENGINEER ONLY · ONCE PER PROMPT</span>
+        </div>
+        <div class="qs-step">
+          <div class="qs-step-n">03</div>
+          <div class="qs-step-t">Replace and deploy once</div>
+          <div class="qs-step-d">Swap each hardcoded string with <code style="color:var(--am);font-size:10px">pm.serve("key")</code>. Deploy this change once. You never deploy a prompt change again. The governance layer handles everything from here.</div>
+          <div class="qs-code" style="margin-top:12px;padding:10px 14px;border-radius:4px;border:1px solid var(--b2);background:rgba(0,5,0,.97)"><span class="cm"># before</span>
+<span class="rd">prompt = "You are a helpful AI assistant..."</span>
+<span class="cm"># after — your final deploy for this prompt</span>
+<span class="gr">prompt = pm.serve("assistant.persona")</span></div>
+          <span class="qs-step-tag">THE LAST DEPLOY FOR THIS PROMPT</span>
+        </div>
+      </div>
+      <p class="qs-note">After step 3 — any team member can propose a change in the dashboard. The engineer reviews the diff and approves in 10 seconds. The new content is live. Zero further deploys. Ever.</p>
+    </div>
+
+    <div class="rv" style="transition-delay:.24s;margin-top:32px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+
+        <div style="background:rgba(0,6,0,.9);border:1px solid rgba(0,230,118,.18);border-radius:7px;padding:20px 22px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,230,118,.25),transparent)"></div>
+          <div style="font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--g3);margin-bottom:10px">// LATENCY — SOLVED WITH CACHE</div>
+          <div style="font-size:13px;font-weight:700;color:var(--txt2);margin-bottom:7px">A 30-second cache. Overhead rounds to zero.</div>
+          <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:12px">Without caching, a serve call adds ~10ms per LLM request. With a local 30-second TTL, the overhead is negligible — and every approved change reaches your app within 30 seconds of going live. Cache once, serve instantly.</p>
+          <div style="background:rgba(0,5,0,.97);border:1px solid var(--b2);border-radius:5px;padding:10px 14px;font-family:var(--mono);font-size:10px;line-height:1.72;color:rgba(200,255,200,.38)">
+            <div style="color:rgba(200,255,200,.22);font-style:italic"># Python — 30s TTL cache</div>
+            <div><span style="color:var(--pu)">import</span> time</div>
+            <div>&nbsp;</div>
+            <div>_cache = {}</div>
+            <div><span style="color:var(--pu)">def</span> <span style="color:var(--cy)">get_prompt</span>(key):</div>
+            <div>&nbsp;&nbsp;now = time.<span style="color:var(--cy)">time</span>()</div>
+            <div>&nbsp;&nbsp;<span style="color:var(--pu)">if</span> key <span style="color:var(--pu)">in</span> _cache <span style="color:var(--pu)">and</span> now - _cache[key][<span style="color:var(--am)">1</span>] &lt; <span style="color:var(--am)">30</span>:</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--pu)">return</span> _cache[key][<span style="color:var(--am)">0</span>]</div>
+            <div>&nbsp;&nbsp;val = pm.<span style="color:var(--cy)">serve</span>(key)</div>
+            <div>&nbsp;&nbsp;_cache[key] = (val, now)</div>
+            <div>&nbsp;&nbsp;<span style="color:var(--pu)">return</span> val</div>
+          </div>
+        </div>
+
+        <div style="background:rgba(0,4,0,.9);border:1px solid rgba(255,204,2,.14);border-radius:7px;padding:20px 22px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;inset-inline:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.2),transparent)"></div>
+          <div style="font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:rgba(255,204,2,.5);margin-bottom:10px">// PRODUCTION SAFETY</div>
+          <div style="font-size:13px;font-weight:700;color:var(--txt2);margin-bottom:7px">Always keep a hardcoded fallback.</div>
+          <p style="font-size:11.5px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:12px">If the serve endpoint is unreachable — network blip, maintenance window — your application should not fail. Wrap the call in a try/except with a sensible default. The fallback fires only if PromptMatrix is unreachable. Your app stays live regardless.</p>
+          <div style="background:rgba(0,5,0,.97);border:1px solid var(--b2);border-radius:5px;padding:10px 14px;font-family:var(--mono);font-size:10px;line-height:1.72;color:rgba(200,255,200,.38)">
+            <div style="color:rgba(200,255,200,.22);font-style:italic"># The correct production pattern</div>
+            <div>FALLBACK = <span style="color:var(--am)">"You are a helpful AI assistant."</span></div>
+            <div>&nbsp;</div>
+            <div><span style="color:var(--pu)">def</span> <span style="color:var(--cy)">get_prompt</span>(key):</div>
+            <div>&nbsp;&nbsp;<span style="color:var(--pu)">try</span>:</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--pu)">return</span> pm.<span style="color:var(--cy)">serve</span>(key)</div>
+            <div>&nbsp;&nbsp;<span style="color:var(--pu)">except</span> Exception:</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--pu)">return</span> <span style="color:var(--g)">FALLBACK</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  </section>
+
+  <!-- WHAT YOU CAN GOVERN -->
+  <section class="pt-section" id="use-cases" aria-label="Governance Use Cases and Prompt Categories">
+  <div class="pt-inner">
+    <div class="rv">
+      <div class="slabel">// GOVERNANCE_SCOPE</div>
+      <h2 class="stitle">Any AI product.<br><span class="em si">Every prompt. Now.</span></h2>
+      <p class="sbody" style="margin-top:12px;max-width:540px">If your product sends a string to a language model, it belongs in PromptMatrix. Register any key in 30 seconds. These are the prompt categories teams are putting under governance today.</p>
+    </div>
+    <div class="pt-grid">
+
+      <div class="pt-card rv">
+        <div class="pt-icon">◉</div>
+        <div class="pt-title">Chatbots &amp; Assistants</div>
+        <div class="pt-desc">System prompt, persona, fallback responses, guardrails. Tune how your chatbot behaves in production — approved changes live without touching code.</div>
+        <div class="pt-keys">
+          <span class="pt-key">assistant.persona</span>
+          <span class="pt-key">assistant.guardrails</span>
+          <span class="pt-key">assistant.fallback</span>
+        </div>
+      </div>
+
+      <div class="pt-card rv" style="transition-delay:.05s;border-color:rgba(0,230,118,.12);background:rgba(0,230,118,.015)">
+        <div class="pt-icon">◈</div>
+        <div class="pt-title">AI Agents &amp; Agent Networks</div>
+        <div class="pt-desc">Control the briefing, operating rules, and persona of every agent. Edit any agent's instructions from the dashboard — no code change, no restart, no hunting through config files. Works with OpenClaw, LangChain, AutoGen, or any orchestrator.</div>
+        <div class="pt-keys">
+          <span class="pt-key">agent.briefing</span>
+          <span class="pt-key">agent.rules</span>
+          <span class="pt-key">agent.persona</span>
+        </div>
+      </div>
+
+      <div class="pt-card rv" style="transition-delay:.1s">
+        <div class="pt-icon">✉</div>
+        <div class="pt-title">Email &amp; Outreach Writers</div>
+        <div class="pt-desc">Version-control the prompts behind your email sequences, cold outreach, and follow-ups. Propose, review, and approve before any change reaches a live send.</div>
+        <div class="pt-keys">
+          <span class="pt-key">email.composer</span>
+          <span class="pt-key">email.subject</span>
+          <span class="pt-key">outreach.cold</span>
+        </div>
+      </div>
+
+      <div class="pt-card rv" style="transition-delay:.07s">
+        <div class="pt-icon">◧</div>
+        <div class="pt-title">Classifiers &amp; Routing Logic</div>
+        <div class="pt-desc">Update classification rules and intent routing without a code change. Full diff review before any rule change touches live traffic.</div>
+        <div class="pt-keys">
+          <span class="pt-key">classifier.rules</span>
+          <span class="pt-key">router.intent</span>
+          <span class="pt-key">triage.priority</span>
+        </div>
+      </div>
+
+      <div class="pt-card rv" style="transition-delay:.12s">
+        <div class="pt-icon">✍</div>
+        <div class="pt-title">Content &amp; Writing Pipelines</div>
+        <div class="pt-desc">Manage tone, format, and style rules for every content workflow. Marketing proposes, engineer approves — no more "can you just fix the prompt" Slack messages.</div>
+        <div class="pt-keys">
+          <span class="pt-key">content.tone</span>
+          <span class="pt-key">content.format</span>
+          <span class="pt-key">newsletter.voice</span>
+        </div>
+      </div>
+
+      <div class="pt-card rv" style="transition-delay:.15s;border-color:rgba(0,230,118,.12);background:rgba(0,230,118,.015)">
+        <div class="pt-icon">⑂</div>
+        <div class="pt-title">Anything with a Hardcoded Prompt</div>
+        <div class="pt-desc">If a string in your code gets sent to a language model, it belongs under governance. Works with OpenAI, Anthropic, Gemini, Mistral — any API, any model, any team.</div>
+        <div class="pt-keys">
+          <span class="pt-key">any.key</span>
+          <span class="pt-key">any.model</span>
+          <span class="pt-key">any.team</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </section>
+
+  <!-- WHY THIS EXISTS -->
+  <section id="why-this-exists" aria-label="Problem Context and Origin Stories" style="position:relative;z-index:2">
+  <div class="wrap">
+    <div class="testi">
+      <div class="testih rv">
+        <div class="slabel">// ORIGIN · WHY THIS EXISTS</div>
+        <h2 class="stitle">Built because every team<br>shipping AI hits <span class="em si">this wall.</span></h2>
+      </div>
+      <div class="testig">
+        <div class="tc2 rv" style="border-color:rgba(128,222,234,.18)">
+          <div style="font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--cy);margin-bottom:14px">// PATTERN · CONTENT TEAMS</div>
+          <p class="tq">A marketer sees a tone problem in the AI's response. It's a 3-word fix. She files a ticket. It sits for 9 days. By the time the engineer ships it, the campaign is over and the moment has passed. <strong>The problem isn't engineers — it's the absence of a governance layer between them.</strong></p>
+          <div class="tau" style="margin-top:18px">
+            <div class="tav" style="background:rgba(128,222,234,.06);border-color:rgba(128,222,234,.2);color:var(--cy);font-size:16px">✍</div>
+            <div><div class="tn" style="color:var(--txt2)">Content &amp; Marketing Teams</div><div class="tr">Propose in plain text. No Git. No tickets. No waiting.</div></div>
+          </div>
+        </div>
+        <div class="tc2 rv" style="transition-delay:.09s;border-color:rgba(179,136,255,.18)">
+          <div style="font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--pu);margin-bottom:14px">// PATTERN · ENGINEERING TEAMS</div>
+          <p class="tq">An engineer gets a Slack message: "can you change the wording on the support bot?" Twenty minutes — PR, review, deploy. Multiply by three times a week, every week. <strong>That's 50+ engineering hours per year spent on word changes.</strong></p>
+          <div class="tau" style="margin-top:18px">
+            <div class="tav" style="background:rgba(179,136,255,.06);border-color:rgba(179,136,255,.2);color:var(--pu);font-size:16px">◈</div>
+            <div><div class="tn" style="color:var(--txt2)">Engineering Teams</div><div class="tr">Review a diff. Click approve. Back to real work.</div></div>
+          </div>
+        </div>
+        <div class="tc2 rv" style="transition-delay:.13s;border-color:rgba(255,204,2,.18)">
+          <div style="font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--am);margin-bottom:14px">// PATTERN · AI AGENT SYSTEMS</div>
+          <p class="tq">You have 26 agents — each with a different briefing, persona, and operating rules. They're running on OpenClaw, LangChain, or raw API calls. Changing one agent's instructions means finding the hardcoded string, editing it, restarting the process. <strong>PromptMatrix puts every agent's instructions in one governed registry. Edit any of them from a dashboard. No code. No restart. No hunting through files.</strong></p>
+          <div class="tau" style="margin-top:18px">
+            <div class="tav" style="background:rgba(255,204,2,.06);border-color:rgba(255,204,2,.2);color:var(--am);font-size:16px">⚡</div>
+            <div><div class="tn" style="color:var(--txt2)">Agent System Builders</div><div class="tr">OpenClaw · LangChain · AutoGen · raw API · any orchestrator.</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  </section>
 
   <!-- LIVE DASHBOARD PREVIEW -->
   <section class="dash-preview" id="dashboard" aria-label="Interactive Product Dashboard Preview">
@@ -1784,7 +2207,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <div class="faqlist rv" style="transition-delay:.1s">
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">Does fetching the prompt add latency to every LLM call? <span class="faqico">+</span></button>
-        <div class="faqa"><p>A bare serve call adds roughly 10–15ms. In practice, you cache locally with a 30-second TTL — the overhead rounds to zero for the vast majority of requests. The SDK handles this automatically. You also keep a hardcoded fallback so your app stays live if the endpoint is unreachable. See the <a href="https://github.com/PromptMatrix/promptmatrix.github.io#readme" target="_blank" rel="noopener" style="color:var(--g2);text-decoration:underline">GitHub README</a> for the exact caching pattern.</p></div>
+        <div class="faqa"><p>A bare serve call adds roughly 10–15ms. In practice, you cache locally with a 30-second TTL — the overhead rounds to zero for the vast majority of requests. The SDK handles this automatically. You also keep a hardcoded fallback so your app stays live if the endpoint is unreachable. The Integration section shows the exact caching pattern.</p></div>
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">Can I run it entirely locally with no server? <span class="faqico">+</span></button>
@@ -1797,6 +2220,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">Why not use environment variables or a database config table? <span class="faqico">+</span></button>
         <div class="faqa"><p>Env vars still require a deploy to change — that's the exact problem this solves. A Postgres config table is structurally closer, but it has no approval gate, no diff view, no audit log, and no interface that a non-engineer can use safely. PromptMatrix is purpose-built for prompt text governance: it understands what a "before" and "after" look like, renders a human-readable diff, and routes every change through a review decision. The storage is the least interesting part. The governance layer is the product.</p></div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">Which LLM providers does this work with? <span class="faqico">+</span></button>
+        <div class="faqa"><p>All of them. PromptMatrix stores and serves text — it has no opinion about which model receives it. Fetch the prompt string, pass it to any LLM API you use, done. Works with OpenAI, Anthropic Claude, Google Gemini, Mistral, Llama via any provider, and anything else with a chat completion interface.</p></div>
       </div>
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">How is this different from keeping prompts in a GitHub repo? <span class="faqico">+</span></button>
@@ -1813,6 +2240,14 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <div class="faqitem">
         <button class="faqq" onclick="toggleFaq(this)">What exactly does the audit trail record? <span class="faqico">+</span></button>
         <div class="faqa"><p>Every event is logged and immutable: who proposed the change, the previous content, the new content, who approved or rejected, and the exact timestamp for each action. Exportable as CSV or queryable via API. For enterprise customers, this is often a hard requirement before AI-powered features can be deployed to end users — "git blame on a string" doesn't pass legal or compliance review.</p></div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">What if no engineer is available to review? <span class="faqico">+</span></button>
+        <div class="faqa"><p>Multiple engineers can be designated as approvers for any prompt. Any one of them can approve a pending change. The pending change queues until reviewed — it never auto-approves, which is the entire point of the system. Slack integration for pending approvals is on the cloud roadmap.</p></div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">Can I use the self-hosted version for production? <span class="faqico">+</span></button>
+        <div class="faqa"><p>The self-hosted version gives you the full governance system with unlimited prompts — the complete approval workflow, serve endpoint, version history, and audit trail. It's not a limited demo. Run it on your own infrastructure and wire it into a real application. Full data sovereignty, zero telemetry, and 100% open source.</p></div>
       </div>
     </div>
   </div>
@@ -2168,6 +2603,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 </section>
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
+  </section>
 </main>
 
 
