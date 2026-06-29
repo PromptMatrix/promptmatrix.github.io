@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "promptmatrix"
+version = "0.2.1"
+description = "Enterprise-grade prompt governance infrastructure for AI applications."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "PromptMatrix", email = "hello@promptmatrix.ai"}
+]
+keywords = ["prompt-engineering", "llm", "governance", "cicd", "ai"]
+dependencies = [
+    "fastapi>=0.135.0",
+    "uvicorn[standard]>=0.32.0",
+    "sqlalchemy==2.0.36",
+    "alembic==1.14.0",
+    "pydantic>=2.10.3",
+    "pydantic-settings>=2.6.1",
+    "python-multipart>=0.0.22",
+    "httpx>=0.28.0",
+    "PyJWT>=2.8.0",
+    "bcrypt==4.2.1",
+    "cryptography>=46.0.0"
+]
+
+[project.urls]
+Homepage = "https://promptmatrix.github.io"
+Repository = "https://github.com/PromptMatrix/promptmatrix.github.io"
+Documentation = "https://github.com/PromptMatrix/promptmatrix.github.io#readme"
+Bug-Tracker = "https://github.com/PromptMatrix/promptmatrix.github.io/issues"
+
+[project.scripts]
+pmx = "pmx:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
