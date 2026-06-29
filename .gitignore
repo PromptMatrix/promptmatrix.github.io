@@ -74,5 +74,6 @@ graphify-out/
 *.crdownload
 Gemini_Generated_Image_*.png
 
-
+# ── Local dev utility scripts — contain absolute local paths ───────
+modify_pricing.py
 
