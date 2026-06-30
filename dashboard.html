@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PromptMatrix — Prompt Governance</title>
+<meta name="description" content="PromptMatrix Dashboard. Enterprise-grade prompt governance with version control, human review workflows, and instant production updates.">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://promptmatrixx.vercel.app;">
+<link rel="canonical" href="https://promptmatrix.github.io/dashboard.html">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -162,7 +166,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 /* ══ COMPONENTS ══ */
 .row{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .row-end{margin-left:auto;display:flex;gap:6px;align-items:center}
-.ph{font-size:13px;letter-spacing:.1em;color:var(--t2);font-weight:500}
+.ph{font-size:13px;letter-spacing:.1em;color:var(--t2);font-weight:500;margin:0}
 .ph span{color:var(--g)}
 .ps2{font-size:18px;color:var(--t3);margin-top:2px;letter-spacing:.04em}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -259,7 +263,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
 
 <!-- ══ BOOT LOADING ══ -->
 <div id="boot-loading">
-  <div class="boot-logo">PROMPT<em>MATRIX</em></div>
+  <h1 class="boot-logo">PROMPT<em>MATRIX</em></h1>
   <div class="spin"></div>
   <div class="boot-status" id="boot-status">CONNECTING...</div>
 </div>
@@ -319,7 +323,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
   <!-- SIDEBAR -->
   <div class="sb" id="sb">
     <div class="logo">
-      <div class="logo-mark" id="logo-text">PROMPT<em>MATRIX</em></div>
+      <h1 class="logo-mark" id="logo-text"><a href="index.html" style="color:inherit;text-decoration:none">PROMPT<em>MATRIX</em></a></h1>
       <button class="sb-tog" id="sb-tog" onclick="toggleSb()">‹</button>
     </div>
     <div class="nav">
@@ -378,7 +382,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <!-- ══ DASHBOARD ══ -->
       <div class="pane on" id="pane-dash">
         <div class="row">
-          <div><div class="ph">SYS: <span>DASHBOARD</span></div><div class="ps2" id="dash-org-line">loading workspace...</div></div>
+          <div><h2 class="ph">SYS: <span>DASHBOARD</span></h2><div class="ps2" id="dash-org-line">loading workspace...</div></div>
           <div class="row-end">
             <button class="btn bp bxs" onclick="loadDash()">↻ REFRESH</button>
           </div>
@@ -424,7 +428,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <!-- ══ PROMPTS REGISTRY ══ -->
       <div class="pane" id="pane-prompts">
         <div class="row">
-          <div><div class="ph">▦ <span>PROMPT_REGISTRY</span></div><div class="ps2">all prompts in this environment · click to open editor</div></div>
+          <div><h2 class="ph">▦ <span>PROMPT_REGISTRY</span></h2><div class="ps2">all prompts in this environment · click to open editor</div></div>
           <div class="row-end">
             <input id="preg-search" placeholder="search keys..." style="background:var(--bg3);border:1px solid var(--b2);color:var(--t);font-family:var(--f);font-size:13px;padding:4px 8px;outline:none;width:160px" oninput="filterRegistry(this.value)">
             <button class="btn bp bxs" onclick="openNewPromptModal()">+ NEW</button>
@@ -439,7 +443,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <!-- ══ EDITOR ══ -->
       <div class="pane" id="pane-editor">
         <div class="row">
-          <div><div class="ph">✦ <span>PROMPT_EDITOR</span></div><div class="ps2" id="editor-meta">select a prompt from Registry</div></div>
+          <div><h2 class="ph">✦ <span>PROMPT_EDITOR</span></h2><div class="ps2" id="editor-meta">select a prompt from Registry</div></div>
           <div class="row-end">
             <button class="btn bxs bg2b" onclick="pg('prompts')">← BACK</button>
             <button class="btn bxs" onclick="saveAsDraft()" id="btn-draft">SAVE DRAFT</button>
@@ -504,7 +508,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <!-- ══ APPROVALS ══ -->
       <div class="pane" id="pane-approvals">
         <div class="row">
-          <div><div class="ph">◉ <span>APPROVAL_QUEUE</span></div><div class="ps2">versions awaiting your review · engineer+ role required to approve</div></div>
+          <div><h2 class="ph">◉ <span>APPROVAL_QUEUE</span></h2><div class="ps2">versions awaiting your review · engineer+ role required to approve</div></div>
           <div class="row-end">
             <button class="btn bxs bg2b" onclick="loadApprovals()">↻ REFRESH</button>
           </div>
@@ -516,7 +520,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <!-- ══ EVALUATIONS ══ -->
       <div class="pane" id="pane-evals">
         <div class="row">
-          <div><div class="ph">◈ <span>EVALUATIONS</span></div><div class="ps2">LLM-as-judge · test your prompts before approving</div></div>
+          <div><h2 class="ph">◈ <span>EVALUATIONS</span></h2><div class="ps2">LLM-as-judge · test your prompts before approving</div></div>
         </div>
         <div class="g2" style="align-items:start">
           <div class="card">
@@ -572,7 +576,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <!-- ══ HISTORY ══ -->
       <div class="pane" id="pane-versions">
         <div class="row">
-          <div><div class="ph">⑂ <span>VERSION_HISTORY</span></div><div class="ps2">complete audit trail · every version ever proposed</div></div>
+          <div><h2 class="ph">⑂ <span>VERSION_HISTORY</span></h2><div class="ps2">complete audit trail · every version ever proposed</div></div>
         </div>
         <div class="card">
           <div class="fg">
@@ -588,7 +592,7 @@ canvas#rain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.018}
       <!-- ══ API KEYS ══ -->
       <div class="pane" id="pane-keys">
         <div class="row">
-          <div><div class="ph">⌘ <span>API_KEYS</span></div><div class="ps2">serve keys for your agents · each key tied to one environment</div></div>
+          <div><h2 class="ph">⌘ <span>API_KEYS</span></h2><div class="ps2">serve keys for your agents · each key tied to one environment</div></div>
           <div class="row-end">
             <button class="btn bp bxs" onclick="openCreateKeyModal()">+ CREATE KEY</button>
           </div>
@@ -611,7 +615,7 @@ system_prompt = r.text  <span class="cm"># returns the approved content</span></
       <!-- ══ ENVIRONMENTS ══ -->
       <div class="pane" id="pane-environments">
         <div class="row">
-          <div><div class="ph">◌ <span>ENVIRONMENTS</span></div><div class="ps2">dev → staging → production · each environment has its own prompts and keys</div></div>
+          <div><h2 class="ph">◌ <span>ENVIRONMENTS</span></h2><div class="ps2">dev → staging → production · each environment has its own prompts and keys</div></div>
         </div>
         <div class="vl" id="env-list"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
       </div>
@@ -619,7 +623,7 @@ system_prompt = r.text  <span class="cm"># returns the approved content</span></
       <!-- ══ AUDIT LOG ══ -->
       <div class="pane" id="pane-audit">
         <div class="row">
-          <div><div class="ph">≡ <span>AUDIT_LOG</span></div><div class="ps2">every action · append-only · who did what and when</div></div>
+          <div><h2 class="ph">≡ <span>AUDIT_LOG</span></h2><div class="ps2">every action · append-only · who did what and when</div></div>
           <div class="row-end">
             <select id="audit-filter" onchange="loadAudit()" style="background:var(--bg3);border:1px solid var(--b2);color:var(--t2);font-family:var(--f);font-size:15px;padding:3px 6px;outline:none">
               <option value="">ALL ACTIONS</option>
@@ -636,7 +640,7 @@ system_prompt = r.text  <span class="cm"># returns the approved content</span></
       <!-- ══ INTEGRATIONS ══ -->
       <div class="pane" id="pane-integrate">
         <div class="row">
-          <div><div class="ph">⊕ <span>INTEGRATIONS</span></div><div class="ps2">connect your agents · copy integration code</div></div>
+          <div><h2 class="ph">⊕ <span>INTEGRATIONS</span></h2><div class="ps2">connect your agents · copy integration code</div></div>
         </div>
         <div class="g2">
           <div class="card">
@@ -706,7 +710,7 @@ curl <span class="st">"...?vars=tone=formal,name=Alex"</span> \
       <!-- ══ SETTINGS ══ -->
       <div class="pane" id="pane-settings">
         <div class="row">
-          <div><div class="ph">⚙ <span>SETTINGS</span></div><div class="ps2">workspace · account · danger zone</div></div>
+          <div><h2 class="ph">⚙ <span>SETTINGS</span></h2><div class="ps2">workspace · account · danger zone</div></div>
         </div>
         <div class="g2" style="align-items:start">
           <div>
