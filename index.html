@@ -2192,11 +2192,12 @@ window.addEventListener('scroll',()=>{
 });
 
 /* ═══════════════════════ PRICING — LIVE SPOTS COUNTER ══════════════════ */
+// Cloud product public stats API (read-only, no private keys required)
+const CLOUD_API_BASE  = 'https://promptmatrixx.vercel.app';
+// Registration URL for the cloud product (Founder CTA sends user here)
+const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
+
 (function(){
-  // Cloud product public stats API (read-only, no private keys required)
-  const CLOUD_API_BASE  = 'https://promptmatrixx.vercel.app';
-  // Registration URL for the cloud product (Founder CTA sends user here)
-  const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
   // NOTE: Checkout and billing endpoints belong exclusively to the cloud product
   // dashboard. The OSS landing page must NOT contain any reference to private API routes.
 
