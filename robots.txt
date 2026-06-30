@@ -1,3 +1,4 @@
+# Allow all search bots and AI citation crawlers (GPTBot, PerplexityBot, ClaudeBot, Google-Extended, etc.)
 User-agent: *
 Allow: /
 Disallow: /googleec4c2cd4a7aabc25.html
@@ -8,14 +9,6 @@ Disallow: /accept-invite.html
 # Sitemaps
 Sitemap: https://promptmatrix.github.io/sitemap.xml
 
-# Block training scrapers (not search indexers)
-User-agent: GPTBot
-Disallow: /
-User-agent: ChatGPT-User
-Disallow: /
+# Block Common Crawl training scraper only (not search/citation crawlers)
 User-agent: CCBot
-Disallow: /
-User-agent: anthropic-ai
-Disallow: /
-User-agent: Claude-Web
 Disallow: /

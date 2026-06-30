@@ -1,0 +1,45 @@
+# PromptMatrix
+
+> Open-source CI/CD pipeline prompt management and governance tool for AI teams. MIT licensed.
+
+PromptMatrix is a developer tool for managing, versioning, and governing LLM prompts inside CI/CD pipelines. Built by Matrix Labs. Free community edition available — self-host with Docker.
+
+## Product
+
+- [Landing page](https://promptmatrix.github.io/)
+- [Privacy Policy](https://promptmatrix.github.io/privacy.html)
+- [Terms of Service](https://promptmatrix.github.io/terms.html)
+- [GitHub Repository](https://github.com/PromptMatrix/Promptmatrix)
+- [Matrix Labs Agency](https://matrixlabs.agency/promptmatrix.html)
+
+## Key Features
+
+- **Prompt Version Control**: Git-style versioning for every LLM prompt. Full audit trail.
+- **CI/CD Integration**: Integrate prompt governance directly into your deployment pipeline.
+- **Human Review Workflows**: Require approval before prompts reach production.
+- **LLM-as-Judge Evals**: Automated quality gates using LLM evaluation before merge.
+- **Sub-10ms Serving**: Production-grade prompt API serving with AES-256-GCM encryption.
+- **Zero-redeploy Updates**: Update prompts live without touching your codebase.
+
+## Pricing
+
+- **Community Edition**: Free, MIT licensed, unlimited local prompts, self-hosted.
+- **Starter**: $29/mo — 100 prompts, 3 seats, 60 RPM. Managed cloud.
+- **Pro**: $79/mo — 400 prompts, 5 seats, 200 RPM. LLM evals.
+- **Scale**: $199/mo — 1,000 prompts, 10 seats, 500 RPM.
+- **Founder**: $499 lifetime — 500 prompts, 5 seats, 100 RPM. Hardcapped at 100 orgs.
+- **Enterprise**: Custom — 5,000+ prompts, SSO, dedicated infra, SLA.
+
+## Built By
+
+Matrix Labs — AI Marketing and Automation Agency, Assam, India.
+Founder: Jachin Saikia Sonowal
+- Twitter/X: https://x.com/jachinsonowal
+- LinkedIn: https://linkedin.com/in/jachinsaikiasonowal
+- Agency: https://matrixlabs.agency
+
+## License
+
+MIT License — https://opensource.org/licenses/MIT
+
+Last updated: 2026-07-01
