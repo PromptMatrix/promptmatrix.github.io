@@ -2003,7 +2003,54 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 
 </div>
 </section>
-<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- FAQ -->
+<section class="faq" id="faq" aria-label="Frequently Asked Questions">
+  <div class="faq-in">
+    <div class="faqh rv">
+      <div class="slabel">// FAQ_SECTION</div>
+      <h2 class="stitle">Frequently Asked Questions.<br><span class="si em">Got answers.</span></h2>
+      <a class="faqlink" href="https://github.com/PromptMatrix/Promptmatrix" target="_blank" rel="noopener">VIEW DOCUMENTATION <span>→</span></a>
+    </div>
+    <div class="faqlist rv" style="transition-delay:.1s">
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">
+          <span>What is an Agent Behavior Registry?</span>
+          <span class="faqico">+</span>
+        </button>
+        <div class="faqa">
+          <p>An Agent Behavior Registry is a centralized, version-controlled repository for managing prompts, personas, and tool schemas outside of your codebase. PromptMatrix serves these configurations dynamically to your agents at runtime, preventing configuration drift.</p>
+        </div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">
+          <span>How does PromptMatrix hot-patch running agents?</span>
+          <span class="faqico">+</span>
+        </button>
+        <div class="faqa">
+          <p>By pulling configurations via the &lt;5ms PromptMatrix serve endpoint instead of hardcoding them, agents fetch their prompt behavior at each task invocation. Changing a prompt in PromptMatrix immediately updates all subsequent agent cycles without restarting the swarm.</p>
+        </div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">
+          <span>Which multi-agent frameworks are supported?</span>
+          <span class="faqico">+</span>
+        </button>
+        <div class="faqa">
+          <p>PromptMatrix is framework-agnostic. It works out-of-the-box with any LLM orchestrator or swarm system, including OpenClaw, LangGraph, and CrewAI.</p>
+        </div>
+      </div>
+      <div class="faqitem">
+        <button class="faqq" onclick="toggleFaq(this)">
+          <span>Is PromptMatrix self-hostable?</span>
+          <span class="faqico">+</span>
+        </button>
+        <div class="faqa">
+          <p>Yes. The Community Edition is 100% open-source and MIT-licensed. You can run it locally or deploy it to your own server using Docker with SQLite, Postgres, or MySQL.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
   </section>
 </main>
