@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PromptMatrix — CI/CD Pipeline Prompt Management Tool</title>
+<title>PromptMatrix — Agent Behavior Registry & Control Plane for AI Swarms</title>
 <meta name="google-site-verification" content="jYZbGxl_GvzTXCqdhH2xtbWnzWudc3zGZ08VbTgurzo" />
 <meta name="google-site-verification" content="googleac4c2cd4a7aabc25" />
-<meta name="description" content="Manage and govern LLM prompts inside your CI/CD pipeline. Version control, human review workflows, and instant production updates without redeploying.">
+<meta name="description" content="The control plane and behavior registry for multi-agent AI swarms. Govern agent personas, tool schemas, and runtime behavior for LangGraph, CrewAI, and OpenClaw — version, approve, and hot-patch without redeployment.">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <meta name="author" content="Jachin Saikia Sonowal">
 <meta http-equiv="content-language" content="en">
@@ -20,21 +20,21 @@
   <meta name="apple-mobile-web-app-title" content="PromptMatrix" />
   <link rel="manifest" href="site.webmanifest" />
 <link rel="canonical" href="https://promptmatrix.github.io/">
-<meta property="og:title" content="PromptMatrix — CI/CD Pipeline Prompt Management Tool">
-<meta property="og:description" content="The ultimate CI/CD pipeline prompt management tool for AI teams. Ensure enterprise-grade prompt governance with version control, approval workflows, and a fast serve endpoint.">
+<meta property="og:title" content="PromptMatrix — Agent Behavior Registry & Control Plane">
+<meta property="og:description" content="Runtime behavior governance for AI agent swarms. Register personas, version tool schemas, approve changes, and hot-patch running LangGraph, CrewAI, or OpenClaw agents — without redeployment.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://promptmatrix.github.io/">
-<meta name="keywords" content="prompt engineering, prompt management, CI/CD, AI governance, LLM orchestration, version control, audit trail, enterprise AI">
+<meta name="keywords" content="multi-agent AI, agent control plane, agent behavior registry, LangGraph prompts, CrewAI governance, OpenClaw, prompt management, AI governance, LLM orchestration, version control, audit trail, agent persona registry, agent swarm, prompt engineering, multi-agent governance">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@jachinsonowal">
 <meta name="twitter:creator" content="@jachinsonowal">
-<meta name="twitter:title" content="PromptMatrix — CI/CD Pipeline Prompt Management Tool">
-<meta name="twitter:description" content="Integrate prompt governance directly into your CI/CD pipeline. Version control, approval workflows, and instant production updates for LLM prompts.">
+<meta name="twitter:title" content="PromptMatrix — Agent Behavior Registry & Control Plane">
+<meta name="twitter:description" content="Runtime governance for agent swarms. Hot-patch LangGraph, CrewAI, and OpenClaw agent personas without restarting. Version control, approval gates, &lt;5ms serving.">
 <meta name="twitter:image" content="https://promptmatrix.github.io/PromptMatrix.webp">
 <meta property="og:image" content="https://promptmatrix.github.io/PromptMatrix.webp">
 <meta property="og:image:width" content="1280">
 <meta property="og:image:height" content="720">
-<meta property="og:image:alt" content="PromptMatrix — CI/CD Pipeline Prompt Management Tool for AI Teams">
+<meta property="og:image:alt" content="PromptMatrix — Agent Behavior Registry & Control Plane for AI Swarms">
 <meta property="og:locale" content="en_US">
 <meta name="theme-color" content="#000301">
 <link rel="manifest" href="/manifest.json">
@@ -60,7 +60,7 @@
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "PromptMatrix",
-  "description": "Enterprise-grade CI/CD pipeline prompt management tool. Govern LLM prompts with version control, auditable workflows, and instant production updates.",
+  "description": "Runtime behavior registry and control plane for multi-agent AI swarms. Govern agent personas, tool schemas, and prompt versions for LangGraph, CrewAI, and OpenClaw orchestrators. Version, approve, and hot-patch agent behavior without redeployment.",
   "url": "https://promptmatrix.github.io/",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Web, Linux, macOS, Windows",
@@ -142,13 +142,21 @@
     "https://matrixlabs.agency/promptmatrix.html"
   ],
   "knowsAbout": [
+    "multi-agent AI systems",
+    "agent persona governance",
+    "LLM agent orchestration",
+    "agent swarm control plane",
+    "agent behavior registry",
+    "CrewAI",
+    "LangGraph",
+    "OpenClaw",
     "prompt engineering",
     "LLM orchestration",
     "prompt governance",
-    "CI/CD pipelines",
     "AI engineering",
     "version control",
-    "LLM evaluation"
+    "LLM evaluation",
+    "tool schema versioning"
   ]
 }
 </script>
@@ -927,7 +935,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <span class="nlt">PromptMatrix</span>
     <span class="nbeta">BETA</span>
   </a>
-  <div class="ntick"><span class="npip"></span>PROMPT GOVERNANCE · LOCAL FIRST · OPEN SOURCE · MIT</div>
+  <div class="ntick"><span class="npip"></span>AGENT CONTROL PLANE · BEHAVIOR REGISTRY · OPEN SOURCE · MIT</div>
   <div class="nlinks">
     <a class="nl" href="#problem">PROBLEM</a>
     <a class="nl" href="#how-it-works">PROTOCOL</a>
@@ -962,17 +970,17 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
   <div class="hl">
     <div class="hkick">
       <span class="hk-line"></span>
-      <span class="hk-tag"><span class="hk-dot"></span>PROMPT GOVERNANCE INFRASTRUCTURE · BETA</span>
+      <span class="hk-tag"><span class="hk-dot"></span>AGENT BEHAVIOR REGISTRY · CONTROL PLANE · BETA</span>
     </div>
 
     <div class="h1-wrap">
-      <h1>THE CI/CD PIPELINE<br><span class="serif-em">PROMPT MANAGEMENT</span><br>TOOL.</h1>
+      <h1>THE CONTROL PLANE<br><span class="serif-em">FOR AGENT SWARMS.</span></h1>
     </div>
 
-    <div class="h1-sub">// propose → version → approve → serve · ci/cd native</div>
+    <div class="h1-sub">// register → version → approve → serve · LangGraph · CrewAI · OpenClaw</div>
 
     <p class="hdesc">
-      Hardcoded prompts scattered across agent configs, codebases, and .env files are a liability. <strong>PromptMatrix is the ultimate CI/CD pipeline prompt management tool</strong> — pulling every prompt into a single governed layer. Review, version, and instantly update production prompts via API without triggering a full deployment.
+      Agent prompts aren’t copy — they’re <strong>Behavioral Specifications</strong>. When a Researcher drifts, a Writer stalls, or a tool schema breaks a swarm, you need a <strong>control plane, not a text editor</strong>. PromptMatrix is the runtime behavior registry for OpenClaw, LangGraph, and CrewAI. Hot-patch any agent persona. Zero swarm restart. Zero redeploy.
     </p>
 
     <div class="hroles">
@@ -1023,10 +1031,10 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     </div>
 
     <div class="hstats">
-      <div class="hst"><span class="hst-v">0</span><span class="hst-k">DEPLOYS PER CHANGE</span></div>
-      <div class="hst"><span class="hst-v">3</span><span class="hst-k">STORAGE TIERS</span></div>
+      <div class="hst"><span class="hst-v">&lt;5ms</span><span class="hst-k">CACHE HIT</span></div>
+      <div class="hst"><span class="hst-v">&lt;30ms</span><span class="hst-k">CACHE MISS</span></div>
       <div class="hst"><span class="hst-v">MIT</span><span class="hst-k">OPEN SOURCE</span></div>
-      <div class="hst"><span class="hst-v">∞</span><span class="hst-k">PROMPTS · AGENTS</span></div>
+      <div class="hst"><span class="hst-v">∞</span><span class="hst-k">AGENTS</span></div>
     </div>
   </div>
 
@@ -1120,6 +1128,11 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <div class="mqi"><span class="dot">◆</span>EVAL SCORING</div>
     <div class="mqi"><span class="dot">◆</span>COMPLIANCE AUDIT LOG</div>
     <div class="mqi"><span class="dot">◆</span>ENTERPRISE READY</div>
+    <div class="mqi"><span class="dot">◆</span>AGENT PERSONA REGISTRY</div>
+    <div class="mqi"><span class="dot">◆</span>SWARM CONTROL PLANE</div>
+    <div class="mqi"><span class="dot">◆</span>TOOL SCHEMA GOVERNANCE</div>
+    <div class="mqi"><span class="dot">◆</span>PERSONA DRIFT PREVENTION</div>
+    <div class="mqi"><span class="dot">◆</span>MULTI-AGENT GOVERNANCE</div>
     <div class="mqi"><span class="dot">◆</span>PROMPT GOVERNANCE</div>
     <div class="mqi"><span class="dot">◆</span>APPROVAL WORKFLOW</div>
     <div class="mqi"><span class="dot">◆</span>IMMUTABLE AUDIT TRAIL</div>
@@ -1132,6 +1145,11 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <div class="mqi"><span class="dot">◆</span>EVAL SCORING</div>
     <div class="mqi"><span class="dot">◆</span>COMPLIANCE AUDIT LOG</div>
     <div class="mqi"><span class="dot">◆</span>ENTERPRISE READY</div>
+    <div class="mqi"><span class="dot">◆</span>AGENT PERSONA REGISTRY</div>
+    <div class="mqi"><span class="dot">◆</span>SWARM CONTROL PLANE</div>
+    <div class="mqi"><span class="dot">◆</span>TOOL SCHEMA GOVERNANCE</div>
+    <div class="mqi"><span class="dot">◆</span>PERSONA DRIFT PREVENTION</div>
+    <div class="mqi"><span class="dot">◆</span>MULTI-AGENT GOVERNANCE</div>
   </div>
   </aside>
 
@@ -1180,6 +1198,19 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
           <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> All prompts in one governed registry</div>
           <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Complete history · 1-click rollback</div>
           <div style="font-family:var(--mono);font-size:9px;color:var(--g2);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Any LLM API · any framework</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(0,4,0,.9);border:1px solid rgba(255,204,2,.18);border-radius:8px;padding:24px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,204,2,.4),transparent)"></div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--am);margin-bottom:14px">// AGENT ORCHESTRATION LEAD</div>
+        <div style="font-size:24px;margin-bottom:10px">⟳</div>
+        <div style="font-size:15px;font-weight:700;color:var(--txt2);margin-bottom:8px;letter-spacing:-.01em">You own the swarm. Not the chaos.</div>
+        <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.75;margin-bottom:14px">Your swarm has 12 agents. Researcher drifts. Writer stalls. You hot-patch the persona in PromptMatrix and the next task cycle picks it up — no swarm restart, no downtime, no hunting which env file holds the broken string.</p>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--am);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Per-agent persona isolation</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--am);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Hot-patch any agent without restart</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--am);display:flex;align-items:center;gap:6px"><span style="color:var(--g3)">→</span> Tool schema versioning · &lt;5ms serve</div>
         </div>
       </div>
 
@@ -1258,6 +1289,72 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
   </div>
 </section>
 
+<!-- AGENT SWARM USE CASE -->
+<section id="agent-swarms" aria-label="Multi-Agent Swarm Use Case" style="position:relative;z-index:2;padding:80px 0;border-top:1px solid var(--b);background:rgba(0,5,0,.6)">
+  <div class="wrap">
+    <div class="rv" style="text-align:center;margin-bottom:44px">
+      <div class="slabel" style="text-align:center">// AGENT_SWARM_USE_CASE</div>
+      <h2 class="stitle" style="text-align:center">Built for agent swarms.<br><span class="em si">Not just prompt editors.</span></h2>
+      <p class="sbody" style="margin:12px auto 0;text-align:center;max-width:560px">In a multi-agent system, prompts are Behavioral Specifications. When a Researcher agent drifts, you need a control plane — not a git commit.</p>
+    </div>
+
+    <div class="rv" style="background:rgba(0,4,0,.95);border:1px solid var(--b2);border-radius:8px;padding:28px 32px;margin-bottom:32px;max-width:860px;margin-left:auto;margin-right:auto;font-family:var(--mono);overflow-x:auto">
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--g3);margin-bottom:16px">// RUNTIME_ARCHITECTURE</div>
+      <pre style="margin:0;font-family:var(--mono);font-size:11px;line-height:1.9;color:rgba(200,255,200,.4);white-space:pre">                    ┌─────────────────────────┐
+                    │  PromptMatrix Registry  │
+                    │  Persona · Tool Schema  │
+                    └────────────┬────────────┘
+                                 │ &lt;5ms serve · hot-patchable
+                                 ▼
+    ┌────────────────────────────┴───────────────────────────┐
+    │    OpenClaw / LangGraph / CrewAI Orchestrator          │
+    │                                                        │
+    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │
+    │  │ Researcher  │─▶│   Writer    │─▶│  Reviewer   │   │
+    │  │ pm.serve()  │  │ pm.serve()  │  │ pm.serve()  │   │
+    │  └─────────────┘  └─────────────┘  └─────────────┘   │
+    └────────────────────────────────────────────────────────┘</pre>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px" class="rv">
+
+      <div style="background:rgba(0,4,0,.85);border:1px solid var(--b2);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(128,222,234,.4),transparent)"></div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--cy);margin-bottom:10px">// LANGGRAPH</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px">Stateful agent graphs</div>
+        <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:12px">Pull node system prompts and tool schemas from PromptMatrix at each graph invocation. Change behavior in the registry — the next graph run picks it up.</p>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--cy)">→ pm.serve("node.researcher")</div>
+      </div>
+
+      <div style="background:rgba(0,4,0,.85);border:1px solid var(--b2);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(179,136,255,.4),transparent)"></div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--pu);margin-bottom:10px">// CREWAI</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px">Role-based agent crews</div>
+        <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:12px">Store each Agent's backstory and system prompt in PromptMatrix. Hot-patch a drifting crew member without restarting the entire crew task.</p>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--pu)">→ pm.serve("crew.senior_analyst")</div>
+      </div>
+
+      <div style="background:rgba(0,4,0,.85);border:1px solid rgba(0,230,118,.16);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,230,118,.3),transparent)"></div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--g2);margin-bottom:10px">// OPENCLAW</div>
+        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px">OpenClaw swarm orchestration</div>
+        <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:12px">PromptMatrix was built alongside OpenClaw. Register agent personas and tool schemas. The approval gate ensures only verified behavior reaches the swarm.</p>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--g2)">→ pm.serve("swarm.coordinator")</div>
+      </div>
+
+    </div>
+
+    <div class="rv" style="margin-top:20px;border:1px solid var(--b2);border-radius:5px;padding:14px 20px;background:rgba(0,4,0,.7);display:flex;align-items:center;gap:16px;max-width:680px;margin-left:auto;margin-right:auto">
+      <div style="font-family:var(--mono);font-size:28px;color:var(--g);text-shadow:0 0 20px rgba(0,230,118,.5);flex-shrink:0">&lt;5ms</div>
+      <div>
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.16em;color:var(--g3);margin-bottom:4px">// SERVE LATENCY · CACHE HIT</div>
+        <div style="font-size:12.5px;color:rgba(200,255,200,.5);line-height:1.65">PromptMatrix's L1/L2 cache serves agent personas in under 5ms on cache hit, under 30ms on miss. Zero latency budget impact on your swarm's LLM call chain.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- PROBLEM -->
 <section id="problem" style="position:relative;z-index:2">
   <div class="wrap">
@@ -1310,6 +1407,13 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
           <div class="pc-b">Three to six hours per week. Senior engineers updating tone, adjusting copy, shipping work that anyone with product context could handle — if there were a safe, governed channel to do it through.</div>
           <span class="pc-cost">ENGINEERING WASTE: 150–300 HRS/YEAR</span>
         </div>
+        <div class="pc rv" style="transition-delay:.22s">
+          <div class="pc-n">// 07</div>
+          <div class="pc-ico">🤖</div>
+          <div class="pc-t">Agent persona drift crashes your swarm mid-run.</div>
+          <div class="pc-b">One bad prompt update. The Researcher agent starts hallucinating. The Writer agent stalls waiting for structured output that never comes. You restart the whole swarm to hotfix one persona buried in an env file.</div>
+          <span class="pc-cost">SWARM RECOVERY: MANUAL RESTART REQUIRED</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1332,6 +1436,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
           <div class="ci"><div class="ci-s b">✗</div><span>A prompt change slips through a large PR unreviewed. Quality drops. Support tickets surface it three days later.</span></div>
           <div class="ci"><div class="ci-s b">✗</div><span>Compliance requests the AI's change history. You produce a Git log. The deal stalls.</span></div>
           <div class="ci"><div class="ci-s b">✗</div><span>The people who understand users best have zero influence over how the AI behaves.</span></div>
+          <div class="ci"><div class="ci-s b">✗</div><span>Agent persona drifts mid-swarm. You can't isolate which env file holds the broken string. You restart everything.</span></div>
         </div>
         <div class="cc cc-yes rv" style="transition-delay:.1s">
           <div class="cc-lbl"><span>✓</span> WITH PROMPTMATRIX</div>
@@ -1341,6 +1446,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
           <div class="ci"><div class="ci-s g">✓</div><span>Every change is reviewed before it reaches production. Bad version? 1-click rollback in under 10 seconds.</span></div>
           <div class="ci"><div class="ci-s g">✓</div><span>Full immutable log: who changed what, when, previous content, who approved. Export-ready. Enterprise-grade.</span></div>
           <div class="ci"><div class="ci-s g">✓</div><span>Non-engineers contribute directly to AI behavior. Engineers maintain the gate. Everyone moves faster.</span></div>
+          <div class="ci"><div class="ci-s g">✓</div><span>Agent persona drifts in a running swarm? Hot-patch in PromptMatrix. Next task cycle picks it up — no restart.</span></div>
         </div>
       </div>
     </div>

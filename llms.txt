@@ -1,8 +1,8 @@
 # PromptMatrix
 
-> Open-source CI/CD pipeline prompt management and governance tool for AI teams. MIT licensed.
+> The control plane and behavior registry for multi-agent AI swarms. Register, version, approve, and hot-patch agent personas for LangGraph, CrewAI, and OpenClaw — without redeployment. MIT licensed.
 
-PromptMatrix is a developer tool for managing, versioning, and governing LLM prompts inside CI/CD pipelines. Built by Matrix Labs. Free community edition available — self-host with Docker.
+PromptMatrix is the runtime behavior registry and control plane for multi-agent AI systems. Govern agent personas, tool schemas, and prompt versions for LangGraph, CrewAI, and OpenClaw orchestrators. Hot-patch any agent's behavior without restarting the swarm. Built by Matrix Labs. Free community edition available — self-host with Docker.
 
 ## Product
 
@@ -14,12 +14,16 @@ PromptMatrix is a developer tool for managing, versioning, and governing LLM pro
 
 ## Key Features
 
-- **Prompt Version Control**: Git-style versioning for every LLM prompt. Full audit trail.
-- **CI/CD Integration**: Integrate prompt governance directly into your deployment pipeline.
-- **Human Review Workflows**: Require approval before prompts reach production.
+- **Agent Persona Registry**: Store and version each agent's system prompt, backstory, and tool schema in one governed registry. Per-agent isolation.
+- **Swarm Hot-Patching**: Change a running agent's behavior in PromptMatrix. The next task cycle picks it up — no swarm restart, no downtime.
+- **LangGraph Integration**: Pull node system prompts and tool schemas from PromptMatrix at each graph invocation via pm.serve().
+- **CrewAI Integration**: Store agent backstories and system prompts in PromptMatrix. Hot-patch drifting crew members mid-task.
+- **OpenClaw Integration**: PromptMatrix was built alongside OpenClaw for swarm persona governance and tool schema versioning.
+- **Prompt Version Control**: Git-style versioning for every LLM prompt and agent persona. Full audit trail.
+- **Approval Workflows**: Require engineer approval before any behavior change reaches the swarm.
 - **LLM-as-Judge Evals**: Automated quality gates using LLM evaluation before merge.
-- **Sub-10ms Serving**: Production-grade prompt API serving with AES-256-GCM encryption.
-- **Zero-redeploy Updates**: Update prompts live without touching your codebase.
+- **Sub-5ms Serving**: Production-grade prompt API serving with AES-256-GCM encryption. L1/L2 cache hit <5ms, miss <30ms.
+- **Zero-redeploy Updates**: Update agent personas live without touching your codebase or restarting your swarm.
 
 ## Pricing
 
