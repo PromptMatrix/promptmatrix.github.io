@@ -2382,6 +2382,7 @@ const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
 (function(){
   // NOTE: Checkout and billing endpoints belong exclusively to the cloud product
   // dashboard. The OSS landing page must NOT contain any reference to private API routes.
+  window._pmxCheckoutReady = false;
 
   function updateSpots(data){
     if(!data || !data.founder) return;
