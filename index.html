@@ -626,6 +626,23 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 .pt-keys{display:flex;flex-wrap:wrap;gap:4px}
 .pt-key{font-family:var(--mono);font-size:8px;color:var(--am);background:rgba(255,204,2,.04);border:1px solid rgba(255,204,2,.14);padding:2px 8px;border-radius:2px;letter-spacing:.05em}
 
+.persona-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:0}
+.swarm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.storage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:44px}
+@media(min-width:992px){.pc:nth-child(7){grid-column:span 3}.pc:nth-child(7) .pc-b,.pc:nth-child(7) .pc-t{max-width:720px}}
+@media(max-width:992px){
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .pc:nth-child(7){grid-column:span 2}
+  .storage-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+  .swarm-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .pc:nth-child(7){grid-column:span 1!important}
+  .storage-grid{grid-template-columns:1fr}
+}
+
 .dash-preview{position:relative;z-index:2;padding:100px 0 0}
 .dash-preview-inner{max-width:1180px;margin:0 auto;padding:0 48px}
 .dash-preview-head{margin-bottom:40px}
@@ -1158,9 +1175,9 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
   <div class="wrap">
     <div class="rv" style="text-align:center;margin-bottom:32px">
       <div class="slabel" style="text-align:center">// OPERATOR_PROFILES</div>
-      <h2 class="stitle" style="text-align:center;font-size:clamp(28px,3vw,40px)">Three roles. <span class="em si">One protocol.</span></h2>
+      <h2 class="stitle" style="text-align:center;font-size:clamp(28px,3vw,40px)">Four roles. <span class="em si">One protocol.</span></h2>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:0" class="rv persona-grid">
+    <div class="rv persona-grid">
 
       <div style="background:rgba(0,5,0,.9);border:1px solid rgba(128,222,234,.18);border-radius:8px;padding:24px;position:relative;overflow:hidden">
         <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(128,222,234,.4),transparent)"></div>
@@ -1227,7 +1244,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <p class="sbody" style="margin:12px auto 0;text-align:center;max-width:520px">No forced cloud. No vendor lock-in. Start in your browser today. Move to SQLite when you're ready. Self-host when it's serious. Cloud when your team needs it.</p>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:44px">
+    <div class="storage-grid">
 
       <!-- Tier 1: Browser -->
       <div class="rv" style="background:rgba(0,230,118,.03);border:1px solid rgba(0,230,118,.18);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
@@ -1316,7 +1333,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     └────────────────────────────────────────────────────────┘</pre>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:11px" class="rv">
+    <div class="rv swarm-grid">
 
       <div style="background:rgba(0,4,0,.85);border:1px solid var(--b2);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
         <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(128,222,234,.4),transparent)"></div>
