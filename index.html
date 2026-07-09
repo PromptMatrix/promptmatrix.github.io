@@ -1755,7 +1755,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(124,106,247,.5);margin-bottom:14px">// PLAN_01 &middot; STARTER</div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
         <div style="font-size:20px;font-weight:800;color:var(--txt1);letter-spacing:-.02em">Starter</div>
-        <span style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;color:rgba(124,106,247,.9);border:1px solid rgba(124,106,247,.3);padding:2px 8px;border-radius:2px;background:rgba(124,106,247,.08)">WAITLIST</span>
+        <span style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;color:rgba(124,106,247,.9);border:1px solid rgba(124,106,247,.3);padding:2px 8px;border-radius:2px;background:rgba(124,106,247,.08)">LIVE NOW</span>
       </div>
       <div style="font-family:var(--mono);font-size:30px;font-weight:700;color:rgba(124,106,247,.85);line-height:1;margin-bottom:4px">$29<span style="font-size:12px;color:var(--txt4)">&nbsp;/month</span></div>
       <p style="font-size:11px;color:rgba(200,255,200,.32);line-height:1.72;margin-bottom:20px">Solo developers and small teams who need managed cloud prompt governance without ops overhead.</p>
@@ -1766,7 +1766,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
         <li style="font-size:11px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:7px"><span style="color:rgba(124,106,247,.8);font-size:9px">&#10003;</span> Approval workflow + audit log</li>
         <li style="font-size:11px;color:rgba(200,255,200,.22);display:flex;align-items:baseline;gap:7px"><span style="color:var(--txt4);font-size:9px">&#8211;</span> LLM-as-a-judge evals</li>
       </ul>
-      <button onclick="openWaitlistModal('starter')" style="display:block;width:100%;padding:12px;text-align:center;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:rgba(124,106,247,.95);border:1px solid rgba(124,106,247,.3);border-radius:5px;cursor:pointer;transition:all .18s;background:rgba(124,106,247,.07)" onmouseover="this.style.background='rgba(124,106,247,.15)';this.style.borderColor='rgba(124,106,247,.55)'" onmouseout="this.style.background='rgba(124,106,247,.07)';this.style.borderColor='rgba(124,106,247,.3)'">JOIN WAITLIST &#8594;</button>
+      <button onclick="claimTierSpot('starter')" style="display:block;width:100%;padding:12px;text-align:center;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:rgba(124,106,247,.95);border:1px solid rgba(124,106,247,.3);border-radius:5px;cursor:pointer;transition:all .18s;background:rgba(124,106,247,.07)" onmouseover="this.style.background='rgba(124,106,247,.15)';this.style.borderColor='rgba(124,106,247,.55)'" onmouseout="this.style.background='rgba(124,106,247,.07)';this.style.borderColor='rgba(124,106,247,.3)'">GET STARTED &#8594;</button>
     </div>
 
     <!-- FOUNDER — HERO (hardcapped 100 orgs, lifetime) -->
@@ -1810,7 +1810,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:rgba(0,200,255,.45);margin-bottom:14px">// PLAN_03 &middot; PRO</div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
         <div style="font-size:20px;font-weight:800;color:var(--txt1);letter-spacing:-.02em">Pro</div>
-        <span style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;color:rgba(0,200,255,.9);border:1px solid rgba(0,200,255,.28);padding:2px 8px;border-radius:2px;background:rgba(0,200,255,.07)">WAITLIST</span>
+        <span style="font-family:var(--mono);font-size:7px;letter-spacing:.12em;color:rgba(0,200,255,.9);border:1px solid rgba(0,200,255,.28);padding:2px 8px;border-radius:2px;background:rgba(0,200,255,.07)">LIVE NOW</span>
       </div>
       <div style="font-family:var(--mono);font-size:30px;font-weight:700;color:rgba(0,200,255,.85);line-height:1;margin-bottom:4px">$79<span style="font-size:12px;color:var(--txt4)">&nbsp;/month</span></div>
       <p style="font-size:11px;color:rgba(200,255,200,.32);line-height:1.72;margin-bottom:20px">Growing AI teams shipping multiple products who need multi-seat governance and LLM-powered quality gates.</p>
@@ -1821,7 +1821,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
         <li style="font-size:11px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:7px"><span style="color:rgba(0,200,255,.8);font-size:9px">&#10003;</span> LLM-as-a-judge evals</li>
         <li style="font-size:11px;color:rgba(200,255,200,.55);display:flex;align-items:baseline;gap:7px"><span style="color:rgba(0,200,255,.8);font-size:9px">&#10003;</span> Approval workflow + audit log</li>
       </ul>
-      <button onclick="openWaitlistModal('pro')" style="display:block;width:100%;padding:12px;text-align:center;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:rgba(0,200,255,.95);border:1px solid rgba(0,200,255,.3);border-radius:5px;cursor:pointer;transition:all .18s;background:rgba(0,200,255,.06)" onmouseover="this.style.background='rgba(0,200,255,.14)';this.style.borderColor='rgba(0,200,255,.55)'" onmouseout="this.style.background='rgba(0,200,255,.06)';this.style.borderColor='rgba(0,200,255,.3)'">JOIN WAITLIST &#8594;</button>
+      <button onclick="claimTierSpot('pro')" style="display:block;width:100%;padding:12px;text-align:center;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:rgba(0,200,255,.95);border:1px solid rgba(0,200,255,.3);border-radius:5px;cursor:pointer;transition:all .18s;background:rgba(0,200,255,.06)" onmouseover="this.style.background='rgba(0,200,255,.14)';this.style.borderColor='rgba(0,200,255,.55)'" onmouseout="this.style.background='rgba(0,200,255,.06)';this.style.borderColor='rgba(0,200,255,.3)'">GET STARTED &#8594;</button>
     </div>
 
   </div>
@@ -2422,6 +2422,22 @@ const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
     }
     // Normal flow: same-window redirect (popups blocked in async handlers)
     window.location.href = CLOUD_REGISTER;
+  };
+
+  window.claimTierSpot = function(tier){
+    if(window._pmxCheckoutReady === false){
+      const subjects = {
+        starter: 'Starter%20Tier%20%E2%80%94%20Get%20Started',
+        pro: 'Pro%20Tier%20%E2%80%94%20Get%20Started'
+      };
+      const bodies = {
+        starter: 'Hi%2C%20I%20want%20to%20subscribe%20to%20the%20Starter%20tier%20(%2429%2Fmo)%20for%20PromptMatrix.%0A%0AName%3A%0ACompany%3A',
+        pro: 'Hi%2C%20I%20want%20to%20subscribe%20to%20the%20Pro%20tier%20(%2479%2Fmo)%20for%20PromptMatrix.%0A%0AName%3A%0ACompany%3A'
+      };
+      window.location.href = 'mailto:jachinchsaikiasonowal@gmail.com?subject=' + (subjects[tier] || 'Get%20Started') + '&body=' + (bodies[tier] || '');
+      return;
+    }
+    window.location.href = CLOUD_REGISTER + '?tier=' + tier;
   };
 
   // fetch on load, then poll every 30s
