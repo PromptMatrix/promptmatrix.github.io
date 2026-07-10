@@ -629,17 +629,14 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
 .persona-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:0}
 .swarm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
 .storage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:44px}
-@media(min-width:992px){.pc:nth-child(7){grid-column:span 3}.pc:nth-child(7) .pc-b,.pc:nth-child(7) .pc-t{max-width:720px}}
 @media(max-width:992px){
   .pgrid{grid-template-columns:repeat(2,1fr)}
-  .pc:nth-child(7){grid-column:span 2}
   .storage-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:900px){
   .swarm-grid{grid-template-columns:1fr}
 }
 @media(max-width:768px){
-  .pc:nth-child(7){grid-column:span 1!important}
   .storage-grid{grid-template-columns:1fr}
 }
 
@@ -1315,50 +1312,13 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
       <p class="sbody" style="margin:12px auto 0;text-align:center;max-width:560px">In a multi-agent system, prompts are Behavioral Specifications. When a Researcher agent drifts, you need a control plane — not a git commit.</p>
     </div>
 
-    <div class="rv" style="background:rgba(0,4,0,.95);border:1px solid var(--b2);border-radius:8px;padding:28px 32px;margin-bottom:32px;max-width:860px;margin-left:auto;margin-right:auto;font-family:var(--mono);overflow-x:auto">
-      <div style="font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--g3);margin-bottom:16px">// RUNTIME_ARCHITECTURE</div>
-      <pre style="margin:0;font-family:var(--mono);font-size:11px;line-height:1.9;color:rgba(200,255,200,.4);white-space:pre">                    ┌─────────────────────────┐
-                    │  PromptMatrix Registry  │
-                    │  Persona · Tool Schema  │
-                    └────────────┬────────────┘
-                                 │ &lt;5ms serve · hot-patchable
-                                 ▼
-    ┌────────────────────────────┴───────────────────────────┐
-    │    OpenClaw / LangGraph / CrewAI Orchestrator          │
-    │                                                        │
-    │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐   │
-    │  │ Researcher  │─▶│   Writer    │─▶│  Reviewer   │   │
-    │  │ pm.serve()  │  │ pm.serve()  │  │ pm.serve()  │   │
-    │  └─────────────┘  └─────────────┘  └─────────────┘   │
-    └────────────────────────────────────────────────────────┘</pre>
-    </div>
-
-    <div class="rv swarm-grid">
-
-      <div style="background:rgba(0,4,0,.85);border:1px solid var(--b2);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(128,222,234,.4),transparent)"></div>
-        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--cy);margin-bottom:10px">// LANGGRAPH</div>
-        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px">Stateful agent graphs</div>
-        <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:12px">Pull node system prompts and tool schemas from PromptMatrix at each graph invocation. Change behavior in the registry — the next graph run picks it up.</p>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--cy)">→ pm.serve("node.researcher")</div>
-      </div>
-
-      <div style="background:rgba(0,4,0,.85);border:1px solid var(--b2);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(179,136,255,.4),transparent)"></div>
-        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--pu);margin-bottom:10px">// CREWAI</div>
-        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px">Role-based agent crews</div>
-        <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:12px">Store each Agent's backstory and system prompt in PromptMatrix. Hot-patch a drifting crew member without restarting the entire crew task.</p>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--pu)">→ pm.serve("crew.senior_analyst")</div>
-      </div>
-
-      <div style="background:rgba(0,4,0,.85);border:1px solid rgba(0,230,118,.16);border-radius:7px;padding:22px 20px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:0;inset-inline:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,230,118,.3),transparent)"></div>
-        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--g2);margin-bottom:10px">// OPENCLAW</div>
-        <div style="font-size:14px;font-weight:700;color:var(--txt2);margin-bottom:8px">OpenClaw swarm orchestration</div>
-        <p style="font-size:12px;color:rgba(200,255,200,.36);line-height:1.72;margin-bottom:12px">PromptMatrix was built alongside OpenClaw. Register agent personas and tool schemas. The approval gate ensures only verified behavior reaches the swarm.</p>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--g2)">→ pm.serve("swarm.coordinator")</div>
-      </div>
-
+    <!-- Framework integration badges -->
+    <div class="rv" style="display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin:24px auto 36px;max-width:720px">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--cy);background:rgba(128,222,234,.05);border:1px solid rgba(128,222,234,.2);padding:6px 14px;border-radius:4px;letter-spacing:.05em">LANGGRAPH</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--pu);background:rgba(179,136,255,.05);border:1px solid rgba(179,136,255,.2);padding:6px 14px;border-radius:4px;letter-spacing:.05em">CREWAI</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--am);background:rgba(255,204,2,.05);border:1px solid rgba(255,204,2,.2);padding:6px 14px;border-radius:4px;letter-spacing:.05em">AUTOGEN</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--bl);background:rgba(68,138,255,.05);border:1px solid rgba(68,138,255,.2);padding:6px 14px;border-radius:4px;letter-spacing:.05em">LLAMAINDEX</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--g);background:rgba(0,230,118,.05);border:1px solid rgba(0,230,118,.2);padding:6px 14px;border-radius:4px;letter-spacing:.05em">OPENCLAW</div>
     </div>
 
     <div class="rv" style="margin-top:20px;border:1px solid var(--b2);border-radius:5px;padding:14px 20px;background:rgba(0,4,0,.7);display:flex;align-items:center;gap:16px;max-width:680px;margin-left:auto;margin-right:auto">
@@ -1385,51 +1345,23 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
         <div class="pc rv">
           <div class="pc-n">// 01</div>
           <div class="pc-ico">🔒</div>
-          <div class="pc-t">Only engineers can change what your AI says.</div>
-          <div class="pc-b">Tone is wrong. Response needs tuning. Brand voice drifted. Every fix demands a PR, a review cycle, and a deploy. The people who actually understand your users have no path in.</div>
-          <span class="pc-cost">ITERATION SPEED: 2–6 DAYS PER CHANGE</span>
+          <div class="pc-t">The deploy bottleneck.</div>
+          <div class="pc-b">Prompts are hardcoded in source. Every minor adjustment — a typo fix, tone tweak, or fallback instruction tuning — demands a pull request, a code review, and a full application redeploy. Product and support teams are locked out.</div>
+          <span class="pc-cost">ITERATION LATENCY: 2–6 DAYS PER CHANGE</span>
         </div>
         <div class="pc rv" style="transition-delay:.06s">
           <div class="pc-n">// 02</div>
-          <div class="pc-ico">🎫</div>
-          <div class="pc-t">Non-technical people file tickets for word changes.</div>
-          <div class="pc-b">Someone notices a problem. They can't fix it. They file a ticket. It enters the backlog. By the time it ships, the context is stale and the person who raised it has moved on to the next fire.</div>
-          <span class="pc-cost">BACKLOG LATENCY: 5–14 DAYS</span>
+          <div class="pc-ico">👻</div>
+          <div class="pc-t">The drift crisis.</div>
+          <div class="pc-b">System instructions drift across git branches, Notion files, and Slack threads. With no version-controlled registry, product teams can't audit or verify what prompts are actually executing live in production.</div>
+          <span class="pc-cost">SINGLE SOURCE OF TRUTH: NONEXISTENT</span>
         </div>
         <div class="pc rv" style="transition-delay:.12s">
           <div class="pc-n">// 03</div>
-          <div class="pc-ico">👻</div>
-          <div class="pc-t">Nobody knows which prompt is actually running in production.</div>
-          <div class="pc-b">The "approved" version lives in a doc. The live version is different. There's a draft in Slack. An engineer made a hotfix. The doc, the code, and production are three different realities.</div>
-          <span class="pc-cost">SINGLE SOURCE OF TRUTH: ✗</span>
-        </div>
-        <div class="pc rv" style="transition-delay:.04s">
-          <div class="pc-n">// 04</div>
-          <div class="pc-ico">🚨</div>
-          <div class="pc-t">Prompt changes ship with zero visibility or gate.</div>
-          <div class="pc-b">A string in a large PR. It merges. It hits production. AI behavior shifts. No one caught it in review. There's no rollback plan because there was no change log. You find out from users.</div>
-          <span class="pc-cost">MEAN TIME TO DETECT: HOURS OR DAYS</span>
-        </div>
-        <div class="pc rv" style="transition-delay:.1s">
-          <div class="pc-n">// 05</div>
-          <div class="pc-ico">📋</div>
-          <div class="pc-t">Compliance can't audit what your AI said or when it changed.</div>
-          <div class="pc-b">Legal and enterprise customers need a change log: who edited this, when, what did it say before. Git blame on a hardcoded string is not an audit trail that passes review. It's a liability that surfaces in deals.</div>
-          <span class="pc-cost">AUDIT TRAIL: NONEXISTENT</span>
-        </div>
-        <div class="pc rv" style="transition-delay:.16s">
-          <div class="pc-n">// 06</div>
-          <div class="pc-ico">⏳</div>
-          <div class="pc-t">Engineering hours spent on non-engineering work.</div>
-          <div class="pc-b">Three to six hours per week. Senior engineers updating tone, adjusting copy, shipping work that anyone with product context could handle — if there were a safe, governed channel to do it through.</div>
-          <span class="pc-cost">ENGINEERING WASTE: 150–300 HRS/YEAR</span>
-        </div>
-        <div class="pc rv" style="transition-delay:.22s">
-          <div class="pc-n">// 07</div>
           <div class="pc-ico">🤖</div>
-          <div class="pc-t">Agent persona drift crashes your swarm mid-run.</div>
-          <div class="pc-b">One bad prompt update. The Researcher agent starts hallucinating. The Writer agent stalls waiting for structured output that never comes. You restart the whole swarm to hotfix one persona buried in an env file.</div>
-          <span class="pc-cost">SWARM RECOVERY: MANUAL RESTART REQUIRED</span>
+          <div class="pc-t">Swarm fragility.</div>
+          <div class="pc-b">In multi-agent systems, a single drifting agent persona starts hallucinating, stall-locking the entire task run. Hot-fixing requires redeploying environmental variables and restarting the running swarm.</div>
+          <span class="pc-cost">RECOVERY ACTION: MANUAL SWARM RESTART</span>
         </div>
       </div>
     </div>
@@ -1906,88 +1838,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <a href="https://github.com/PromptMatrix/Promptmatrix" target="_blank" rel="noopener" style="flex-shrink:0;padding:12px 22px;text-align:center;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--g);border:1px solid rgba(0,230,118,.28);border-radius:5px;text-decoration:none;transition:all .18s;background:rgba(0,230,118,.04);white-space:nowrap" onmouseover="this.style.background='rgba(0,230,118,.1)';this.style.borderColor='rgba(0,230,118,.5)'" onmouseout="this.style.background='rgba(0,230,118,.04)';this.style.borderColor='rgba(0,230,118,.28)'">&#9733; CLONE ON GITHUB &#8594;</a>
   </div>
 
-  <!-- FEATURE COMPARISON TABLE (7 columns: OSS + 5 tiers) -->
-  <div class="rv" style="transition-delay:.12s;overflow-x:auto;border:1px solid var(--b2);border-radius:8px;background:rgba(0,4,0,.6);margin-bottom:24px">
-    <table style="width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;min-width:840px">
-      <thead>
-        <tr style="border-bottom:1px solid var(--b2)">
-          <th style="text-align:left;padding:13px 18px;color:var(--txt3);font-size:8px;letter-spacing:.15em;font-weight:400">CAPABILITY</th>
-          <th style="text-align:center;padding:13px 10px;color:var(--g3);font-size:8px;letter-spacing:.15em;font-weight:400;border-left:1px solid var(--b)">OSS</th>
-          <th style="text-align:center;padding:13px 10px;color:rgba(124,106,247,.75);font-size:8px;letter-spacing:.15em;font-weight:400;border-left:1px solid var(--b)">STARTER</th>
-          <th style="text-align:center;padding:13px 10px;color:var(--g);font-size:8px;letter-spacing:.15em;font-weight:700;border-left:1px solid var(--b);background:rgba(0,230,118,.03)">FOUNDER</th>
-          <th style="text-align:center;padding:13px 10px;color:rgba(0,200,255,.75);font-size:8px;letter-spacing:.15em;font-weight:400;border-left:1px solid var(--b)">PRO</th>
-          <th style="text-align:center;padding:13px 10px;color:rgba(255,160,0,.75);font-size:8px;letter-spacing:.15em;font-weight:400;border-left:1px solid var(--b)">SCALE</th>
-          <th style="text-align:center;padding:13px 10px;color:var(--txt3);font-size:8px;letter-spacing:.15em;font-weight:400;border-left:1px solid var(--b)">ENTERPRISE</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="border-bottom:1px solid var(--b)">
-          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Cloud prompts</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#8734; local</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">100</td>
-          <td style="text-align:center;padding:10px;color:var(--g);font-weight:700;border-left:1px solid var(--b);background:rgba(0,230,118,.03)">500</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">400</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">1,000</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">5,000+</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--b)">
-          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Team seats</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#8734; self-hosted</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">3</td>
-          <td style="text-align:center;padding:10px;color:var(--g);font-weight:700;border-left:1px solid var(--b);background:rgba(0,230,118,.03)">5</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">5</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">10</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">Custom</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--b)">
-          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Serve RPM</td>
-          <td style="text-align:center;padding:10px;color:var(--txt3);border-left:1px solid var(--b)">self-hosted</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">60</td>
-          <td style="text-align:center;padding:10px;color:var(--g);font-weight:700;border-left:1px solid var(--b);background:rgba(0,230,118,.03)">100</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">200</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">500</td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">1,000</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--b)">
-          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">LLM-as-a-judge evals</td>
-          <td style="text-align:center;padding:10px;color:rgba(200,255,200,.3);border-left:1px solid var(--b)">Rule-based</td>
-          <td style="text-align:center;padding:10px;color:var(--rd);border-left:1px solid var(--b)">&#8211;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b);background:rgba(0,230,118,.03)">&#10003; Full</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-        </tr>
-        <tr style="border-bottom:1px solid var(--b)">
-          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Approval workflow</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b);background:rgba(0,230,118,.03)">&#10003;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-        </tr>
-
-        <tr style="border-bottom:1px solid var(--b)">
-          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">SSO / SAML</td>
-          <td style="text-align:center;padding:10px;color:var(--rd);border-left:1px solid var(--b)">&#8211;</td>
-          <td style="text-align:center;padding:10px;color:var(--rd);border-left:1px solid var(--b)">&#8211;</td>
-          <td style="text-align:center;padding:10px;color:var(--rd);border-left:1px solid var(--b);background:rgba(0,230,118,.03)">&#8211;</td>
-          <td style="text-align:center;padding:10px;color:var(--rd);border-left:1px solid var(--b)">&#8211;</td>
-          <td style="text-align:center;padding:10px;color:var(--rd);border-left:1px solid var(--b)">&#8211;</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b)">&#10003;</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 18px;color:rgba(200,255,200,.55)">Price</td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b);font-weight:700">Free forever</td>
-          <td style="text-align:center;padding:10px;color:rgba(124,106,247,.85);border-left:1px solid var(--b)">$29/mo<br><span style="font-size:8px;color:var(--txt4)">waitlist</span></td>
-          <td style="text-align:center;padding:10px;color:var(--g);border-left:1px solid var(--b);background:rgba(0,230,118,.03);font-weight:700">$499 once<br><span style="font-size:8px;color:rgba(0,230,118,.55)">LIVE NOW</span></td>
-          <td style="text-align:center;padding:10px;color:rgba(0,200,255,.85);border-left:1px solid var(--b)">$79/mo<br><span style="font-size:8px;color:var(--txt4)">waitlist</span></td>
-          <td style="text-align:center;padding:10px;color:rgba(255,160,0,.85);border-left:1px solid var(--b)">$199/mo<br><span style="font-size:8px;color:var(--txt4)">waitlist</span></td>
-          <td style="text-align:center;padding:10px;color:var(--txt2);border-left:1px solid var(--b)">Custom</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  
 
   <!-- GUARANTEES -->
   <div class="rv" style="transition-delay:.18s;display:grid;grid-template-columns:repeat(3,1fr);gap:11px">
