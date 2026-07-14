@@ -81,8 +81,8 @@
       "name": "Starter",
       "price": "29.00",
       "priceCurrency": "USD",
-      "description": "Starter: 100 prompts, 3 seats, 60 RPM. Managed cloud. Waitlist.",
-      "availability": "https://schema.org/PreOrder"
+      "description": "Starter: 100 prompts, 3 seats, 60 RPM. Managed cloud. Monthly subscription.",
+      "availability": "https://schema.org/InStock"
     },
     {
       "@type": "Offer",
@@ -98,8 +98,8 @@
       "name": "Pro",
       "price": "79.00",
       "priceCurrency": "USD",
-      "description": "Pro: 400 prompts, 5 seats, 200 RPM. LLM evals. Waitlist.",
-      "availability": "https://schema.org/PreOrder"
+      "description": "Pro: 400 prompts, 5 seats, 200 RPM. LLM evals. Monthly subscription.",
+      "availability": "https://schema.org/InStock"
     },
     {
       "@type": "Offer",
@@ -2192,7 +2192,7 @@ const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
 (function(){
   // NOTE: Checkout and billing endpoints belong exclusively to the cloud product
   // dashboard. The OSS landing page must NOT contain any reference to private API routes.
-  window._pmxCheckoutReady = false;
+  window._pmxCheckoutReady = {};
 
   function updateSpots(data){
     if(!data || !data.founder) return;
@@ -2204,8 +2204,8 @@ const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
     const pct   = Math.min(100, (f.claimed / f.cap) * 100);
     const heroSpots = document.getElementById('hero-spots-left');
     const heroText = document.getElementById('hero-scarcity-text');
-    // Store checkout_available for claimFounderSpot to read
-    window._pmxCheckoutReady = !!data.checkout_available;
+    // Store checkout_available object for claim buttons to read
+    window._pmxCheckoutReady = data.checkout_available || {};
 
     if(label) label.textContent = f.claimed + ' / ' + f.cap;
     if(bar)   bar.style.width   = pct + '%';
@@ -2244,16 +2244,16 @@ const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
   window.claimFounderSpot = function(){
     // If checkout is not yet configured (RAZORPAY_FOUNDER_LINK not set in Vercel),
     // send interested founders to email instead of dead-end registration.
-    if(window._pmxCheckoutReady === false){
+    if(!window._pmxCheckoutReady.founder){
       window.location.href = 'mailto:jachinchsaikiasonowal@gmail.com?subject=Founder%20Tier%20%E2%80%94%20Claim%20My%20Spot&body=Hi%2C%20I%20want%20to%20claim%20a%20Founder%20spot%20(%24499%20lifetime)%20for%20PromptMatrix.%0A%0AName%3A%0ACompany%3A';
       return;
     }
     // Normal flow: same-window redirect (popups blocked in async handlers)
-    window.location.href = CLOUD_REGISTER;
+    window.location.href = CLOUD_REGISTER + '?tier=founder';
   };
 
   window.claimTierSpot = function(tier){
-    if(window._pmxCheckoutReady === false){
+    if(!window._pmxCheckoutReady[tier]){
       const subjects = {
         starter: 'Starter%20Tier%20%E2%80%94%20Get%20Started',
         pro: 'Pro%20Tier%20%E2%80%94%20Get%20Started'
