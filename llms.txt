@@ -1,8 +1,8 @@
 # PromptMatrix
 
-> The control plane and behavior registry for multi-agent AI swarms. Register, version, approve, and hot-patch agent personas for LangGraph, CrewAI, and OpenClaw — without redeployment. MIT licensed.
+> Enterprise Prompt Management & CI/CD Pipeline Prompt Management for AI Swarms. Register, version, approve, and hot-patch agent personas for LangGraph, CrewAI, and OpenClaw — without redeployment. MIT licensed.
 
-PromptMatrix is the runtime behavior registry and control plane for multi-agent AI systems. Govern agent personas, tool schemas, and prompt versions for LangGraph, CrewAI, and OpenClaw orchestrators. Hot-patch any agent's behavior without restarting the swarm. Built by Matrix Labs. Free community edition available — self-host with Docker.
+PromptMatrix is the enterprise prompt management and CI/CD pipeline prompt management control plane for multi-agent AI systems. Govern agent personas, tool schemas, and prompt versions for LangGraph, CrewAI, and OpenClaw orchestrators. Hot-patch any agent's prompt behavior without restarting the swarm. Built by Matrix Labs. Free community edition available — self-host with Docker.
 
 ## Product
 
