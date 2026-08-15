@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security & Architecture — PromptMatrix</title>
+<meta name="description" content="PromptMatrix Security Whitepaper. Cryptographic encryption standards, AES-256-GCM vault, API key SHA-256 hashing, multi-tenant isolation, and vulnerability disclosure.">
+<meta name="robots" content="index, follow, max-snippet:-1">
+<meta name="author" content="Jachin Saikia Sonowal">
+<meta property="og:title" content="Security & Architecture — PromptMatrix">
+<meta property="og:description" content="Enterprise security posture, AES-256-GCM encryption, sub-10ms cache isolation, and vulnerability disclosure protocols.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://promptmatrix.github.io/security.html">
+<meta property="og:image" content="https://promptmatrix.github.io/PromptMatrix.webp">
+<meta property="og:locale" content="en_US">
+<link rel="canonical" href="https://promptmatrix.github.io/security.html">
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+<link rel="shortcut icon" href="favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:   #00e676;
+  --g2:  #00c853;
+  --g3:  #00691c;
+  --g4:  #003010;
+  --g5:  #000d04;
+  --txt:  #e0ffe0;
+  --txt2: #a5d6a7;
+  --txt3: #4caf50;
+  --txt4: #2e7d32;
+  --b:   rgba(0,230,118,.05);
+  --b2:  rgba(0,230,118,.11);
+  --b3:  rgba(0,230,118,.22);
+  --mono:'JetBrains Mono',monospace;
+  --ui:  'Syne',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:#000301;color:var(--txt);font-family:var(--ui);line-height:1.6;padding:80px 24px 120px;overflow-x:hidden}
+.container{max-width:800px;margin:0 auto;background:rgba(0,5,1,.75);border:1px solid var(--b2);border-radius:12px;padding:48px;backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.back-btn{display:inline-flex;align-items:center;text-decoration:none;color:var(--g);font-family:var(--mono);font-size:11px;letter-spacing:.08em;margin-bottom:32px;border:1px solid var(--b2);padding:8px 16px;border-radius:4px;transition:all .18s;background:rgba(0,230,118,.02)}
+.back-btn:hover{background:rgba(0,230,118,.08);border-color:var(--b3);box-shadow:0 0 15px rgba(0,230,118,.15)}
+h1{font-size:36px;font-weight:800;color:var(--txt);letter-spacing:-.02em;margin-bottom:8px;line-height:1.2}
+.meta{font-family:var(--mono);font-size:10px;color:var(--txt3);letter-spacing:.05em;margin-bottom:40px;border-bottom:1px solid var(--b);padding-bottom:16px}
+h2{font-size:20px;font-weight:700;color:var(--g);margin:32px 0 12px;letter-spacing:-.01em;font-family:var(--ui)}
+p{font-size:14px;color:rgba(224,255,224,.75);margin-bottom:16px}
+ul{margin:0 0 20px 20px;color:rgba(224,255,224,.75);font-size:14px}
+li{margin-bottom:8px}
+strong{color:var(--txt2)}
+a{color:var(--g);text-decoration:none}
+a:hover{text-decoration:underline}
+code{font-family:var(--mono);font-size:12px;background:rgba(0,230,118,.05);padding:2px 6px;border-radius:3px;color:var(--txt2)}
+.grid-box{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.card{background:rgba(0,230,118,.02);border:1px solid var(--b2);border-radius:8px;padding:20px}
+.card h3{font-size:16px;color:var(--txt2);margin-bottom:8px}
+.card p{font-size:13px;margin-bottom:0}
+@media(max-width:600px){.grid-box{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back-btn" aria-label="Return to PromptMatrix home">← BACK TO HOME</a>
+  <h1>Security Architecture & Trust Whitepaper</h1>
+  <div class="meta">LAST UPDATED: AUGUST 15, 2026 &middot; SPECIFICATION 1.0</div>
+
+  <p>PromptMatrix is engineered from the ground up for high-security enterprise AI engineering teams. This document outlines our multi-layered cryptographic controls, multi-tenant isolation, and vulnerability disclosure protocols.</p>
+
+  <div class="grid-box">
+    <div class="card">
+      <h3>AES-256-GCM Encryption</h3>
+      <p>All sensitive customer secrets and Bring-Your-Own-Key (BYOK) evaluation credentials are encrypted at rest with authenticated 256-bit Galois/Counter Mode.</p>
+    </div>
+    <div class="card">
+      <h3>SHA-256 Key Hashing</h3>
+      <p>Runtime API keys are never stored in plaintext. Keys are hashed with SHA-256 upon creation and verified with timing-safe comparisons.</p>
+    </div>
+    <div class="card">
+      <h3>Row-Level Tenant Isolation</h3>
+      <p>All workspace queries are strictly scoped by organisation ID at the database layer. Cross-tenant access is structurally impossible.</p>
+    </div>
+    <div class="card">
+      <h3>Zero Model Training</h3>
+      <p>Your prompt templates, test sets, and variable parameters are strictly isolated and never fed into public or private model training pipelines.</p>
+    </div>
+  </div>
+
+  <h2>1. Data Encryption & Key Management</h2>
+  <ul>
+    <li><strong>In Transit:</strong> TLS 1.3 enforced across all API endpoints and web consoles. Plain HTTP requests are automatically rejected.</li>
+    <li><strong>At Rest:</strong> PostgreSQL database disks are encrypted using AES-256. Individual sensitive fields (e.g. LLM judge keys) undergo application-layer encryption via separate encryption keys.</li>
+    <li><strong>Zero Raw Key Storage:</strong> When generating a prompt serving key (e.g. <code>pm_live_...</code>), the plaintext key is displayed once. The database retains only its SHA-256 hash digest.</li>
+  </ul>
+
+  <h2>2. Authentication & Authorization</h2>
+  <ul>
+    <li><strong>Role-Based Access Control (RBAC):</strong> Granular workspace roles (Admin, Member, Viewer) govern prompt drafting, review gating, API key rotation, and billing actions.</li>
+    <li><strong>Session Tokens:</strong> Short-lived JWTs signed with HMAC-SHA256 and separate refresh token rotation.</li>
+    <li><strong>Webhook Verification:</strong> Inbound payment events from Razorpay are verified using cryptographic HMAC-SHA256 signatures before processing.</li>
+  </ul>
+
+  <h2>3. High-Throughput Edge Caching & Isolation</h2>
+  <p>PromptMatrix serves approved prompts with sub-10ms latency. The serving cache stores only approved prompt versions with strict cache invalidation hooks triggered on rollback or new approval events.</p>
+
+  <h2>4. Vulnerability Disclosure & Bug Reporting</h2>
+  <p>We welcome security reports from researchers and our developer community. If you discover a potential vulnerability:</p>
+  <ul>
+    <li>Email our security team directly at <a href="mailto:jachinchsaikiasonowal@gmail.com">jachinchsaikiasonowal@gmail.com</a> with steps to reproduce.</li>
+    <li>We commit to acknowledging reports within <strong>24 hours</strong> and providing regular remediation status updates.</li>
+    <li>We request that you adhere to coordinated vulnerability disclosure and refrain from public disclosure until patches are deployed.</li>
+  </ul>
+</div>
+</body>
+</html>
