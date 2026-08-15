@@ -2299,7 +2299,7 @@ const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
     // If checkout is not yet configured (RAZORPAY_FOUNDER_LINK not set in Vercel),
     // send interested founders to email instead of dead-end registration.
     if(!window._pmxCheckoutReady.founder){
-      window.location.href = 'mailto:jachinsaikiasonowal@gmail.com?subject=Founder%20Tier%20%E2%80%94%20Claim%20My%20Spot&body=Hi%2C%20I%20want%20to%20claim%20a%20Founder%20spot%20(%24499%20lifetime)%20for%20PromptMatrix.%0A%0AName%3A%0ACompany%3A';
+      window.location.href = 'mailto:jachinchsaikiasonowal@gmail.com?subject=Founder%20Tier%20%E2%80%94%20Claim%20My%20Spot&body=Hi%2C%20I%20want%20to%20claim%20a%20Founder%20spot%20(%24499%20lifetime)%20for%20PromptMatrix.%0A%0AName%3A%0ACompany%3A';
       return;
     }
     // Normal flow: same-window redirect (popups blocked in async handlers)
@@ -2316,7 +2316,7 @@ const CLOUD_REGISTER  = CLOUD_API_BASE + '/register';
         starter: 'Hi%2C%20I%20want%20to%20subscribe%20to%20the%20Starter%20tier%20(%2429%2Fmo)%20for%20PromptMatrix.%0A%0AName%3A%0ACompany%3A',
         pro: 'Hi%2C%20I%20want%20to%20subscribe%20to%20the%20Pro%20tier%20(%2479%2Fmo)%20for%20PromptMatrix.%0A%0AName%3A%0ACompany%3A'
       };
-      window.location.href = 'mailto:jachinsaikiasonowal@gmail.com?subject=' + (subjects[tier] || 'Get%20Started') + '&body=' + (bodies[tier] || '');
+      window.location.href = 'mailto:jachinchsaikiasonowal@gmail.com?subject=' + (subjects[tier] || 'Get%20Started') + '&body=' + (bodies[tier] || '');
       return;
     }
     window.location.href = CLOUD_REGISTER + '?tier=' + tier;
