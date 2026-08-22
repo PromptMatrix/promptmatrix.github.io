@@ -1,0 +1,10 @@
+Contact: mailto:jachinchsaikiasonowal@gmail.com
+Expires: 2027-08-23T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://promptmatrix.github.io/.well-known/security.txt
+Policy: https://promptmatrix.github.io/security.html
+
+# PromptMatrix Security Policy
+# Report security vulnerabilities to the contact above.
+# Do not open public GitHub issues for security bugs.
+# We aim to respond within 48 hours and remediate critical issues within 7 days.
