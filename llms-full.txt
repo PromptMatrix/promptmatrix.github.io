@@ -1,0 +1,98 @@
+# PromptMatrix — Complete LLM & Agent Knowledge Base
+
+## System Identity & Overview
+PromptMatrix is an enterprise prompt CI/CD pipeline and runtime behavioral control plane for AI swarms (LangGraph, CrewAI, OpenClaw). It provides a central, versioned, evaluated, and approval-gated registry for system prompts, agent personas, and tool schemas.
+
+## 1. Authentication & Security Model
+- **Public API Keys:** Format `pm_live_<32bytes_urlsafe>` / `pm_dev_<32bytes_urlsafe>`. Sent in header: `Authorization: Bearer <key>`.
+- **Key Storage:** SHA-256 hashed in database. Keys are shown once at creation.
+- **JWT Auth for Dashboard:** HS256 JWTs (`PyJWT>=2.8.0`).
+- **BYOK Encryption:** Provider keys (OpenAI, Anthropic, Google) for evaluations are encrypted using AES-256-GCM and purged from Python memory scope immediately after use.
+
+## 2. Core Runtime Endpoints
+
+### 2.1 Serve Prompt (The Hot Path)
+- **Method:** `GET /pm/serve/{key}`
+- **Headers:** `Authorization: Bearer <api_key>`
+- **Query Params:**
+  - `format`: `json` (default) or `text`
+  - `vars`: Comma-separated variable bindings (e.g. `vars=name=Alice,tier=Gold`)
+- **Response (JSON):**
+  ```json
+  {
+    "key": "assistant.system",
+    "version_id": "c1f729b4-...",
+    "version_num": 3,
+    "content": "You are a helpful assistant for Acme Corp.",
+    "target_model": "gpt-4o",
+    "target_provider": "openai",
+    "cached": true
+  }
+  ```
+
+### 2.2 Telemetry Feedback
+- **Method:** `POST /pm/serve/{key}/feedback`
+- **Headers:** `Authorization: Bearer <api_key>`
+- **Body:**
+  ```json
+  {
+    "version_id": "c1f729b4-...",
+    "outcome": "success",
+    "latency_ms": 320,
+    "tokens_used": 145,
+    "llm_latency_ms": 290,
+    "metadata": { "model": "gpt-4o", "session_id": "user_123" }
+  }
+  ```
+
+## 3. Python SDK Usage (`promptmatrix-sdk`)
+
+```python
+from promptmatrix import PromptMatrix
+
+# Serve-only client
+pm = PromptMatrix(api_key="pm_live_xxxx")
+
+# Fetch and interpolate
+prompt = pm.serve("swarm.lead", company="Acme", role="Architect")
+print(prompt.content)
+
+# Telemetry feedback
+pm.feedback(
+    prompt_key="swarm.lead",
+    version_id=prompt.version_id,
+    outcome="success",
+    latency_ms=250,
+    tokens_used=80
+)
+```
+
+## 4. Multi-Agent Swarm Integration Recipes
+
+### OpenClaw Swarm Hot-Patching:
+```python
+import openclaw
+from promptmatrix import PromptMatrix
+
+pm = PromptMatrix(api_key="pm_live_xxxx")
+researcher_prompt = pm.serve("openclaw.researcher.system")
+
+agent = openclaw.Agent(
+    name="Researcher",
+    instructions=researcher_prompt.content,
+    tools=[openclaw.tools.WebSearch()]
+)
+```
+
+### LangGraph Dynamic Node:
+```python
+from promptmatrix import PromptMatrix
+
+pm = PromptMatrix(api_key="pm_live_xxxx")
+
+def prompt_node(state):
+    sys_prompt = pm.serve("langgraph.synthesizer")
+    res = model.invoke(sys_prompt.content + "\n" + state["input"])
+    pm.feedback("langgraph.synthesizer", sys_prompt.version_id, "success")
+    return {"output": res}
+```

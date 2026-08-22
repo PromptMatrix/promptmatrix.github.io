@@ -1,49 +1,62 @@
 # PromptMatrix
 
-> Enterprise Prompt Management & CI/CD Pipeline Prompt Management for AI Swarms. Register, version, approve, and hot-patch agent personas for LangGraph, CrewAI, and OpenClaw — without redeployment. MIT licensed.
+> Enterprise Prompt CI/CD & Runtime Behavioral Control Plane for AI Swarms (LangGraph, CrewAI, OpenClaw). Register, version, evaluate, and hot-patch agent personas without redeploying code. MIT Licensed.
 
-PromptMatrix is the enterprise prompt management and CI/CD pipeline prompt management control plane for multi-agent AI systems. Govern agent personas, tool schemas, and prompt versions for LangGraph, CrewAI, and OpenClaw orchestrators. Hot-patch any agent's prompt behavior without restarting the swarm. Built by Matrix Labs. Free community edition available — self-host with Docker.
+PromptMatrix is the enterprise prompt management and CI/CD governance engine for AI engineering teams and autonomous multi-agent systems. Pull your prompts out of hardcoded application strings into a governed, auditable, sub-15ms cached registry.
 
-## Product
+## Quick Reference
 
-- [Landing page](https://promptmatrix.github.io/)
-- [Privacy Policy](https://promptmatrix.github.io/privacy.html)
-- [Terms of Service](https://promptmatrix.github.io/terms.html)
+- [Landing Page](https://promptmatrix.github.io/)
+- [Developer Documentation](https://promptmatrix.github.io/docs/)
+- [OpenAPI Spec](https://promptmatrix.github.io/docs/openapi.json)
+- [Full LLM Knowledge](https://promptmatrix.github.io/llms-full.txt)
 - [GitHub Repository](https://github.com/PromptMatrix/Promptmatrix)
-- [Matrix Labs Agency](https://matrixlabs.agency/promptmatrix.html)
+- [Python SDK (PyPI)](https://pypi.org/project/promptmatrix/)
 
-## Key Features
+## Core Endpoints
 
-- **Agent Persona Registry**: Store and version each agent's system prompt, backstory, and tool schema in one governed registry. Per-agent isolation.
-- **Swarm Hot-Patching**: Change a running agent's behavior in PromptMatrix. The next task cycle picks it up — no swarm restart, no downtime.
-- **LangGraph Integration**: Pull node system prompts and tool schemas from PromptMatrix at each graph invocation via pm.serve().
-- **CrewAI Integration**: Store agent backstories and system prompts in PromptMatrix. Hot-patch drifting crew members mid-task.
-- **OpenClaw Integration**: PromptMatrix was built alongside OpenClaw for swarm persona governance and tool schema versioning.
-- **Prompt Version Control**: Git-style versioning for every LLM prompt and agent persona. Full audit trail.
-- **Approval Workflows**: Require engineer approval before any behavior change reaches the swarm.
-- **LLM-as-Judge Evals**: Automated quality gates using LLM evaluation before merge.
-- **Sub-5ms Serving**: Production-grade prompt API serving with AES-256-GCM encryption. L1/L2 cache hit <5ms, miss <30ms.
-- **Zero-redeploy Updates**: Update agent personas live without touching your codebase or restarting your swarm.
+- `GET /pm/serve/{key}`: Sub-15ms cached hot-path prompt delivery with variable interpolation.
+- `POST /pm/serve/{key}/feedback`: Telemetry feedback (latency, tokens used, outcome).
+- `GET /api/v1/prompts`: List all prompts in an environment.
+- `POST /api/v1/prompts/{key}/versions`: Create a new draft version.
+- `POST /api/v1/approvals/{version_id}/approve`: Gate approval flow (admin/engineer only).
+- `POST /api/v1/evals/run`: Multi-judge and rule-based prompt quality evaluation.
 
-## Pricing
+## Framework Quickstart
 
-- **Community Edition**: Free, MIT licensed, unlimited local prompts, self-hosted.
-- **Starter**: $29/mo — 100 prompts, 3 seats, 60 RPM. Managed cloud.
-- **Pro**: $79/mo — 400 prompts, 5 seats, 200 RPM. LLM evals.
-- **Scale**: $199/mo — 1,000 prompts, 10 seats, 500 RPM.
-- **Founder**: $499 lifetime — 500 prompts, 5 seats, 100 RPM. Hardcapped at 100 orgs.
-- **Enterprise**: Custom — 5,000+ prompts, SSO, dedicated infra, SLA.
+### Python SDK (`promptmatrix-sdk`)
+```python
+from promptmatrix import PromptMatrix
+pm = PromptMatrix(api_key="pm_live_xxxx")
+prompt = pm.serve("assistant.system", user="Alice")
+print(prompt.content)
+```
 
-## Built By
+### OpenClaw Swarm Hot-Patching
+```python
+import openclaw
+from promptmatrix import PromptMatrix
+pm = PromptMatrix(api_key="pm_live_xxxx")
+agent = openclaw.Agent(
+    name="Researcher",
+    instructions=pm.serve("openclaw.researcher.system").content
+)
+```
 
-Matrix Labs — AI Marketing and Automation Agency, Assam, India.
-Founder: Jachin Saikia Sonowal
-- Twitter/X: https://x.com/jachinsonowal
-- LinkedIn: https://linkedin.com/in/jachinsaikiasonowal
-- Agency: https://matrixlabs.agency
+### LangGraph Node Integration
+```python
+from promptmatrix import PromptMatrix
+pm = PromptMatrix(api_key="pm_live_xxxx")
+def node_fn(state):
+    sys_prompt = pm.serve("langgraph.node.reasoning")
+    return {"out": model.invoke(sys_prompt.content + "\n" + state["in"])}
+```
 
-## License
+## Pricing Tiers
 
-MIT License — https://opensource.org/licenses/MIT
-
-Last updated: 2026-07-01
+- **Community Edition**: $0 (Free, self-hosted, SQLite, MIT Licensed).
+- **Founder Tier**: $499 one-time lifetime (100 org hardcap, unlimited prompts, 5 seats, 10k RPM).
+- **Starter (Waitlist)**: $29/mo (100 prompts, 3 seats, 600 RPM).
+- **Pro (Waitlist)**: $79/mo (400 prompts, 10 seats, 3k RPM, LLM evals).
+- **Scale (Waitlist)**: $199/mo (1,000 prompts, 25 seats, 10k RPM).
+- **Enterprise**: Custom ACV (SSO, dedicated infrastructure, 99.99% SLA).

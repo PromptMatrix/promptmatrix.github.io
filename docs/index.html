@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PromptMatrix Documentation — API, SDK & Multi-Agent Integration</title>
+  <meta name="description" content="Official documentation for PromptMatrix. Low-latency prompt CI/CD, agent persona governance, OpenAPI reference, and integrations for OpenClaw, LangGraph, and CrewAI.">
+  <link rel="icon" type="image/png" href="/favicon-96x96.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #090b10;
+      --bg-surface: #0f131c;
+      --bg-elevated: #161b26;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-focus: #6366f1;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --code-bg: #030712;
+      --sidebar-w: 280px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation */
+    header.docs-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
+      background: rgba(9, 11, 16, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .brand img { width: 30px; height: 30px; }
+    .header-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .header-links a:hover, .header-links a.active { color: #fff; }
+    .btn-header {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #fff !important;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    /* Layout */
+    .docs-layout {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    aside.sidebar {
+      width: var(--sidebar-w);
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      overflow-y: auto;
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      flex-shrink: 0;
+    }
+    .nav-group-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin: 16px 0 8px 12px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .nav-item:hover {
+      background: var(--bg-elevated);
+      color: var(--text);
+    }
+    .nav-item.active {
+      background: rgba(99, 102, 241, 0.12);
+      color: #818cf8;
+      font-weight: 600;
+      border-left: 3px solid var(--primary);
+      border-radius: 0 6px 6px 0;
+    }
+
+    main.content {
+      flex: 1;
+      padding: 40px 48px;
+      max-width: 1000px;
+    }
+
+    /* Typography & Content */
+    h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.02em; }
+    h2 { font-size: 1.5rem; font-weight: 700; margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    h3 { font-size: 1.15rem; font-weight: 600; margin: 24px 0 10px; }
+    p { margin-bottom: 16px; color: #cbd5e1; }
+    ul, ol { margin: 0 0 20px 24px; color: #cbd5e1; }
+    li { margin-bottom: 6px; }
+
+    /* Code Blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #38bdf8;
+    }
+    pre code { background: none; padding: 0; color: inherit; }
+
+    /* Badges & Callouts */
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-get { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .badge-post { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+    .badge-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+    .callout {
+      background: rgba(99, 102, 241, 0.08);
+      border-left: 4px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+    .callout-title { font-weight: 700; color: #818cf8; margin-bottom: 4px; }
+    
+    /* Tabs */
+    .tab-group {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* API Reference Container */
+    #scalar-container {
+      width: 100%;
+      height: 850px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 24px 0;
+      background: #0b0f19;
+    }
+    #scalar-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="docs-header">
+    <a href="/" class="brand">
+      <img src="/logo.png" alt="PromptMatrix Logo">
+      <span>PromptMatrix <span style="color:var(--primary); font-weight:500;">Docs</span></span>
+    </a>
+    <div class="header-links">
+      <a href="#quickstart" class="active">Quickstart</a>
+      <a href="#frameworks">Swarm Integrations</a>
+      <a href="#sdk">Python SDK</a>
+      <a href="#api-ref">Interactive API</a>
+      <a href="https://github.com/PromptMatrix/Promptmatrix" target="_blank">GitHub</a>
+      <a href="https://promptmatrixx.vercel.app/dashboard" class="btn-header">Open Dashboard</a>
+    </div>
+  </header>
+
+  <div class="docs-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="nav-group-title">Getting Started</div>
+      <a href="#overview" class="nav-item active">Overview & Mental Model</a>
+      <a href="#quickstart" class="nav-item">60-Second Quickstart</a>
+      <a href="#architecture" class="nav-item">Runtime Architecture</a>
+
+      <div class="nav-group-title">Multi-Agent Swarms</div>
+      <a href="#openclaw" class="nav-item">OpenClaw Integration</a>
+      <a href="#langgraph" class="nav-item">LangGraph Hot-Patching</a>
+      <a href="#crewai" class="nav-item">CrewAI Persona Governance</a>
+
+      <div class="nav-group-title">SDKs & Tooling</div>
+      <a href="#sdk-python" class="nav-item">Python SDK (Zero-Dep)</a>
+      <a href="#cli" class="nav-item">CLI (`pmx.py` / `pm`)</a>
+      <a href="#curl" class="nav-item">Raw HTTP / cURL</a>
+
+      <div class="nav-group-title">API & Reference</div>
+      <a href="#serve-api" class="nav-item">Runtime `/pm/serve` API</a>
+      <a href="#feedback-api" class="nav-item">Telemetry `/pm/feedback`</a>
+      <a href="#api-ref" class="nav-item">Interactive OpenAPI Explorer</a>
+
+      <div class="nav-group-title">Operations & Security</div>
+      <a href="#self-hosting" class="nav-item">Self-Hosting (Docker / SQLite)</a>
+      <a href="#security" class="nav-item">Security & BYOK Model</a>
+      <a href="/llms.txt" class="nav-item" target="_blank">Machine Docs (`llms.txt`)</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+
+      <!-- Section: Overview -->
+      <section id="overview">
+        <h1>PromptMatrix Developer Documentation</h1>
+        <p>PromptMatrix is a <strong>runtime prompt governance control plane</strong> for AI systems and multi-agent swarms. It centralizes your LLM system instructions, agent personas, and tool schemas into a version-controlled, evaluated, and approval-gated registry—served in <strong>sub-15ms</strong> via edge caching without ever redeploying code.</p>
+
+        <div class="callout">
+          <div class="callout-title">The Mental Model: Git for AI Behavior</div>
+          <p style="margin:0; font-size:0.92rem;">
+            Treat system prompts as <strong>Behavioral Specifications</strong>. <code>Prompt Key</code> = Repo, <code>PromptVersion</code> = Commit, <code>Draft</code> = Branch, <code>Approval Queue</code> = Pull Request, and <code>/pm/serve/{key}</code> = CDN delivery directly into running agents.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section: Quickstart -->
+      <section id="quickstart">
+        <h2>⚡ 60-Second Quickstart</h2>
+        <p>Retrieve any live prompt at runtime using your API key (<code>pm_live_...</code> or <code>pm_dev_...</code>):</p>
+
+        <div class="tab-group">
+          <button class="tab-btn active" onclick="switchTab(event, 'qs-python')">Python SDK</button>
+          <button class="tab-btn" onclick="switchTab(event, 'qs-curl')">cURL</button>
+          <button class="tab-btn" onclick="switchTab(event, 'qs-ts')">TypeScript / Node.js</button>
+        </div>
+
+        <div id="qs-python" class="tab-pane active">
+<pre><code># pip install promptmatrix
+from promptmatrix import PromptMatrix
+
+pm = PromptMatrix(api_key="pm_live_your_key_here")
+
+# 1. Fetch live prompt with dynamic variable substitution
+prompt = pm.serve("assistant.system", company="Acme Corp", user_role="Admin")
+print(prompt.content)
+
+# 2. Pass to OpenAI, Anthropic, or Agent Swarm
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "system", "content": prompt.content}, {"role": "user", "content": "Hello!"}]
+)
+
+# 3. Log execution telemetry back to PromptMatrix
+pm.feedback(
+    prompt_key="assistant.system",
+    version_id=prompt.version_id,
+    outcome="success",
+    latency_ms=450,
+    tokens_used=120
+)</code></pre>
+        </div>
+
+        <div id="qs-curl" class="tab-pane">
+<pre><code># Hot-path prompt retrieval (sub-15ms cached)
+curl -X GET "https://api.promptmatrix.io/pm/serve/assistant.system?vars=company=Acme,role=Admin" \
+     -H "Authorization: Bearer pm_live_your_key_here" \
+     -H "Accept: application/json"</code></pre>
+        </div>
+
+        <div id="qs-ts" class="tab-pane">
+<pre><code>// Zero external dependencies (native fetch)
+const res = await fetch("https://api.promptmatrix.io/pm/serve/assistant.system?format=json", {
+  headers: { Authorization: "Bearer pm_live_your_key_here" }
+});
+const { content, version_id } = await res.json();
+console.log("Active prompt:", content);</code></pre>
+        </div>
+      </section>
+
+      <!-- Section: Framework Integrations -->
+      <section id="frameworks">
+        <h2>🤖 Multi-Agent Swarm Integrations</h2>
+
+        <h3 id="openclaw">1. OpenClaw Swarm Persona Registry</h3>
+        <p>In multi-agent architectures (like OpenClaw), hardcoded personas cause system-wide fragility. Govern each agent's identity dynamically:</p>
+<pre><code>import openclaw
+from promptmatrix import PromptMatrix
+
+pm = PromptMatrix(api_key="pm_live_xxxx")
+
+# Fetch governed personas for swarm agents
+lead_prompt = pm.serve("openclaw.lead_analyst.system")
+coder_prompt = pm.serve("openclaw.code_synthesizer.system")
+
+lead_agent = openclaw.Agent(
+    name="LeadAnalyst",
+    instructions=lead_prompt.content,
+    tools=[openclaw.tools.WebSearch()]
+)
+
+coder_agent = openclaw.Agent(
+    name="CodeSynthesizer",
+    instructions=coder_prompt.content
+)
+
+# Launch swarm — any prompt edit in PromptMatrix updates the next run instantly!
+swarm = openclaw.Swarm(agents=[lead_agent, coder_agent])
+swarm.run("Analyze market trends for Q3")</code></pre>
+
+        <h3 id="langgraph">2. LangGraph Node Hot-Patching</h3>
+        <p>Hot-patch prompts inside state graph nodes without redeploying microservices:</p>
+<pre><code>from langgraph.graph import StateGraph
+from promptmatrix import PromptMatrix
+
+pm = PromptMatrix(api_key="pm_live_xxxx")
+
+def reasoning_step(state):
+    # Dynamically pull prompt for this node
+    prompt = pm.serve("langgraph.node.reasoning")
+    
+    response = model.invoke(prompt.content + "\nState: " + state["input"])
+    
+    # Report telemetry for node-level observability
+    pm.feedback(prompt_key="langgraph.node.reasoning", version_id=prompt.version_id, outcome="success")
+    return {"result": response}
+
+workflow = StateGraph(dict)
+workflow.add_node("reasoning", reasoning_step)</code></pre>
+
+        <h3 id="crewai">3. CrewAI Agent Backstory Governance</h3>
+<pre><code>from crewai import Agent, Crew, Task
+from promptmatrix import PromptMatrix
+
+pm = PromptMatrix(api_key="pm_live_xxxx")
+
+researcher = Agent(
+    role="Senior Market Researcher",
+    goal="Discover high-growth AI SaaS vectors",
+    backstory=pm.serve("crewai.researcher.backstory").content,
+    verbose=True
+)</code></pre>
+      </section>
+
+      <!-- Section: Python SDK -->
+      <section id="sdk">
+        <h2>📦 Python SDK Reference (`promptmatrix-sdk`)</h2>
+        <p>The official Python SDK is <strong>100% zero-dependency</strong> (implemented purely with Python standard library <code>urllib</code>), guaranteeing zero conflicts with your existing ML packages.</p>
+        
+        <ul>
+          <li><code>pm.serve(key, **vars)</code> — Sub-15ms cached hot-path fetch.</li>
+          <li><code>pm.feedback(key, version_id, outcome, latency_ms, tokens_used)</code> — Observability trace logger.</li>
+          <li><code>pm.prompts.create(env_id, key, content)</code> — Programmatic prompt creation.</li>
+          <li><code>pm.prompts.create_version(prompt_id, content)</code> — Draft a new version.</li>
+          <li><code>pm.prompts.approve(prompt_id, version_id)</code> — Gate approval flow.</li>
+          <li><code>pm.prompts.rollback(prompt_id, version_id)</code> — Instant 1-click rollback.</li>
+        </ul>
+      </section>
+
+      <!-- Section: Interactive API Explorer -->
+      <section id="api-ref">
+        <h2>📖 Interactive OpenAPI Reference</h2>
+        <p>Explore all 44 live endpoints, request schemas, parameters, and authentication requirements:</p>
+
+        <div id="scalar-container">
+          <!-- Embedded Scalar API Reference -->
+          <iframe srcdoc="
+            <!doctype html>
+            <html>
+              <head>
+                <meta charset='utf-8' />
+                <meta name='viewport' content='width=device-width, initial-scale=1' />
+              </head>
+              <body style='margin:0; background:#0b0f19;'>
+                <script id='api-reference' data-url='/docs/openapi.json' data-configuration='{&quot;theme&quot;:&quot;purple&quot;,&quot;layout&quot;:&quot;modern&quot;,&quot;darkMode&quot;:true}' src='https://cdn.jsdelivr.net/npm/@scalar/api-reference'></script>
+              </body>
+            </html>
+          "></iframe>
+        </div>
+      </section>
+
+      <!-- Section: Self-Hosting -->
+      <section id="self-hosting">
+        <h2>🏠 Self-Hosting (OSS Community Tier)</h2>
+        <p>PromptMatrix is fully open source (MIT Licensed). Run the entire stack locally with SQLite or PostgreSQL:</p>
+<pre><code># 1. Clone repository
+git clone https://github.com/PromptMatrix/Promptmatrix.git
+cd Promptmatrix
+
+# 2. Run with Docker Compose
+docker compose up -d
+
+# 3. Or launch with native Python
+./start.sh    # Windows: start.bat
+# Dashboard opens automatically at http://localhost:8000/dashboard</code></pre>
+      </section>
+
+      <!-- Section: Security -->
+      <section id="security">
+        <h2>🛡️ Security & BYOK Architecture</h2>
+        <ul>
+          <li><strong>API Key Security:</strong> All API keys are SHA-256 hashed. Full keys are displayed once at creation and never stored in plaintext.</li>
+          <li><strong>BYOK (Bring Your Own Key) Zero-Retention:</strong> Model keys supplied for LLM evaluations are AES-256-GCM encrypted in memory, used once, and explicitly deleted from Python memory scope.</li>
+          <li><strong>High Availability & Fail-Open:</strong> If edge cache or Redis undergoes maintenance, the serve router gracefully falls back to database lookup, preventing agent downtime.</li>
+        </ul>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    function switchTab(e, tabId) {
+      const parent = e.target.closest('section');
+      parent.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      parent.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      e.target.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+  </script>
+</body>
+</html>
