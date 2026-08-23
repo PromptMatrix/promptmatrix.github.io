@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PromptMatrix — Enterprise Prompt Management & CI/CD Pipeline Prompt Management</title>
+<title>PromptMatrix — CI/CD Pipeline Prompt Management Tool for AI</title>
 <meta name="google-site-verification" content="jYZbGxl_GvzTXCqdhH2xtbWnzWudc3zGZ08VbTgurzo" />
 <meta name="google-site-verification" content="googleac4c2cd4a7aabc25" />
-<meta name="description" content="Enterprise prompt management and CI/CD pipeline prompt management for AI swarms. Version, approve, and hot-patch LLM prompts for LangGraph, CrewAI, &amp; OpenClaw.">
+<meta name="description" content="PromptMatrix is the open-source CI/CD pipeline prompt management tool for AI agents. Version, evaluate, approve, and hot-patch LLM prompts without redeployment.">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 <meta name="author" content="Jachin Saikia Sonowal">
 <meta http-equiv="content-language" content="en">
@@ -20,16 +20,16 @@
   <meta name="apple-mobile-web-app-title" content="PromptMatrix" />
   <link rel="manifest" href="site.webmanifest" />
 <link rel="canonical" href="https://promptmatrix.github.io/">
-<meta property="og:title" content="PromptMatrix — Enterprise Prompt Management & CI/CD Pipeline Control Plane">
-<meta property="og:description" content="Runtime prompt management & CI/CD pipeline governance for AI agent swarms. Register personas, version tool schemas, approve changes, and hot-patch LangGraph, CrewAI, or OpenClaw prompts with <5ms latency.">
+<meta property="og:title" content="PromptMatrix — CI/CD Pipeline Prompt Management Tool for AI Swarms">
+<meta property="og:description" content="The open-source CI/CD pipeline prompt management tool for AI agents. Version, test, approve, and hot-patch LangGraph, CrewAI, and OpenClaw prompts with <5ms latency.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://promptmatrix.github.io/">
-<meta name="keywords" content="prompt management, CI/CD pipeline prompt management, prompt CI/CD pipeline, enterprise prompt management, AI prompt management system, LLM prompt governance, LangGraph prompt management, CrewAI prompt management, prompt version control, prompt registry, agent control plane, multi-agent AI, agent behavior registry">
+<meta name="keywords" content="CI/CD pipeline prompt management tool, prompt management tool, prompt CI/CD pipeline, enterprise prompt management, AI prompt management system, LLM prompt governance, LangGraph prompt management, CrewAI prompt management, prompt version control, prompt registry, agent control plane, multi-agent AI, agent behavior registry">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@jachinsonowal">
 <meta name="twitter:creator" content="@jachinsonowal">
-<meta name="twitter:title" content="PromptMatrix — Enterprise Prompt Management & CI/CD Pipeline Control Plane">
-<meta name="twitter:description" content="Enterprise prompt management & CI/CD pipeline prompt control plane. Hot-patch LangGraph, CrewAI, and OpenClaw agent prompts without restarting. Version control, approval gates, <5ms serving.">
+<meta name="twitter:title" content="PromptMatrix — CI/CD Pipeline Prompt Management Tool for AI Swarms">
+<meta name="twitter:description" content="The open-source CI/CD pipeline prompt management tool for AI agents. Hot-patch LangGraph, CrewAI, and OpenClaw prompts with <5ms serving and automated eval gates.">
 <meta name="twitter:image" content="https://promptmatrix.github.io/PromptMatrix.webp">
 <meta property="og:image" content="https://promptmatrix.github.io/PromptMatrix.webp">
 <meta property="og:image:width" content="1280">
@@ -61,8 +61,8 @@
   "@graph": [
     {
       "@type": "SoftwareApplication",
-      "name": "PromptMatrix — Enterprise Prompt Management & CI/CD Pipeline Control Plane",
-      "description": "Enterprise prompt management and CI/CD pipeline prompt management control plane for AI agent swarms. Govern agent personas, tool schemas, and prompt versions for LangGraph, CrewAI, and OpenClaw orchestrators. Version, test, approve, and hot-patch LLM prompts without redeployment.",
+      "name": "PromptMatrix — CI/CD Pipeline Prompt Management Tool",
+      "description": "Enterprise-grade open-source CI/CD pipeline prompt management tool and runtime control plane for AI swarms. Version, test, evaluate, approve, and hot-patch LLM prompts for LangGraph, CrewAI, and OpenClaw without code redeployment.",
       "url": "https://promptmatrix.github.io/",
       "applicationCategory": "DeveloperApplication, SoftwareDevelopment, PromptManagement",
       "operatingSystem": "Web, Linux, macOS, Windows",
@@ -71,12 +71,13 @@
       "isAccessibleForFree": true,
       "dateModified": "2026-08-23",
       "featureList": [
+        "CI/CD Pipeline Prompt Management Tool",
         "Enterprise Prompt Management",
-        "CI/CD Pipeline Prompt Management",
         "Swarm Hot-Patching",
         "Prompt Version Control",
         "LLM Evaluation Gating",
-        "Approval Workflows"
+        "Approval Workflows",
+        "Agent Behavior Registry"
       ],
       "offers": [
         {
@@ -84,7 +85,7 @@
           "name": "Community Edition",
           "price": "0.00",
           "priceCurrency": "USD",
-          "description": "Free, open-source, self-hosted prompt management. Unlimited local prompts. MIT licensed."
+          "description": "Free, open-source, self-hosted prompt management tool. Unlimited local prompts. MIT licensed."
         },
         {
           "@type": "Offer",
@@ -152,9 +153,10 @@
         "https://matrixlabs.agency/promptmatrix.html"
       ],
       "knowsAbout": [
-        "prompt management",
-        "CI/CD pipeline prompt management",
+        "CI/CD pipeline prompt management tool",
+        "prompt management tool",
         "prompt CI/CD pipeline",
+        "enterprise prompt management",
         "multi-agent AI systems",
         "agent persona governance",
         "LLM agent orchestration",
@@ -180,7 +182,7 @@
           "name": "What is Prompt Management?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Prompt management is the engineering practice of decoupling LLM system prompts, agent personas, and tool schemas from application code into a centralized, version-controlled control plane with approval workflows and sub-5ms serving APIs."
+            "text": "Prompt management is the software engineering discipline of centralizing, versioning, evaluating, and governing LLM system prompts, agent personas, and tool schemas outside application codebases. PromptMatrix provides a dedicated control plane for enterprise prompt management with sub-5ms serving latency."
           }
         },
         {
@@ -188,7 +190,39 @@
           "name": "How does CI/CD pipeline prompt management work in PromptMatrix?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "CI/CD pipeline prompt management in PromptMatrix enables non-engineers and developers to propose prompt changes, run automated LLM evaluation quality gates, review visual diffs, and approve deployment into production swarms without code redeployments or server restarts."
+            "text": "CI/CD pipeline prompt management integrates prompt updates directly into continuous integration and deployment workflows. With PromptMatrix, teams can propose prompt revisions, trigger automated LLM-as-a-judge evaluation gates, inspect visual diffs, and approve deployments to live production swarms with zero code redeployments."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is an Agent Behavior Registry?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An Agent Behavior Registry is a centralized, version-controlled repository for managing prompts, personas, and tool schemas outside of your codebase. PromptMatrix serves these configurations dynamically to your agents at runtime, preventing configuration drift."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does PromptMatrix hot-patch running agents?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "By pulling configurations via the <5ms PromptMatrix serve endpoint instead of hardcoding them, agents fetch their prompt behavior at each task invocation. Changing a prompt in PromptMatrix immediately updates all subsequent agent cycles without restarting the swarm."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which multi-agent frameworks are supported?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "PromptMatrix is framework-agnostic. It works out-of-the-box with any LLM orchestrator or swarm system, including OpenClaw, LangGraph, and CrewAI."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is PromptMatrix self-hostable?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The Community Edition is 100% open-source and MIT-licensed. You can run it locally or deploy it to your own server using Docker with SQLite, Postgres, or MySQL."
           }
         }
       ]
@@ -1032,7 +1066,7 @@ footer{border-top:1px solid var(--b2);position:relative;z-index:2;background:rgb
     <div class="h1-sub">// CI/CD Pipeline Prompt Management · LangGraph · CrewAI · OpenClaw</div>
 
     <p class="hdesc">
-      LLM prompts are <strong>Behavioral Specifications</strong>. PromptMatrix is the enterprise <strong>prompt management</strong> and <strong>CI/CD pipeline prompt management</strong> control plane for LangGraph, CrewAI, and OpenClaw. Hot-patch personas dynamically with zero swarm downtime and zero redeployment.
+      LLM prompts are <strong>Behavioral Specifications</strong>. PromptMatrix is the open-source <strong>CI/CD pipeline prompt management tool</strong> and runtime control plane for LangGraph, CrewAI, and OpenClaw swarms. Version, test, approve, and hot-patch prompts dynamically with sub-5ms latency and zero redeployments.
     </p>
 
     <!-- HERO CTA: Founder-first, OSS secondary -->
