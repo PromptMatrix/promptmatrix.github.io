@@ -10,8 +10,8 @@ PromptMatrix is the enterprise prompt management and CI/CD governance engine for
 - [Developer Documentation](https://promptmatrix.github.io/docs/)
 - [OpenAPI Spec](https://promptmatrix.github.io/docs/openapi.json)
 - [Full LLM Knowledge](https://promptmatrix.github.io/llms-full.txt)
-- [GitHub Repository](https://github.com/PromptMatrix/Promptmatrix)
-- [Python SDK (PyPI)](https://pypi.org/project/promptmatrix/)
+- [Python SDK (PyPI)](https://pypi.org/project/promptmatrix-sdk/)
+- [CLI / Server Engine (PyPI)](https://pypi.org/project/promptmatrix-ai/)
 
 ## Core Endpoints
 
