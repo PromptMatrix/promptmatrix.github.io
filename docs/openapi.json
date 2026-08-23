@@ -2,9 +2,28 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PromptMatrix API",
-    "description": "Prompt governance infrastructure for AI teams",
-    "version": "0.2.0"
+    "description": "Enterprise prompt governance infrastructure and CI/CD pipeline control plane for AI agent swarms.",
+    "version": "1.1.0",
+    "contact": {
+      "name": "PromptMatrix Support",
+      "email": "jachinchsaikiasonowal@gmail.com",
+      "url": "https://promptmatrix.github.io"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
   },
+  "servers": [
+    {
+      "url": "https://promptmatrixx.vercel.app",
+      "description": "Production Managed Cloud"
+    },
+    {
+      "url": "http://localhost:8000",
+      "description": "Local Self-Hosted Server"
+    }
+  ],
   "paths": {
     "/pm/serve/{prompt_key}": {
       "get": {
